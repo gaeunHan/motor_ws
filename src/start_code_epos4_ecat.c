@@ -94,7 +94,7 @@ const static ec_pdo_entry_reg_t domain1_regs[] =
 
 
 
-/*****************************************************************************/
+/**************************** MDP module PPM mapping ****************************/
 static	ec_pdo_entry_info_t maxon_epos4_pdo_entries[] = 
 {
     // RxPDO (Master -> Slave)
@@ -196,7 +196,9 @@ void check_slave_config_states(void)
 
 /*****************************************************************************/
 
-uint16_t status_word;
+uint16_t status_word = 0;
+uint16_t prev_status_word = -1;
+uint16_t check_status_word;
 // uint16_t control_word=0;
 
 
@@ -231,7 +233,37 @@ void cyclic_task()
         // check for slave configuration state(s)
         check_slave_config_states(); // ecrt_slave_config_state()
 
-    }    
+        // get status word
+        status_word = EC_READ_U16(domain1_pd + offset_status_word);
+
+        // print status word if changed
+        if(status_word != prev_status_word){        
+            printf("current statusword: 0x%04X\n\n", status_word);
+            prev_status_word = status_word;
+        }
+        
+        // write process data   
+        check_status_word = status_word & 0x0067; // check 0,1,5,6th bit only
+        switch(check_status_word){
+            case 0x0040: // switch on disabled
+                EC_WRITE_U16(domain1_pd + offset_control_word, 0x0006);
+                printf("switch on disabled -> ready to switch on\n");
+                break;
+            case 0x0021: // ready to switch on
+                EC_WRITE_U16(domain1_pd + offset_control_word, 0x0007);
+                printf("ready to switch on -> switched on\n");
+                break;
+            case 0x0023: // switched on
+                EC_WRITE_U16(domain1_pd + offset_control_word, 0x000F);
+                printf("switched on -> operation enabled\n");
+                break;
+            case 0x0027: // operation enabled
+                printf("operation enabled reached\n");
+                break;
+        }
+    } 
+
+    
 
     // (마스터가) send process data
     ecrt_domain_queue(domain1);
