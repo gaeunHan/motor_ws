@@ -17,6 +17,7 @@
 /****************************************************************************/
 
 #include "ecrt.h"
+#include "motor.h"
 
 /****************************************************************************/
 
@@ -199,8 +200,15 @@ void check_slave_config_states(void)
 uint16_t status_word = 0;
 uint16_t prev_status_word = -1;
 uint16_t check_status_word;
-// uint16_t control_word=0;
-
+uint16_t control_word = 0;
+/* statusword bit */
+uint16_t setPointAcknowledge = 0b0001000000000000;
+/* controlword bit */
+uint16_t set_rel_target_pos = 0b0000000001000000;
+uint16_t set_abs_target_pos = 0b1111111110111111;
+uint16_t set_0_newSetpoint = 0b1111111111101111;
+uint16_t set_1_newSetpoint = 0b0000000000010000;
+int target_position_cnt;
 
 //밑에 while 문에서 cyclic_task가 계속 돌고 있다(1000Hz, 1ms 주기)  
 void cyclic_task()
@@ -233,8 +241,11 @@ void cyclic_task()
         // check for slave configuration state(s)
         check_slave_config_states(); // ecrt_slave_config_state()
 
-        // get status word
+        // get statusword
         status_word = EC_READ_U16(domain1_pd + offset_status_word);
+
+        // get controlword
+        control_word = EC_READ_U16(domain1_pd + offset_control_word);
 
         // print status word if changed
         if(status_word != prev_status_word){        
@@ -258,7 +269,25 @@ void cyclic_task()
                 printf("switched on -> operation enabled\n");
                 break;
             case 0x0027: // operation enabled
+                // set position mode(abs/rel)
+                control_word |= set_rel_target_pos;
+
+                // set target position
+                EC_WRITE_U16(domain1_pd + offset_target_postion, target_position_cnt);
+
+                // determine new setpoint bit to give new target position
+                if(status_word & setPointAcknowledge == 0b0001000000000000) control_word &= set_0_newSetpoint;
+                else control_word |= set_1_newSetpoint; 
+
+                // write new setpoint bit on controlword
+                EC_WRITE_U16(domain1_pd + offset_control_word, control_word);
+
+                // debugging
                 printf("operation enabled reached\n");
+                break;
+            case 0x0008: //fault
+                control_word += 0x0080; // fault reset
+                EC_WRITE_U16(domain1_pd + offset_control_word, control_word);
                 break;
         }
     } 
@@ -271,6 +300,29 @@ void cyclic_task()
 }
 
 /****************************************************************************/
+
+// working in parallel with cyclic_task()
+void *p_function(void *data){
+    while(1){
+        // create a motor obj
+        struct Motor motor1;
+        MotorID(&motor1, 1);
+        SetEncodorandGear(&motor1, 1024, 1);
+        EncodorHomeposition(&motor1, 0);
+        SetJointMinMiax(&motor1, -90, 90);
+
+        // get degree to move motor
+        int degree;
+        printf("Enter a target position in degree: ");
+        scanf("%d", &degree);
+        SetDegree(&motor1, degree);
+        target_position_cnt = GetEncoderCnt(&motor1);
+
+        sleep(1);
+    }    
+}
+
+/*****************************************************************************/
 
 void stack_prefault(void)
 {
@@ -352,6 +404,19 @@ int main(int argc, char **argv)
     wakeup_time.tv_sec += 1; /* start in future */
     wakeup_time.tv_nsec = 0;
 
+    /* Create a pthread */
+    char p1[] = "thread_1";  //thread
+    int thr_id;
+    pthread_t pthread;
+
+    thr_id = pthread_create(&pthread, NULL, p_function, (void*)p1); //2
+    if(thr_id < 0)
+    {
+        perror("pthread0 create error");
+        exit(EXIT_FAILURE);
+    }
+
+    /* Main Task */
     while (1) 
     {
         ret = clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME,
