@@ -49,30 +49,39 @@ static ec_slave_config_state_t slave_config_state = {};
 /****************************************************************************/
 
 // process data
-static uint8_t *domain1_pd = NULL;
+static uint8_t *domain1_pd = NULL; // for PPM
+static uint8_t *domain2_pd = NULL; // for CSV
 
 #define MAXON_EPOS4_5A 0x000000fb, 0x61500000 // Product Number 확인 필요(ESI file)
 
 static unsigned int counter = 0;
 
 
-// offsets for PDO entries - MDP module for PPM RxPDO   master -> slave
-static unsigned int offset_control_word;
-static unsigned int offset_target_postion;
-static unsigned int offset_profile_acceleration;
-static unsigned int offset_profile_deceleration;
-static unsigned int offset_profile_velocity;
-static unsigned int offset_modes_of_operation;
-static unsigned int offset_digital_outputs;
+// RxPDO (master -> slave) offsets for PDO entries
+    /* MDP module for PPM */
+    static unsigned int offset_control_word;
+    static unsigned int offset_target_postion;
+    static unsigned int offset_profile_acceleration;
+    static unsigned int offset_profile_deceleration;
+    static unsigned int offset_profile_velocity;
+    static unsigned int offset_modes_of_operation;
+    static unsigned int offset_digital_outputs;
+    /* MDP module for CSV */
+    static unsigned int offset_target_velocity;
+    static unsigned int offset_velocity_offset;
 
-// offsets for PDO entries - MDP module for PPM TxPDO   slave -> master
-static unsigned int offset_status_word;
-static unsigned int offset_position_actual_value;
-static unsigned int offset_velocity_actual_value;
-static unsigned int offset_following_error_actual_value;
-static unsigned int offset_modes_of_operation_display;
-static unsigned int offset_digital_inputs;
+// TxPDO (slave -> master) offsets for PDO entries 
+    /* MDP module for PPM */ 
+    static unsigned int offset_status_word;
+    static unsigned int offset_position_actual_value;
+    static unsigned int offset_velocity_actual_value;
+    static unsigned int offset_following_error_actual_value;
+    static unsigned int offset_modes_of_operation_display;
+    static unsigned int offset_digital_inputs;
+    /* MDP module for CSV */
+    static unsigned int offset_torque_actual_value;
 
+// MDP Module PPM
 const static ec_pdo_entry_reg_t domain1_regs[] = 
 {
     // RxPDO
@@ -89,6 +98,25 @@ const static ec_pdo_entry_reg_t domain1_regs[] =
     {0,0, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value},
     {0,0, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value},
     {0,0, MAXON_EPOS4_5A, 0x60F4, 0x00, &offset_following_error_actual_value},
+    {0,0, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display},
+    {0,0, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs}
+};
+
+// MDP Module CSV
+const static ec_pdo_entry_reg_t domain2_regs[] = 
+{
+    // RxPDO
+    {0,0, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word},
+    {0,0, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity},
+    {0,0, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset},
+    {0,0, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation},
+    {0,0, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs},
+
+    // TxPDO
+    {0,0, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word},
+    {0,0, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value},
+    {0,0, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value},
+    {0,0, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value},
     {0,0, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display},
     {0,0, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs}
 };
@@ -133,6 +161,42 @@ static ec_sync_info_t maxon_epos4_syncs[] = {
 	{ 1, EC_DIR_INPUT, 0, NULL, EC_WD_DISABLE },
 	{ 2, EC_DIR_OUTPUT, 1, maxon_epos4_pdos + 0, EC_WD_ENABLE },
 	{ 3, EC_DIR_INPUT,  1, maxon_epos4_pdos + 1, EC_WD_DISABLE },
+	{ 0xff }
+};
+
+/**************************** MDP module CSV mapping ****************************/
+static ec_pdo_entry_info_t csv_pdo_entries[] = {
+    // RxPDO (Master -> Slave)
+    {0x6040, 0x00, 16},    // control word
+    {0x60FF, 0x00, 32},    // target velocity
+    {0x60B1, 0x00, 32},    // velocity offset
+    {0x6060, 0x00, 8},     // modes of operation
+    {0x60FE, 0x01, 32},    // digital outputs
+
+    // TxPDO (Slave -> Master)
+    {0x6041, 0x00, 16},    // status word
+    {0x6064, 0x00, 32},    // position actual value
+    {0x606C, 0x00, 32},    // velocity actual value
+    {0x6077, 0x00, 16},    // torque actual value
+    {0x6061, 0x00, 8},     // modes of operation display
+    {0x60FD, 0x00, 32}     // digital inputs
+};
+
+static ec_pdo_info_t csv_pdos[] = {
+    // RxPDO(Master -> Slave) 1 mapping
+    {0x1600, 5,	csv_pdo_entries + 0}, // 5개의 RxPDO entry를 mapping 할 것인데, entry의 시작 위치는 maxon_epos4_pdo_entries[0]이다. 
+
+    // TxPDO(Master <- Slave) 1 mapping
+    {0x1a00, 6,	csv_pdo_entries + 5} // 6개의 TxPDO entry를 mapping 할 것인데, entry의 시작 위치는 maxon_epos4_pdo_entries[5]이다. 
+};
+
+// slave sync manager
+// EC_DIR_OUTPUT: Master -> Slave, EC_DIR_INPUT: Master <- Slave
+static ec_sync_info_t maxon_epos4_syncs_csv[] = {
+	{ 0, EC_DIR_OUTPUT, 0, NULL, EC_WD_DISABLE },
+	{ 1, EC_DIR_INPUT, 0, NULL, EC_WD_DISABLE },
+	{ 2, EC_DIR_OUTPUT, 1, csv_pdos + 0, EC_WD_ENABLE },
+	{ 3, EC_DIR_INPUT,  1, csv_pdos + 1, EC_WD_DISABLE },
 	{ 0xff }
 };
 
@@ -209,9 +273,10 @@ uint16_t set_abs_target_pos = 0b1111111110111111;
 uint16_t set_0_newSetpoint = 0b1111111111101111;
 uint16_t set_1_newSetpoint = 0b0000000000010000;
 int target_position_cnt = 0;
+int target_velocity = 0;
 
-//밑에 while 문에서 cyclic_task가 계속 돌고 있다(1000Hz, 1ms 주기)  
-void cyclic_task()
+//밑에 while 문에서 cyclic_task_ppm이 계속 돌고 있다(1000Hz, 1ms 주기)  
+void cyclic_task_ppm()
 {
     // (마스터가) receive process data
     ecrt_master_receive(master); // 데이터 받아(queue에서 데이터그램 dispatch)
@@ -251,7 +316,7 @@ void cyclic_task()
         // }
         
         // write process data   
-        check_status_word = status_word & 0x006F; // check 0,1,5,6th bit only
+        check_status_word = status_word & 0x006F; // check 0,1,2,3,5,6th bit only
         switch(check_status_word){
             case 0x0040: // switch on disabled
                 EC_WRITE_U16(domain1_pd + offset_control_word, 0x0006);
@@ -312,7 +377,79 @@ void cyclic_task()
 
     } 
 
-    
+    // (마스터가) send process data
+    ecrt_domain_queue(domain1);
+    ecrt_master_send(master);
+}
+
+// 1ms period
+void cyclic_task_csv()
+{
+    // (마스터가) receive process data
+    ecrt_master_receive(master); // 데이터 받아(queue에서 데이터그램 dispatch)
+    ecrt_domain_process(domain1); // 정상적인 통신 이루어졌는지 확인, 도메인 상태 업뎃
+
+    // check process data state - optional
+    check_domain1_state(); // ecrt_domain_state(), 도메인 상태 확인 
+
+    if (counter) 
+    {
+        counter--;   
+    } 
+    else // 1s period
+    { 
+        counter = FREQUENCY;  
+        
+        // check for master state
+        check_master_state(); // ecrt_master_state()
+
+        // check for slave configuration state(s)
+        check_slave_config_states(); // ecrt_slave_config_state()
+
+        // get statusword
+        status_word = EC_READ_U16(domain2_pd + offset_status_word);
+        
+        // write process data   
+        check_status_word = status_word & 0x006F; // check 0,1,2,3,5,6th bit only
+        switch(check_status_word){
+            case 0x0040: // switch on disabled
+                EC_WRITE_U16(domain2_pd + offset_control_word, 0x0006);
+                printf("switch on disabled -> ready to switch on\n");
+                break;
+
+            case 0x0021: // ready to switch on
+                EC_WRITE_U16(domain2_pd + offset_control_word, 0x0007);
+                printf("ready to switch on -> switched on\n");
+                break;
+
+            case 0x0023: // switched on
+                EC_WRITE_U16(domain2_pd + offset_control_word, 0x000F);
+                printf("switched on -> operation enabled\n");
+                break;
+
+            case 0x0027: // operation enabled
+                EC_WRITE_U16(domain2_pd + offset_modes_of_operation, 9); // select csv mode
+                EC_WRITE_U32(domain2_pd + offset_target_velocity, target_velocity);
+                break;
+
+            case 0x0008: //fault
+                printf("fault\n");
+
+                // get controlword
+                control_word = EC_READ_U16(domain2_pd + offset_control_word);
+
+                // fault reset
+                control_word |= 0x0080; 
+                EC_WRITE_U16(domain2_pd + offset_control_word, control_word);
+                break;
+        }
+
+        // // debugging
+        // printf("~~ current statusword: 0x%04X\n", status_word);
+        // printf("~~ current controlword: 0x%04X\n", EC_READ_U16(domain1_pd + offset_control_word));
+        // printf("~~ Target position: %d\n\n", EC_READ_U16(domain1_pd + offset_target_postion));
+
+    } 
 
     // (마스터가) send process data
     ecrt_domain_queue(domain1);
@@ -331,12 +468,16 @@ void *p_function(void *data){
         EncodorHomeposition(&motor1, 0);
         SetJointMinMiax(&motor1, -90, 90);
 
-        // get degree to move motor
-        int degree;
-        printf("Enter a target position in degree: ");
-        scanf("%d", &degree);
-        SetDegree(&motor1, degree);
-        target_position_cnt = GetEncoderCnt(&motor1);
+        // // ppm - get degree to move motor
+        // int degree;
+        // printf("Enter a target position in degree: ");
+        // scanf("%d", &degree);
+        // SetDegree(&motor1, degree);
+        // target_position_cnt = GetEncoderCnt(&motor1);
+
+        // csv - get target velocity
+        printf("Enter a target velocity: ");
+        scanf("%d", &target_velocity);
 
         sleep(1);
     }    
@@ -379,13 +520,13 @@ int main(int argc, char **argv)
     }
 
     printf("Configuring PDOs...\n");
-    if (ecrt_slave_config_pdos(slave_config, EC_END, maxon_epos4_syncs)) 
+    if (ecrt_slave_config_pdos(slave_config, EC_END, maxon_epos4_syncs_csv)) 
     {
         fprintf(stderr, "Failed to configure PDOs.\n");
         return -1;
     }
 
-    if (ecrt_domain_reg_pdo_entry_list(domain1, domain1_regs)) 
+    if (ecrt_domain_reg_pdo_entry_list(domain1, domain2_regs)) 
     {
         fprintf(stderr, "PDO entry registration failed!\n");
         return -1;
@@ -397,7 +538,7 @@ int main(int argc, char **argv)
     }
 
     printf("Activating domain...\n");
-    if (!(domain1_pd = ecrt_domain_data(domain1))) {
+    if (!(domain2_pd = ecrt_domain_data(domain1))) {
         return -1;
     }
 
@@ -447,7 +588,8 @@ int main(int argc, char **argv)
             break;
         }
 
-        cyclic_task();
+        //cyclic_task_ppm();
+        cyclic_task_csv();
 
         wakeup_time.tv_nsec += PERIOD_NS;
         while (wakeup_time.tv_nsec >= NSEC_PER_SEC) {
