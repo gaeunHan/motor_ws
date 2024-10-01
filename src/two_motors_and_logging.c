@@ -192,7 +192,7 @@ void check_slave_config_states(void)
 # define PI 3.14159265
 int T = 1; // period of sine func in [sec]
 int N = 4; // number of period to observe
-int A = 1000; // amplitude of sine func
+int A = 200; // amplitude of sine func
 float t = 0;
 int idx = 0;
 float *t1_array;
@@ -276,7 +276,7 @@ void cyclic_task_csv()
     // create sine velocity profile and log datum
     if(is_operational){
         // create sine velocity profile
-        target_velocity = 200*sin((2*PI/T)*t);
+        target_velocity = A*sin((2*PI/T)*t);
         EC_WRITE_U32(domain1_pd + offset_target_velocity, target_velocity);
 
         // logging
@@ -422,7 +422,7 @@ int main(int argc, char **argv)
         }
     }
 
-    FILE* file1 = fopen("motor4_data.txt", "w");
+    FILE* file1 = fopen("motor2_data.txt", "w");
 
     if(file1 != NULL){
         for(int i=0; i < N*T*1000; i++){
