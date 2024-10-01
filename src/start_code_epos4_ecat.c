@@ -208,7 +208,7 @@ uint16_t set_rel_target_pos = 0b0000000001000000;
 uint16_t set_abs_target_pos = 0b1111111110111111;
 uint16_t set_0_newSetpoint = 0b1111111111101111;
 uint16_t set_1_newSetpoint = 0b0000000000010000;
-int target_position_cnt;
+int target_position_cnt = 0;
 
 //밑에 while 문에서 cyclic_task가 계속 돌고 있다(1000Hz, 1ms 주기)  
 void cyclic_task()
@@ -244,31 +244,36 @@ void cyclic_task()
         // get statusword
         status_word = EC_READ_U16(domain1_pd + offset_status_word);
 
-        // get controlword
-        control_word = EC_READ_U16(domain1_pd + offset_control_word);
-
-        // print status word if changed
-        if(status_word != prev_status_word){        
-            printf("current statusword: 0x%04X\n\n", status_word);
-            prev_status_word = status_word;
-        }
+        // // print status word if changed
+        // if(status_word != prev_status_word){        
+        //     printf("current statusword: 0x%04X\n\n", status_word);
+        //     prev_status_word = status_word;
+        // }
         
         // write process data   
-        check_status_word = status_word & 0x0067; // check 0,1,5,6th bit only
+        check_status_word = status_word & 0x006F; // check 0,1,5,6th bit only
         switch(check_status_word){
             case 0x0040: // switch on disabled
                 EC_WRITE_U16(domain1_pd + offset_control_word, 0x0006);
                 printf("switch on disabled -> ready to switch on\n");
                 break;
+
             case 0x0021: // ready to switch on
                 EC_WRITE_U16(domain1_pd + offset_control_word, 0x0007);
                 printf("ready to switch on -> switched on\n");
                 break;
+
             case 0x0023: // switched on
                 EC_WRITE_U16(domain1_pd + offset_control_word, 0x000F);
                 printf("switched on -> operation enabled\n");
                 break;
+
             case 0x0027: // operation enabled
+                //printf("operation enabled reached\n");
+
+                // get controlword
+                control_word = EC_READ_U16(domain1_pd + offset_control_word);
+
                 // set position mode(abs/rel)
                 control_word |= set_rel_target_pos;
 
@@ -276,20 +281,35 @@ void cyclic_task()
                 EC_WRITE_U16(domain1_pd + offset_target_postion, target_position_cnt);
 
                 // determine new setpoint bit to give new target position
-                if(status_word & setPointAcknowledge == 0b0001000000000000) control_word &= set_0_newSetpoint;
-                else control_word |= set_1_newSetpoint; 
-
+                if((status_word & setPointAcknowledge) == setPointAcknowledge){
+                    control_word &= set_0_newSetpoint;
+                    //printf("1 -> 0\n");
+                } 
+                else{
+                    control_word |= set_1_newSetpoint; 
+                    //printf("0 -> 1\n");
+                } 
                 // write new setpoint bit on controlword
                 EC_WRITE_U16(domain1_pd + offset_control_word, control_word);
-
-                // debugging
-                printf("operation enabled reached\n");
                 break;
+
             case 0x0008: //fault
-                control_word += 0x0080; // fault reset
+                printf("fault\n");
+
+                // get controlword
+                control_word = EC_READ_U16(domain1_pd + offset_control_word);
+
+                // fault reset
+                control_word |= 0x0080; 
                 EC_WRITE_U16(domain1_pd + offset_control_word, control_word);
                 break;
         }
+
+        // // debugging
+        // printf("~~ current statusword: 0x%04X\n", status_word);
+        // printf("~~ current controlword: 0x%04X\n", EC_READ_U16(domain1_pd + offset_control_word));
+        // printf("~~ Target position: %d\n\n", EC_READ_U16(domain1_pd + offset_target_postion));
+
     } 
 
     
