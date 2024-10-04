@@ -34,6 +34,7 @@
 /* Constants */
 #define NSEC_PER_SEC (1000000000)
 #define FREQUENCY (NSEC_PER_SEC / PERIOD_NS)
+#define EPOSNUM 2
 
 /****************************************************************************/
 
@@ -58,39 +59,54 @@ static unsigned int counter = 0;
 
 
 // RxPDO (master -> slave) offsets for PDO entries
-static unsigned int offset_control_word;
-static unsigned int offset_target_velocity;
-static unsigned int offset_velocity_offset;
-static unsigned int offset_modes_of_operation;
-static unsigned int offset_digital_outputs;
+static unsigned int offset_control_word[EPOSNUM];
+static unsigned int offset_target_velocity[EPOSNUM];
+static unsigned int offset_velocity_offset[EPOSNUM];
+static unsigned int offset_modes_of_operation[EPOSNUM];
+static unsigned int offset_digital_outputs[EPOSNUM];
     
 
 // TxPDO (slave -> master) offsets for PDO entries 
-static unsigned int offset_status_word;
-static unsigned int offset_position_actual_value;
-static unsigned int offset_velocity_actual_value;
-static unsigned int offset_torque_actual_value;
-static unsigned int offset_modes_of_operation_display;
-static unsigned int offset_digital_inputs;
+static unsigned int offset_status_word[EPOSNUM];
+static unsigned int offset_position_actual_value[EPOSNUM];
+static unsigned int offset_velocity_actual_value[EPOSNUM];
+static unsigned int offset_torque_actual_value[EPOSNUM];
+static unsigned int offset_modes_of_operation_display[EPOSNUM];
+static unsigned int offset_digital_inputs[EPOSNUM];
     
 
 // MDP Module CSV
 const static ec_pdo_entry_reg_t domain1_regs[] = 
 {
     // RxPDO
-    {0,0, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word},
-    {0,0, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity},
-    {0,0, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset},
-    {0,0, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation},
-    {0,0, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs},
+    {0,0, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[0]},
+    {0,0, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[0]},
+    {0,0, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[0]},
+    {0,0, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[0]},
+    {0,0, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[0]},
 
     // TxPDO
-    {0,0, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word},
-    {0,0, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value},
-    {0,0, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value},
-    {0,0, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value},
-    {0,0, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display},
-    {0,0, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs}
+    {0,0, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[0]},
+    {0,0, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[0]},
+    {0,0, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[0]},
+    {0,0, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[0]},
+    {0,0, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[0]},
+    {0,0, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[0]},
+
+    // RxPDO
+    {0,1, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[1]},
+    {0,1, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[1]},
+    {0,1, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[1]},
+    {0,1, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[1]},
+    {0,1, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[1]},
+
+    // TxPDO
+    {0,1, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[1]},
+    {0,1, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[1]},
+    {0,1, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[1]},
+    {0,1, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[1]},
+    {0,1, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[1]},
+    {0,1, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[1]}
 };
 
 /**************************** MDP module CSV mapping ****************************/
@@ -190,24 +206,27 @@ void check_slave_config_states(void)
 /*****************************************************************************/
 // logging vars.
 # define PI 3.14159265
-int T = 1; // period of sine func in [sec]
+int T[EPOSNUM] = {1, 4}; // period of sine func in [sec]
 int N = 4; // number of period to observe
-int A = 200; // amplitude of sine func
+int A[EPOSNUM] = {4000, 2000}; // amplitude of sine func
 float t = 0;
 int idx = 0;
-float *t1_array;
-uint32_t *vel1_input_array;
-uint32_t *vel1_output_array;
+float *t1_array, *t2_array;
+uint32_t *vel1_input_array, *vel2_input_array;
+uint32_t *vel1_output_array, *vel2_output_array;
+int max(int a, int b){
+    if(a >= b) return a;
+    else return b;
+}
 
 
 /*****************************************************************************/
 // cyclic task vars.
-uint16_t status_word = 0;
-uint16_t prev_status_word = -1;
-uint16_t check_status_word;
-uint16_t control_word = 0;
-uint32_t target_velocity = 0;
-bool is_operational = 0;
+uint16_t status_word[EPOSNUM] = {0, 0};
+uint16_t check_status_word[EPOSNUM];
+uint16_t control_word[EPOSNUM] = {0, 0};
+uint32_t target_velocity[EPOSNUM] = {0, 0};
+bool is_operational[EPOSNUM] = {0, 0};
 
 // 1ms period
 void cyclic_task_csv()
@@ -234,55 +253,99 @@ void cyclic_task_csv()
         check_slave_config_states(); // ecrt_slave_config_state()
 
         // get statusword
-        status_word = EC_READ_U16(domain1_pd + offset_status_word);
+        status_word[0] = EC_READ_U16(domain1_pd + offset_status_word[0]);
+        status_word[1] = EC_READ_U16(domain1_pd + offset_status_word[1]);
         
-        // write process data   
-        check_status_word = status_word & 0x006F; // check 0,1,2,3,5,6th bit only
-        switch(check_status_word){
+        // write process data on slave 1
+        check_status_word[0] = status_word[0] & 0x006F; // check 0,1,2,3,5,6th bit only
+        switch(check_status_word[0]){
             case 0x0040: // switch on disabled
-                EC_WRITE_U16(domain1_pd + offset_control_word, 0x0006);
+                EC_WRITE_U16(domain1_pd + offset_control_word[0], 0x0006);
                 printf("switch on disabled -> ready to switch on\n");
                 break;
 
             case 0x0021: // ready to switch on
-                EC_WRITE_U16(domain1_pd + offset_control_word, 0x0007);
+                EC_WRITE_U16(domain1_pd + offset_control_word[0], 0x0007);
                 printf("ready to switch on -> switched on\n");
                 break;
 
             case 0x0023: // switched on
-                EC_WRITE_U16(domain1_pd + offset_control_word, 0x000F);
+                EC_WRITE_U16(domain1_pd + offset_control_word[0], 0x000F);
                 printf("switched on -> operation enabled\n");
                 break;
 
             case 0x0027: // operation enabled
-                is_operational = 1;
-                EC_WRITE_U16(domain1_pd + offset_modes_of_operation, 9); // select csv mode
-                EC_WRITE_U32(domain1_pd + offset_target_velocity, target_velocity);
+                is_operational[0] = 1;
+                EC_WRITE_U16(domain1_pd + offset_modes_of_operation[0], 9); // select csv mode
+                //EC_WRITE_U32(domain1_pd + offset_target_velocity[0], target_velocity[0]);
                 break;
 
             case 0x0008: //fault
                 printf("fault\n");
 
                 // get controlword
-                control_word = EC_READ_U16(domain1_pd + offset_control_word);
+                control_word[0] = EC_READ_U16(domain1_pd + offset_control_word[0]);
 
                 // fault reset
-                control_word |= 0x0080; 
-                EC_WRITE_U16(domain1_pd + offset_control_word, control_word);
+                control_word[0] |= 0x0080; 
+                EC_WRITE_U16(domain1_pd + offset_control_word[0], control_word[0]);
+                break;
+        }
+
+        // write process data on slave 2
+        check_status_word[1] = status_word[1] & 0x006F; // check 0,1,2,3,5,6th bit only
+        switch(check_status_word[1]){
+            case 0x0040: // switch on disabled
+                EC_WRITE_U16(domain1_pd + offset_control_word[1], 0x0006);
+                printf("switch on disabled -> ready to switch on\n");
+                break;
+
+            case 0x0021: // ready to switch on
+                EC_WRITE_U16(domain1_pd + offset_control_word[1], 0x0007);
+                printf("ready to switch on -> switched on\n");
+                break;
+
+            case 0x0023: // switched on
+                EC_WRITE_U16(domain1_pd + offset_control_word[1], 0x000F);
+                printf("switched on -> operation enabled\n");
+                break;
+
+            case 0x0027: // operation enabled
+                is_operational[1] = 1;
+                EC_WRITE_U16(domain1_pd + offset_modes_of_operation[1], 9); // select csv mode
+                //EC_WRITE_U32(domain1_pd + offset_target_velocity[1], target_velocity[1]);
+                break;
+
+            case 0x0008: //fault
+                printf("fault\n");
+
+                // get controlword
+                control_word[1] = EC_READ_U16(domain1_pd + offset_control_word[1]);
+
+                // fault reset
+                control_word[1] |= 0x0080; 
+                EC_WRITE_U16(domain1_pd + offset_control_word[1], control_word[1]);
                 break;
         }
     } 
 
     // create sine velocity profile and log datum
-    if(is_operational){
-        // create sine velocity profile
-        target_velocity = A*sin((2*PI/T)*t);
-        EC_WRITE_U32(domain1_pd + offset_target_velocity, target_velocity);
+    if(is_operational[0] * is_operational[1]){
+        // target velocity for slave 1
+        target_velocity[0] = A[0]*sin((2*PI/T[0])*t);
+        EC_WRITE_U32(domain1_pd + offset_target_velocity[0], target_velocity[0]);
+
+        // target velocity for slave 2
+        target_velocity[1] = A[1]*sin((2*PI/T[1])*t);
+        EC_WRITE_U32(domain1_pd + offset_target_velocity[1], target_velocity[1]);
 
         // logging
         t1_array[idx] = t;
-        vel1_input_array[idx] = target_velocity;
-        vel1_output_array[idx] = EC_READ_S32(domain1_pd + offset_velocity_actual_value); // Read a 32-bit signed value from EtherCAT data
+        vel1_input_array[idx] = target_velocity[0];
+        vel1_output_array[idx] = EC_READ_S32(domain1_pd + offset_velocity_actual_value[0]); // Read a 32-bit signed value from EtherCAT data.
+        t2_array[idx] = t;
+        vel2_input_array[idx] = target_velocity[1];
+        vel2_output_array[idx] = EC_READ_S32(domain1_pd + offset_velocity_actual_value[1]);
         t += 0.001; 
         idx++;
     } 
@@ -297,7 +360,7 @@ char stopSignal;
 
 // working in parallel with cyclic_task()
 void *p_function(void *data){
-    printf("Enter 'q' to stop motor");
+    printf("Enter 'q' to stop motor\n");
     scanf("%c", &stopSignal);
 };
 
@@ -331,12 +394,29 @@ int main(int argc, char **argv)
         return -1;
     }
 
+    // register the first slave
     if (!(slave_config = ecrt_master_slave_config(master, 0, 0, MAXON_EPOS4_5A))) 
     {
         fprintf(stderr, "Failed to get slave configuration.\n");
         return -1;
     }
 
+    // configure PDO of the first slave
+    printf("Configuring PDOs...\n");
+    if (ecrt_slave_config_pdos(slave_config, EC_END, maxon_epos4_syncs_csv)) 
+    {
+        fprintf(stderr, "Failed to configure PDOs.\n");
+        return -1;
+    }
+
+    // register the second slave
+    if (!(slave_config = ecrt_master_slave_config(master, 0, 1, MAXON_EPOS4_5A))) 
+    {
+        fprintf(stderr, "Failed to get slave configuration.\n");
+        return -1;
+    }
+
+    // configure PDO of the second slave
     printf("Configuring PDOs...\n");
     if (ecrt_slave_config_pdos(slave_config, EC_END, maxon_epos4_syncs_csv)) 
     {
@@ -396,9 +476,13 @@ int main(int argc, char **argv)
     }
 
     /* allocate memory for logging */
-    t1_array = (float *)malloc((N * T * 1000) * sizeof(float));
-    vel1_input_array = (uint32_t *)malloc((N * T * 1000) * sizeof(uint32_t));
-    vel1_output_array = (uint32_t *)malloc((N * T* 1000) * sizeof(uint32_t));
+    t1_array = (float *)malloc((N * max(T[0],T[1]) * 1000) * sizeof(float));
+    vel1_input_array = (uint32_t *)malloc((N * max(T[0],T[1]) * 1000) * sizeof(uint32_t));
+    vel1_output_array = (uint32_t *)malloc((N * max(T[0],T[1])* 1000) * sizeof(uint32_t));
+    t2_array = (float *)malloc((N * max(T[0],T[1]) * 1000) * sizeof(float));
+    vel2_input_array = (uint32_t *)malloc((N * max(T[0],T[1]) * 1000) * sizeof(uint32_t));
+    vel2_output_array = (uint32_t *)malloc((N * max(T[0],T[1])* 1000) * sizeof(uint32_t));
+
 
     /* Main Task */
     while (1) 
@@ -413,7 +497,7 @@ int main(int argc, char **argv)
 
         cyclic_task_csv();
 
-        if(stopSignal=='q' || idx > N*T*1000) break;
+        if(stopSignal=='q' || idx > N*max(T[0],T[1])*1000) break;
 
         wakeup_time.tv_nsec += PERIOD_NS;
         while (wakeup_time.tv_nsec >= NSEC_PER_SEC) {
@@ -422,21 +506,28 @@ int main(int argc, char **argv)
         }
     }
 
-    FILE* file1 = fopen("motor2_data.txt", "w");
+    FILE* file1 = fopen("slave1_data.txt", "w");
+    FILE* file2 = fopen("slave2_data.txt", "w");
 
     if(file1 != NULL){
-        for(int i=0; i < N*T*1000; i++){
+        for(int i=0; i < N*max(T[0],T[1])*1000; i++){
             fprintf(file1, "%f %d %d\n", t1_array[i], vel1_input_array[i], vel1_output_array[i]);
+            fprintf(file2, "%f %d %d\n", t1_array[i], vel2_input_array[i], vel2_output_array[i]);
         }
     }
 
     fclose(file1);
+    fclose(file2);
     printf("values saved to file. \n");
-    printf("T: %d, N: %d, A: %d\n", T, N, A);
+    printf("slave 1: \n\tT: %d, N: %d, A: %d\n", T[0], N, A[0]);
+    printf("slave 2: \n\tT: %d, N: %d, A: %d\n", T[1], N, A[1]);
 
     free(t1_array);
     free(vel1_input_array);
     free(vel1_output_array);
+    free(t2_array);
+    free(vel2_input_array);
+    free(vel2_output_array);
 
     return ret;
 }
