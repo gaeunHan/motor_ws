@@ -193,6 +193,8 @@ void check_slave_config_states(void)
 float t = 0;
 int idx = 0;
 float *t1_array;
+float *velocity_input_array;
+float *position_input_array;
 int32_t *velocity_output_array;
 float *position_output_array;
 
@@ -308,6 +310,8 @@ void cyclic_task_csv()
 
         // logging
         t1_array[idx] = t;
+        velocity_input_array[idx] = vel_t;
+        position_input_array[idx] = pos_t * 360.0 / 4096.0 / 35.0;
         velocity_output_array[idx] = EC_READ_S32(domain1_pd + offset_velocity_actual_value); // Read a 32-bit signed value from EtherCAT data
         position_output_array[idx] = (((float)EC_READ_S32(domain1_pd + offset_position_actual_value) * 360.0f) / 4096.0f) / 35.0; // logging pos in degree - *(360/4096)하면 0 되어버림
         t += 0.001; 
@@ -428,9 +432,11 @@ int main(int argc, char **argv)
     }
 
     /* allocate memory for logging */
-    t1_array = (float *)malloc((2*1000) * sizeof(float)); // t가 0.001씩 즈가 -> 1000이면 되는데 걍 넉넉잡아 2000
-    velocity_output_array = (uint32_t *)malloc((2*1000) * sizeof(int32_t));
-    position_output_array = (float *)malloc((2*1000) * sizeof(float));
+    t1_array = (float *)malloc((1000) * sizeof(float)); // t가 0.001씩 즈가 -> 1000이면 되는데 걍 넉넉잡아 2000
+    velocity_input_array = (float *)malloc((1000) * sizeof(float));
+    position_input_array = (float *)malloc((1000) * sizeof(float));
+    velocity_output_array = (uint32_t *)malloc((1000) * sizeof(int32_t));
+    position_output_array = (float *)malloc((1000) * sizeof(float));
 
     /* Main Task */
     while (1) 
@@ -445,7 +451,7 @@ int main(int argc, char **argv)
 
         cyclic_task_csv();
 
-        if(stopSignal=='q' || idx > 2*1000) break;
+        if(stopSignal=='q' || idx > 1000) break;
 
         wakeup_time.tv_nsec += PERIOD_NS;
         while (wakeup_time.tv_nsec >= NSEC_PER_SEC) {
@@ -458,9 +464,9 @@ int main(int argc, char **argv)
     FILE* file2 = fopen("/home/ghan/study_ws/epos4_etherCAT/logging/5th_vel.txt", "w");
 
     if(file1 != NULL && file2 != NULL){
-        for(int i=0; i < N*T*1000; i++){
-            fprintf(file1, "%f %f %f\n", t1_array[i], pos_t, position_output_array[i]);
-            fprintf(file2, "%f %d\n", t1_array[i], velocity_output_array[i]);
+        for(int i=0; i < 1000; i++){
+            fprintf(file1, "%f %f %f\n", t1_array[i], position_input_array[i], position_output_array[i]);
+            fprintf(file2, "%f %f %d\n", t1_array[i], velocity_input_array[i], velocity_output_array[i]);
         }
     }
 
