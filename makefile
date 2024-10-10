@@ -14,7 +14,10 @@ OBJ3 = epos4_03.out
 SRC4 = src/csp_poly5.c
 OBJ4 = epos4_04.out
 
-all: $(OBJ1) $(OBJ2) $(OBJ3) $(OBJ4)
+SRC5 = src/sine_sweep_csp.c
+OBJ5 = epos4_05.out
+
+all: $(OBJ1) $(OBJ2) $(OBJ3) $(OBJ4) $(OBJ5)
 
 $(OBJ1): $(SRC1)
 	$(CC) -o $(OBJ1) $(SRC1) $(CFLAGS) $(LDFLAGS)
@@ -28,5 +31,8 @@ $(OBJ3): $(SRC3)
 $(OBJ4): $(SRC4)
 	$(CC) -o $(OBJ4) $(SRC4) $(CFLAGS) $(LDFLAGS)
 
+$(OBJ5): $(SRC5)
+	$(CC) -o $(OBJ5) $(SRC5) $(CFLAGS) $(LDFLAGS)
+
 clean:
-	rm -f $(OBJ1) $(OBJ2) $(OBJ3) $(OJB4)
+	rm -f $(OBJ1) $(OBJ2) $(OBJ3) $(OBJ4) $(OBJ5)
