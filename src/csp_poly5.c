@@ -222,8 +222,8 @@ void getTrajectory(float q0, float q1, float v0, float v1, float a0, float a1, f
     // pos, vel, acc formula
     currTime = t;
     float dt = currTime - t0;
-    pos_t = b0 + b1*dt + b2*pow(dt,2) + b3*pow(dt,3) + b4*pow(dt,4) + b5*pow(dt,5);
-    vel_t = b1 + 2*b2*dt + 3*b3*pow(dt,2) + 4*b4*pow(dt,3) + 5*b5*pow(dt,4);
+    pos_t = b0 + b1*dt + b2*pow(dt,2) + b3*pow(dt,3) + b4*pow(dt,4) + b5*pow(dt,5); // [encoder cnt]
+    vel_t = b1 + 2*b2*dt + 3*b3*pow(dt,2) + 4*b4*pow(dt,3) + 5*b5*pow(dt,4); // [encoder cnt / sec]
     acc_t = 2*b2 + 6*b3*dt + 12*b4*pow(dt,2) + 20*b5*pow(dt,3);
 
 }
@@ -310,9 +310,9 @@ void cyclic_task_csv()
 
         // logging
         t1_array[idx] = t;
-        velocity_input_array[idx] = vel_t;
-        position_input_array[idx] = pos_t * 360.0 / 4096.0 / 35.0;
-        velocity_output_array[idx] = EC_READ_S32(domain1_pd + offset_velocity_actual_value); // Read a 32-bit signed value from EtherCAT data
+        velocity_input_array[idx] = (vel_t / (4096.0 * 35.0)) * 60; // [rpm]
+        position_input_array[idx] = pos_t * 360.0 / 4096.0 / 35.0; // [deg]
+        velocity_output_array[idx] = (EC_READ_S32(domain1_pd + offset_velocity_actual_value))/35.0; // actual velocity 읽을 때 기어비로 나눠줘야 함. 
         position_output_array[idx] = (((float)EC_READ_S32(domain1_pd + offset_position_actual_value) * 360.0f) / 4096.0f) / 35.0; // logging pos in degree - *(360/4096)하면 0 되어버림
         t += 0.001; 
         idx++;
@@ -460,8 +460,8 @@ int main(int argc, char **argv)
         }
     }
 
-    FILE* file1 = fopen("/home/ghan/study_ws/epos4_etherCAT/logging/5th_pos.txt", "w");
-    FILE* file2 = fopen("/home/ghan/study_ws/epos4_etherCAT/logging/5th_vel.txt", "w");
+    FILE* file1 = fopen("/home/ghan/study_ws/epos4_etherCAT/logging/5th_pos2.txt", "w");
+    FILE* file2 = fopen("/home/ghan/study_ws/epos4_etherCAT/logging/5th_vel2.txt", "w");
 
     if(file1 != NULL && file2 != NULL){
         for(int i=0; i < 1000; i++){
