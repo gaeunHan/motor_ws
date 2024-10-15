@@ -57,9 +57,8 @@ static unsigned int counter = 0;
 
 // RxPDO (master -> slave) offsets for PDO entries
 static unsigned int offset_control_word;
-static unsigned int offset_target_position;
-static unsigned int offset_position_offset;
-static unsigned int offset_torque_offset;
+static unsigned int offset_target_velocity;
+static unsigned int offset_velocity_offset;
 static unsigned int offset_modes_of_operation;
 static unsigned int offset_digital_outputs;
     
@@ -79,9 +78,8 @@ const static ec_pdo_entry_reg_t domain1_regs[] =
 {
     // RxPDO
     {0,0, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word},
-    {0,0, MAXON_EPOS4_5A, 0x607A, 0x00, &offset_target_position},
-    {0,0, MAXON_EPOS4_5A, 0x60B0, 0x00, &offset_position_offset},
-    {0,0, MAXON_EPOS4_5A, 0x60B2, 0x00, &offset_torque_offset},
+    {0,0, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity},
+    {0,0, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset},
     {0,0, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation},
     {0,0, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs},
 
@@ -95,13 +93,13 @@ const static ec_pdo_entry_reg_t domain1_regs[] =
     {0,0, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_error_code}
 };
 
+
 /**************************** MDP module CSV mapping ****************************/
-static ec_pdo_entry_info_t csp_pdo_entries[] = {
+static ec_pdo_entry_info_t csv_pdo_entries[] = {
     // RxPDO (Master -> Slave)
     {0x6040, 0x00, 16},    // control word
-    {0x607A, 0x00, 32},    // target position
-    {0x60B0, 0x00, 32},    // position offset
-    {0x60B2, 0x00, 16},    // torque offset
+    {0x60FF, 0x00, 32},    // target velocity
+    {0x60B1, 0x00, 32},    // velocity offset
     {0x6060, 0x00, 8},     // modes of operation
     {0x60FE, 0x01, 32},    // digital outputs
 
@@ -111,25 +109,25 @@ static ec_pdo_entry_info_t csp_pdo_entries[] = {
     {0x606C, 0x00, 32},    // velocity actual value
     {0x6077, 0x00, 16},    // torque actual value
     {0x6061, 0x00, 8},     // modes of operation display
-    {0x60FD, 0x00, 32},    // digital inputs
+    {0x60FD, 0x00, 32},     // digital inputs
     {0x603F, 0x00, 16}     // error code
 };
 
-static ec_pdo_info_t csp_pdos[] = {
+static ec_pdo_info_t csv_pdos[] = {
     // RxPDO(Master -> Slave) 1 mapping
-    {0x1600, 6,	csp_pdo_entries + 0}, // 6개의 RxPDO entry를 mapping 할 것인데, entry의 시작 위치는 maxon_epos4_pdo_entries[0]이다. 
+    {0x1600, 5,	csv_pdo_entries + 0}, // 5개의 RxPDO entry를 mapping 할 것인데, entry의 시작 위치는 maxon_epos4_pdo_entries[0]이다. 
 
     // TxPDO(Master <- Slave) 1 mapping
-    {0x1a00, 7,	csp_pdo_entries + 6} // 7개의 TxPDO entry를 mapping 할 것인데, entry의 시작 위치는 maxon_epos4_pdo_entries[6]이다. 
+    {0x1a00, 7,	csv_pdo_entries + 5} // 6개의 TxPDO entry를 mapping 할 것인데, entry의 시작 위치는 maxon_epos4_pdo_entries[5]이다. 
 };
 
 // slave sync manager
 // EC_DIR_OUTPUT: Master -> Slave, EC_DIR_INPUT: Master <- Slave
-static ec_sync_info_t maxon_epos4_syncs_csp[] = {
+static ec_sync_info_t maxon_epos4_syncs_csv[] = {
 	{ 0, EC_DIR_OUTPUT, 0, NULL, EC_WD_DISABLE },
 	{ 1, EC_DIR_INPUT, 0, NULL, EC_WD_DISABLE },
-	{ 2, EC_DIR_OUTPUT, 1, csp_pdos + 0, EC_WD_ENABLE },
-	{ 3, EC_DIR_INPUT,  1, csp_pdos + 1, EC_WD_DISABLE },
+	{ 2, EC_DIR_OUTPUT, 1, csv_pdos + 0, EC_WD_ENABLE },
+	{ 3, EC_DIR_INPUT,  1, csv_pdos + 1, EC_WD_DISABLE },
 	{ 0xff }
 };
 
@@ -197,39 +195,18 @@ float t = 0;
 int idx = 0;
 float *t1_array;
 float *velocity_input_array;
-float *position_input_array;
-int32_t *velocity_output_array;
-float *position_output_array;
+float *velocity_output_array;
+float *freq_arr;
 
 /*****************************************************************************/
-// trajectory generator
-#define CNT_PER_DEGREE 398.0 // 1024*4*35/360
-float pos[2] = {0.0, 180.0*CNT_PER_DEGREE};
-float vel[2] = {0.0, 0.0};
-float acc[2] = {0.0, 0.0};
-float moveTime[2] = {0.0, 1.0};
-float currTime;
-float pos_t, vel_t, acc_t;
-
-void getTrajectory(float q0, float q1, float v0, float v1, float a0, float a1, float t0, float t1){
-    // calc coefficients
-    float b0, b1, b2, b3, b4, b5;
-    float T = t1 - t0;
-    b0 = q0;
-    b1 = v0;
-    b2 = 0.5 * a0;
-    b3 = (1.0 / (2 * T * T * T)) * (20 * (q1 - q0) - (8 * v1 + 12 * v0) * T - (3 * a0 - a1) * T * T);
-    b4 = (1.0 / (2 * T * T * T * T)) * (-30 * (q1 - q0) + (14 * v1 + 16 * v0) * T + (3 * a0 - 2 * a1) * T * T);
-    b5 = (1.0 / (2 * T * T * T * T * T)) * (12 * (q1 - q0) - 6 * (v1 + v0) * T + (a1 - a0) * T * T);
-
-    // pos, vel, acc formula
-    currTime = t;
-    float dt = currTime - t0;
-    pos_t = b0 + b1*dt + b2*pow(dt,2) + b3*pow(dt,3) + b4*pow(dt,4) + b5*pow(dt,5); // [encoder cnt]
-    vel_t = b1 + 2*b2*dt + 3*b3*pow(dt,2) + 4*b4*pow(dt,3) + 5*b5*pow(dt,4); // [encoder cnt / sec]
-    acc_t = 2*b2 + 6*b3*dt + 12*b4*pow(dt,2) + 20*b5*pow(dt,3);
-
-}
+// sine sweep var.
+# define PI 3.14159265
+#define GEAR_RATIO 35.0
+float vel_t;
+int N = 20;
+float start_frequency = 0.1;
+float end_frequency = 1.0;
+float frequency = 0.1;
 
 /*****************************************************************************/
 // cyclic task vars.
@@ -237,8 +214,8 @@ uint16_t status_word = 0;
 uint16_t prev_status_word = -1;
 uint16_t check_status_word;
 uint16_t control_word = 0;
-uint16_t error_code = 0;
 uint32_t target_velocity = 0;
+uint16_t error_code = 0;
 bool is_operational = 0;
 
 // 1ms period
@@ -318,29 +295,27 @@ void cyclic_task_csv()
                 }
                 break;
         }
+        // printf("current frequency: %f\n", frequency);
+        // printf("current velocity: %f\n", (EC_READ_S32(domain1_pd + offset_velocity_actual_value))/35.0);
     } 
 
-    // apply PI control and log datum
+    // sine sweep and logging
     if(is_operational){
-        // get target position by following 5th-poly trajectory
-        getTrajectory(pos[0], pos[1], vel[0], vel[1], acc[0], acc[1], moveTime[0], moveTime[1]);
+        // generate sine sweep test signal
+        frequency = start_frequency + (end_frequency - start_frequency) * (t / N);
+        vel_t = 180.0 * sin(2 * PI * frequency * t) * GEAR_RATIO; // [rpm]
 
         // write a target position
-        EC_WRITE_U32(domain1_pd + offset_target_position, pos_t);
+        EC_WRITE_U32(domain1_pd + offset_target_velocity, vel_t);
 
         // logging
         t1_array[idx] = t;
-        velocity_input_array[idx] = (vel_t / (4096.0 * 35.0)) * 60; // [rpm]
-        position_input_array[idx] = pos_t * 360.0 / 4096.0 / 35.0; // [deg]
-        velocity_output_array[idx] = (EC_READ_S32(domain1_pd + offset_velocity_actual_value))/35.0; // actual velocity 읽을 때 기어비로 나눠줘야 함. 
-        position_output_array[idx] = (((float)EC_READ_S32(domain1_pd + offset_position_actual_value) * 360.0f) / 4096.0f) / 35.0; // logging pos in degree - *(360/4096)하면 0 되어버림
+        freq_arr[idx] = frequency;
+        velocity_input_array[idx] = vel_t / GEAR_RATIO; // [deg]
+        velocity_output_array[idx] = (float)EC_READ_S32(domain1_pd + offset_velocity_actual_value)/GEAR_RATIO;
         t += 0.001; 
         idx++;
     } 
-
-    // debugging
-    // printf("curr_pos_cnt: %d\n", EC_READ_S32(domain1_pd + offset_position_actual_value));
-    // printf("curr_pos_deg: %f\n\n", ((float)EC_READ_S32(domain1_pd + offset_position_actual_value) * 360.0f) / 4096.0f);
      
     // (마스터가) send process data
     ecrt_domain_queue(domain1);
@@ -394,7 +369,7 @@ int main(int argc, char **argv)
     }
 
     printf("Configuring PDOs...\n");
-    if (ecrt_slave_config_pdos(slave_config, EC_END, maxon_epos4_syncs_csp)) 
+    if (ecrt_slave_config_pdos(slave_config, EC_END, maxon_epos4_syncs_csv)) 
     {
         fprintf(stderr, "Failed to configure PDOs.\n");
         return -1;
@@ -415,6 +390,8 @@ int main(int argc, char **argv)
     if (!(domain1_pd = ecrt_domain_data(domain1))) {
         return -1;
     }
+
+    printf("domain1_pd address: %p\n", (void *)domain1_pd);
 
     /* Set priority */
     struct sched_param param = {};
@@ -452,11 +429,10 @@ int main(int argc, char **argv)
     }
 
     /* allocate memory for logging */
-    t1_array = (float *)malloc((1000) * sizeof(float)); // t가 0.001씩 즈가 -> 1000이면 되는데 걍 넉넉잡아 2000
-    velocity_input_array = (float *)malloc((1000) * sizeof(float));
-    position_input_array = (float *)malloc((1000) * sizeof(float));
-    velocity_output_array = (uint32_t *)malloc((1000) * sizeof(int32_t));
-    position_output_array = (float *)malloc((1000) * sizeof(float));
+    t1_array = (float *)malloc(N * 1000 * sizeof(float)); 
+    velocity_input_array = (float *)malloc(N * 1000 * sizeof(float));
+    velocity_output_array = (float *)malloc(N * 1000 * sizeof(float));
+    freq_arr = (float *)malloc(N * 1000 * sizeof(float));
 
     /* Main Task */
     while (1) 
@@ -471,7 +447,7 @@ int main(int argc, char **argv)
 
         cyclic_task_csv();
 
-        if(stopSignal=='q' || idx > 1000) break;
+        if(stopSignal=='q' || idx > N*1000) break;
 
         wakeup_time.tv_nsec += PERIOD_NS;
         while (wakeup_time.tv_nsec >= NSEC_PER_SEC) {
@@ -480,23 +456,21 @@ int main(int argc, char **argv)
         }
     }
 
-    FILE* file1 = fopen("/home/ghan/study_ws/epos4_etherCAT/logging/5th_pos99.txt", "w");
-    FILE* file2 = fopen("/home/ghan/study_ws/epos4_etherCAT/logging/5th_vel99.txt", "w");
+    FILE* file1 = fopen("/home/ghan/study_ws/epos4_etherCAT/logging/sine_sweep_csp.txt", "w");
 
-    if(file1 != NULL && file2 != NULL){
-        for(int i=0; i < 1000; i++){
-            fprintf(file1, "%f %f %f\n", t1_array[i], position_input_array[i], position_output_array[i]);
-            fprintf(file2, "%f %f %d\n", t1_array[i], velocity_input_array[i], velocity_output_array[i]);
+    if(file1 != NULL){
+        for(int i=0; i < N*1000; i++){
+            fprintf(file1, "%f %f %f %f\n", t1_array[i], velocity_input_array[i], velocity_output_array[i], freq_arr[i]);
         }
     }
 
     fclose(file1);
-    fclose(file2);
     printf("values saved to file. \n");
 
     free(t1_array);
+    free(velocity_input_array);
     free(velocity_output_array);
-    free(position_output_array);
+    free(freq_arr);
 
     return ret;
 }

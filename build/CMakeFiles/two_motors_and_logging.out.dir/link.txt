@@ -1,0 +1,1 @@
+/usr/bin/cc    CMakeFiles/two_motors_and_logging.out.dir/src/02_two_motors_and_logging.c.o  -o two_motors_and_logging.out   -L/opt/etherlab/lib  -Wl,-rpath,/opt/etherlab/lib -lethercat -lm 

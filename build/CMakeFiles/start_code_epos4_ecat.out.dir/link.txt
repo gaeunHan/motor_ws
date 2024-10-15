@@ -1,0 +1,1 @@
+/usr/bin/cc    CMakeFiles/start_code_epos4_ecat.out.dir/src/01_start_code_epos4_ecat.c.o  -o start_code_epos4_ecat.out   -L/opt/etherlab/lib  -Wl,-rpath,/opt/etherlab/lib -lethercat -lm 
