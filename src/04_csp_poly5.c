@@ -193,18 +193,40 @@ void check_slave_config_states(void)
 float t = 0;
 int idx = 0;
 float *t1_array;
+float *velocity_input_array;
 float *position_input_array;
+int32_t *velocity_output_array;
 float *position_output_array;
 
 /*****************************************************************************/
-// sine sweep var.
-# define PI 3.14159265
+// trajectory generator
 #define CNT_PER_DEGREE 398.0 // 1024*4*35/360
-float pos_t;
-int N = 4;
-float start_frequency = 1.0;
-float end_frequency = 5.0;
-float frequency = 1.0;
+float pos[2] = {0.0, 180.0*CNT_PER_DEGREE};
+float vel[2] = {0.0, 0.0};
+float acc[2] = {0.0, 0.0};
+float moveTime[2] = {0.0, 1.0};
+float currTime;
+float pos_t, vel_t, acc_t;
+
+void getTrajectory(float q0, float q1, float v0, float v1, float a0, float a1, float t0, float t1){
+    // calc coefficients
+    float b0, b1, b2, b3, b4, b5;
+    float T = t1 - t0;
+    b0 = q0;
+    b1 = v0;
+    b2 = 0.5 * a0;
+    b3 = (1.0 / (2 * T * T * T)) * (20 * (q1 - q0) - (8 * v1 + 12 * v0) * T - (3 * a0 - a1) * T * T);
+    b4 = (1.0 / (2 * T * T * T * T)) * (-30 * (q1 - q0) + (14 * v1 + 16 * v0) * T + (3 * a0 - 2 * a1) * T * T);
+    b5 = (1.0 / (2 * T * T * T * T * T)) * (12 * (q1 - q0) - 6 * (v1 + v0) * T + (a1 - a0) * T * T);
+
+    // pos, vel, acc formula
+    currTime = t;
+    float dt = currTime - t0;
+    pos_t = b0 + b1*dt + b2*pow(dt,2) + b3*pow(dt,3) + b4*pow(dt,4) + b5*pow(dt,5); // [encoder cnt]
+    vel_t = b1 + 2*b2*dt + 3*b3*pow(dt,2) + 4*b4*pow(dt,3) + 5*b5*pow(dt,4); // [encoder cnt / sec]
+    acc_t = 2*b2 + 6*b3*dt + 12*b4*pow(dt,2) + 20*b5*pow(dt,3);
+
+}
 
 /*****************************************************************************/
 // cyclic task vars.
@@ -266,30 +288,31 @@ void cyclic_task_csv()
                 break;
 
             case 0x0008: //fault
-                printf("fault\n");
+                // printf("fault\n");
 
-                // get controlword
-                control_word = EC_READ_U16(domain1_pd + offset_control_word);
+                // // get controlword
+                // control_word = EC_READ_U16(domain1_pd + offset_control_word);
 
-                // fault reset
-                control_word |= 0x0080; 
-                EC_WRITE_U16(domain1_pd + offset_control_word, control_word);
+                // // fault reset
+                // control_word |= 0x0080; 
+                // EC_WRITE_U16(domain1_pd + offset_control_word, control_word);
                 break;
         }
     } 
 
     // apply PI control and log datum
     if(is_operational){
-        // generate sine sweep test signal (1Hz - 100Hz)
-        frequency = start_frequency + (end_frequency - start_frequency) * (t / N);
-        pos_t = 180.0 * sin(2 * PI * 0.5 * t) * CNT_PER_DEGREE; // [cnt]
+        // get target position by following 5th-poly trajectory
+        getTrajectory(pos[0], pos[1], vel[0], vel[1], acc[0], acc[1], moveTime[0], moveTime[1]);
 
         // write a target position
         EC_WRITE_U32(domain1_pd + offset_target_position, pos_t);
 
         // logging
         t1_array[idx] = t;
+        velocity_input_array[idx] = (vel_t / (4096.0 * 35.0)) * 60; // [rpm]
         position_input_array[idx] = pos_t * 360.0 / 4096.0 / 35.0; // [deg]
+        velocity_output_array[idx] = (EC_READ_S32(domain1_pd + offset_velocity_actual_value))/35.0; // actual velocity 읽을 때 기어비로 나눠줘야 함. 
         position_output_array[idx] = (((float)EC_READ_S32(domain1_pd + offset_position_actual_value) * 360.0f) / 4096.0f) / 35.0; // logging pos in degree - *(360/4096)하면 0 되어버림
         t += 0.001; 
         idx++;
@@ -409,9 +432,11 @@ int main(int argc, char **argv)
     }
 
     /* allocate memory for logging */
-    t1_array = (float *)malloc(N * 1000 * sizeof(float)); 
-    position_input_array = (float *)malloc(N * 1000 * sizeof(float));
-    position_output_array = (float *)malloc(N * 1000 * sizeof(float));
+    t1_array = (float *)malloc((1000) * sizeof(float)); // t가 0.001씩 즈가 -> 1000이면 되는데 걍 넉넉잡아 2000
+    velocity_input_array = (float *)malloc((1000) * sizeof(float));
+    position_input_array = (float *)malloc((1000) * sizeof(float));
+    velocity_output_array = (uint32_t *)malloc((1000) * sizeof(int32_t));
+    position_output_array = (float *)malloc((1000) * sizeof(float));
 
     /* Main Task */
     while (1) 
@@ -426,7 +451,7 @@ int main(int argc, char **argv)
 
         cyclic_task_csv();
 
-        if(stopSignal=='q' || idx > N*1000) break;
+        if(stopSignal=='q' || idx > 1000) break;
 
         wakeup_time.tv_nsec += PERIOD_NS;
         while (wakeup_time.tv_nsec >= NSEC_PER_SEC) {
@@ -435,18 +460,22 @@ int main(int argc, char **argv)
         }
     }
 
-    FILE* file1 = fopen("/home/ghan/study_ws/epos4_etherCAT/logging/sine_sweep_csp.txt", "w");
+    FILE* file1 = fopen("/home/ghan/study_ws/epos4_etherCAT/logging/5th_pos99.txt", "w");
+    FILE* file2 = fopen("/home/ghan/study_ws/epos4_etherCAT/logging/5th_vel99.txt", "w");
 
-    if(file1 != NULL){
-        for(int i=0; i < N*1000; i++){
+    if(file1 != NULL && file2 != NULL){
+        for(int i=0; i < 1000; i++){
             fprintf(file1, "%f %f %f\n", t1_array[i], position_input_array[i], position_output_array[i]);
+            fprintf(file2, "%f %f %d\n", t1_array[i], velocity_input_array[i], velocity_output_array[i]);
         }
     }
 
     fclose(file1);
+    fclose(file2);
     printf("values saved to file. \n");
 
     free(t1_array);
+    free(velocity_output_array);
     free(position_output_array);
 
     return ret;
