@@ -71,6 +71,7 @@ static unsigned int offset_velocity_actual_value;
 static unsigned int offset_torque_actual_value;
 static unsigned int offset_modes_of_operation_display;
 static unsigned int offset_digital_inputs;
+static unsigned int offset_error_code;
     
 
 // MDP Module CSV
@@ -90,7 +91,8 @@ const static ec_pdo_entry_reg_t domain1_regs[] =
     {0,0, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value},
     {0,0, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value},
     {0,0, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display},
-    {0,0, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs}
+    {0,0, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs},
+    {0,0, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_error_code}
 };
 
 /**************************** MDP module CSV mapping ****************************/
@@ -109,7 +111,8 @@ static ec_pdo_entry_info_t csp_pdo_entries[] = {
     {0x606C, 0x00, 32},    // velocity actual value
     {0x6077, 0x00, 16},    // torque actual value
     {0x6061, 0x00, 8},     // modes of operation display
-    {0x60FD, 0x00, 32}     // digital inputs
+    {0x60FD, 0x00, 32},     // digital inputs
+    {0x603F, 0x00, 16}
 };
 
 static ec_pdo_info_t csp_pdos[] = {
@@ -117,7 +120,7 @@ static ec_pdo_info_t csp_pdos[] = {
     {0x1600, 6,	csp_pdo_entries + 0}, // 6개의 RxPDO entry를 mapping 할 것인데, entry의 시작 위치는 maxon_epos4_pdo_entries[0]이다. 
 
     // TxPDO(Master <- Slave) 1 mapping
-    {0x1a00, 6,	csp_pdo_entries + 6} // 6개의 TxPDO entry를 mapping 할 것인데, entry의 시작 위치는 maxon_epos4_pdo_entries[6]이다. 
+    {0x1a00, 7,	csp_pdo_entries + 6} // 7개의 TxPDO entry를 mapping 할 것인데, entry의 시작 위치는 maxon_epos4_pdo_entries[6]이다. 
 };
 
 // slave sync manager
@@ -234,6 +237,7 @@ uint16_t status_word = 0;
 uint16_t prev_status_word = -1;
 uint16_t check_status_word;
 uint16_t control_word = 0;
+uint16_t error_code = 0;
 uint32_t target_velocity = 0;
 bool is_operational = 0;
 
@@ -288,14 +292,30 @@ void cyclic_task_csv()
                 break;
 
             case 0x0008: //fault
-                // printf("fault\n");
+                // read error code
+                error_code = EC_READ_U16(domain1_pd + offset_error_code);
+                printf("Fault, error code is: 0x%04X\n", error_code);
 
-                // // get controlword
-                // control_word = EC_READ_U16(domain1_pd + offset_control_word);
+                // get controlword
+                control_word = EC_READ_U16(domain1_pd + offset_control_word);
 
-                // // fault reset
-                // control_word |= 0x0080; 
-                // EC_WRITE_U16(domain1_pd + offset_control_word, control_word);
+                // fault reset
+                control_word |= 0x0080; 
+                EC_WRITE_U16(domain1_pd + offset_control_word, control_word);
+
+                // following error handling
+                if((error_code & 0xFFFF) == 0x8611){
+                    EC_WRITE_U16(domain1_pd + offset_modes_of_operation, 6); // select homing mode
+                    printf("Homing mode is selected\n");
+
+                    EC_WRITE_U16(domain1_pd + offset_control_word, control_word |= 0x0010);
+
+                    // check if homing is done
+                    while(!(EC_READ_U16(domain1_pd + offset_status_word) & 0xF000)) {
+                        printf("homing..\n");
+                    }
+                    printf("Homing is done\n");
+                }
                 break;
         }
     } 

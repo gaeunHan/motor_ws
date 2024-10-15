@@ -377,6 +377,8 @@ int main(int argc, char **argv)
         return -1;
     }
 
+    printf("domain1_pd address: %p\n", (void *)domain1_pd);
+
     /* Set priority */
     struct sched_param param = {};
     param.sched_priority = sched_get_priority_max(SCHED_FIFO);
