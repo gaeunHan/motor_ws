@@ -144,6 +144,7 @@ static	ec_pdo_entry_info_t maxon_epos4_pdo_entries[] =
     {0x60FD, 0x00, 32}    // digital inputs
 };
 
+// Enable PDO by writing the value of the number of objects in object
 static	ec_pdo_info_t maxon_epos4_pdos[] = 
 {
     // RxPDO(Master -> Slave) 1 mapping
