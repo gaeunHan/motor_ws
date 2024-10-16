@@ -3,6 +3,7 @@
 /home/ghan/study_ws/epos4_etherCAT/build/CMakeFiles/sine_sweep_csp.out.dir
 /home/ghan/study_ws/epos4_etherCAT/build/CMakeFiles/sine_sweep_ppm.out.dir
 /home/ghan/study_ws/epos4_etherCAT/build/CMakeFiles/csp_poly5.out.dir
+/home/ghan/study_ws/epos4_etherCAT/build/CMakeFiles/homing.out.dir
 /home/ghan/study_ws/epos4_etherCAT/build/CMakeFiles/csv_with_pi_controller.out.dir
 /home/ghan/study_ws/epos4_etherCAT/build/CMakeFiles/two_motors_and_logging.out.dir
 /home/ghan/study_ws/epos4_etherCAT/build/CMakeFiles/edit_cache.dir

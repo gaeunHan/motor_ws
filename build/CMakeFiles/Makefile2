@@ -57,6 +57,7 @@ all: CMakeFiles/sine_sweep_csv.out.dir/all
 all: CMakeFiles/sine_sweep_csp.out.dir/all
 all: CMakeFiles/sine_sweep_ppm.out.dir/all
 all: CMakeFiles/csp_poly5.out.dir/all
+all: CMakeFiles/homing.out.dir/all
 all: CMakeFiles/csv_with_pi_controller.out.dir/all
 all: CMakeFiles/two_motors_and_logging.out.dir/all
 all: CMakeFiles/start_code_epos4_ecat.out.dir/all
@@ -73,6 +74,7 @@ clean: CMakeFiles/sine_sweep_csv.out.dir/clean
 clean: CMakeFiles/sine_sweep_csp.out.dir/clean
 clean: CMakeFiles/sine_sweep_ppm.out.dir/clean
 clean: CMakeFiles/csp_poly5.out.dir/clean
+clean: CMakeFiles/homing.out.dir/clean
 clean: CMakeFiles/csv_with_pi_controller.out.dir/clean
 clean: CMakeFiles/two_motors_and_logging.out.dir/clean
 clean: CMakeFiles/start_code_epos4_ecat.out.dir/clean
@@ -86,7 +88,7 @@ clean: CMakeFiles/start_code_epos4_ecat.out.dir/clean
 CMakeFiles/sine_sweep_csv.out.dir/all:
 	$(MAKE) -f CMakeFiles/sine_sweep_csv.out.dir/build.make CMakeFiles/sine_sweep_csv.out.dir/depend
 	$(MAKE) -f CMakeFiles/sine_sweep_csv.out.dir/build.make CMakeFiles/sine_sweep_csv.out.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ghan/study_ws/epos4_etherCAT/build/CMakeFiles --progress-num=7,8 "Built target sine_sweep_csv.out"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ghan/study_ws/epos4_etherCAT/build/CMakeFiles --progress-num=9,10 "Built target sine_sweep_csv.out"
 .PHONY : CMakeFiles/sine_sweep_csv.out.dir/all
 
 # Build rule for subdir invocation for target.
@@ -113,7 +115,7 @@ CMakeFiles/sine_sweep_csv.out.dir/clean:
 CMakeFiles/sine_sweep_csp.out.dir/all:
 	$(MAKE) -f CMakeFiles/sine_sweep_csp.out.dir/build.make CMakeFiles/sine_sweep_csp.out.dir/depend
 	$(MAKE) -f CMakeFiles/sine_sweep_csp.out.dir/build.make CMakeFiles/sine_sweep_csp.out.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ghan/study_ws/epos4_etherCAT/build/CMakeFiles --progress-num=5,6 "Built target sine_sweep_csp.out"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ghan/study_ws/epos4_etherCAT/build/CMakeFiles --progress-num=7,8 "Built target sine_sweep_csp.out"
 .PHONY : CMakeFiles/sine_sweep_csp.out.dir/all
 
 # Build rule for subdir invocation for target.
@@ -140,7 +142,7 @@ CMakeFiles/sine_sweep_csp.out.dir/clean:
 CMakeFiles/sine_sweep_ppm.out.dir/all:
 	$(MAKE) -f CMakeFiles/sine_sweep_ppm.out.dir/build.make CMakeFiles/sine_sweep_ppm.out.dir/depend
 	$(MAKE) -f CMakeFiles/sine_sweep_ppm.out.dir/build.make CMakeFiles/sine_sweep_ppm.out.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ghan/study_ws/epos4_etherCAT/build/CMakeFiles --progress-num=9,10 "Built target sine_sweep_ppm.out"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ghan/study_ws/epos4_etherCAT/build/CMakeFiles --progress-num=11,12 "Built target sine_sweep_ppm.out"
 .PHONY : CMakeFiles/sine_sweep_ppm.out.dir/all
 
 # Build rule for subdir invocation for target.
@@ -188,6 +190,33 @@ CMakeFiles/csp_poly5.out.dir/clean:
 .PHONY : CMakeFiles/csp_poly5.out.dir/clean
 
 #=============================================================================
+# Target rules for target CMakeFiles/homing.out.dir
+
+# All Build rule for target.
+CMakeFiles/homing.out.dir/all:
+	$(MAKE) -f CMakeFiles/homing.out.dir/build.make CMakeFiles/homing.out.dir/depend
+	$(MAKE) -f CMakeFiles/homing.out.dir/build.make CMakeFiles/homing.out.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ghan/study_ws/epos4_etherCAT/build/CMakeFiles --progress-num=5,6 "Built target homing.out"
+.PHONY : CMakeFiles/homing.out.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/homing.out.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ghan/study_ws/epos4_etherCAT/build/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/homing.out.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ghan/study_ws/epos4_etherCAT/build/CMakeFiles 0
+.PHONY : CMakeFiles/homing.out.dir/rule
+
+# Convenience name for target.
+homing.out: CMakeFiles/homing.out.dir/rule
+
+.PHONY : homing.out
+
+# clean rule for target.
+CMakeFiles/homing.out.dir/clean:
+	$(MAKE) -f CMakeFiles/homing.out.dir/build.make CMakeFiles/homing.out.dir/clean
+.PHONY : CMakeFiles/homing.out.dir/clean
+
+#=============================================================================
 # Target rules for target CMakeFiles/csv_with_pi_controller.out.dir
 
 # All Build rule for target.
@@ -221,7 +250,7 @@ CMakeFiles/csv_with_pi_controller.out.dir/clean:
 CMakeFiles/two_motors_and_logging.out.dir/all:
 	$(MAKE) -f CMakeFiles/two_motors_and_logging.out.dir/build.make CMakeFiles/two_motors_and_logging.out.dir/depend
 	$(MAKE) -f CMakeFiles/two_motors_and_logging.out.dir/build.make CMakeFiles/two_motors_and_logging.out.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ghan/study_ws/epos4_etherCAT/build/CMakeFiles --progress-num=13,14 "Built target two_motors_and_logging.out"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ghan/study_ws/epos4_etherCAT/build/CMakeFiles --progress-num=15,16 "Built target two_motors_and_logging.out"
 .PHONY : CMakeFiles/two_motors_and_logging.out.dir/all
 
 # Build rule for subdir invocation for target.
@@ -248,7 +277,7 @@ CMakeFiles/two_motors_and_logging.out.dir/clean:
 CMakeFiles/start_code_epos4_ecat.out.dir/all:
 	$(MAKE) -f CMakeFiles/start_code_epos4_ecat.out.dir/build.make CMakeFiles/start_code_epos4_ecat.out.dir/depend
 	$(MAKE) -f CMakeFiles/start_code_epos4_ecat.out.dir/build.make CMakeFiles/start_code_epos4_ecat.out.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ghan/study_ws/epos4_etherCAT/build/CMakeFiles --progress-num=11,12 "Built target start_code_epos4_ecat.out"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ghan/study_ws/epos4_etherCAT/build/CMakeFiles --progress-num=13,14 "Built target start_code_epos4_ecat.out"
 .PHONY : CMakeFiles/start_code_epos4_ecat.out.dir/all
 
 # Build rule for subdir invocation for target.

@@ -241,7 +241,31 @@ void cyclic_task_homing(){
                 break;
 
             case 0x0027: // operation enabled
-                EC_WRITE_U16(domain1_pd + offset_modes_of_operation, 6); // select homing mode
+                // select homing mode
+                EC_WRITE_U16(domain1_pd + offset_modes_of_operation, 6); 
+
+                // write controlword for homing
+                EC_WRITE_U16(domain1_pd + offset_control_word, control_word |= 0x0010);
+                
+                // debugging
+                printf("curr statusword: 0x%X\n", (EC_READ_U16(domain1_pd + offset_status_word)));
+                switch((EC_READ_U16(domain1_pd + offset_status_word)) & 0x3400){
+                    case 0x0000:
+                        printf("homing is in progress\n");
+                        break;
+                    case 0x0400:
+                        printf("homing is interrupted or not started\n");
+                        break;
+                    case 0x1000:
+                    case 0x1400:
+                        printf("homing is completed successfully\n");
+                        break;
+                    case 0x2000:
+                    case 0x2400:
+                        printf("homing error occurred\n");
+                        break;
+                }
+                printf("pos: %d\n",EC_READ_S32(domain1_pd + offset_position_actual_value));
                 break;
 
             case 0x0008: //fault
@@ -258,27 +282,6 @@ void cyclic_task_homing(){
                 
                 break;
         }
-
-        // debugging
-        printf("curr statusword: 0x%X\n", (EC_READ_U16(domain1_pd + offset_status_word)));
-        switch((EC_READ_U16(domain1_pd + offset_status_word)) & 0xB400){
-            case 0x0000:
-                printf("homing is in progress\n");
-                break;
-            case 0x0400:
-                printf("homing is interrupted or not started\n");
-                break;
-            case 0x1000:
-            case 0x1400:
-                printf("homing is completed successfully\n");
-                break;
-            case 0x2000:
-            case 0x2400:
-                printf("homing error occurred\n");
-                break;
-        }
-        printf("pos: %d\n",EC_READ_S32(domain1_pd + offset_position_actual_value));
-
     } 
     // (마스터가) send process data
     ecrt_domain_queue(domain1);
@@ -392,7 +395,7 @@ int main(int argc, char **argv)
     }
 
     /* homing before terminate */
-    while ((EC_READ_U16(domain1_pd + offset_status_word) & 0x1000) != 0x1000) 
+    while (1) 
     {
         ret = clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME,
                 &wakeup_time, NULL);
@@ -403,6 +406,8 @@ int main(int argc, char **argv)
         }
 
         cyclic_task_homing();
+
+        // if((EC_READ_U16(domain1_pd + offset_status_word) & 0x1000) == 0x1000) break;
 
         wakeup_time.tv_nsec += PERIOD_NS;
         while (wakeup_time.tv_nsec >= NSEC_PER_SEC) {

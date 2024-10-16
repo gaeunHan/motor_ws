@@ -163,6 +163,19 @@ csp_poly5.out/fast:
 .PHONY : csp_poly5.out/fast
 
 #=============================================================================
+# Target rules for targets named homing.out
+
+# Build rule for target.
+homing.out: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 homing.out
+.PHONY : homing.out
+
+# fast build rule for target.
+homing.out/fast:
+	$(MAKE) -f CMakeFiles/homing.out.dir/build.make CMakeFiles/homing.out.dir/build
+.PHONY : homing.out/fast
+
+#=============================================================================
 # Target rules for targets named csv_with_pi_controller.out
 
 # Build rule for target.
@@ -390,6 +403,33 @@ src/07_sine_sweep_csv.c.s:
 	$(MAKE) -f CMakeFiles/sine_sweep_csv.out.dir/build.make CMakeFiles/sine_sweep_csv.out.dir/src/07_sine_sweep_csv.c.s
 .PHONY : src/07_sine_sweep_csv.c.s
 
+src/08_homing.o: src/08_homing.c.o
+
+.PHONY : src/08_homing.o
+
+# target to build an object file
+src/08_homing.c.o:
+	$(MAKE) -f CMakeFiles/homing.out.dir/build.make CMakeFiles/homing.out.dir/src/08_homing.c.o
+.PHONY : src/08_homing.c.o
+
+src/08_homing.i: src/08_homing.c.i
+
+.PHONY : src/08_homing.i
+
+# target to preprocess a source file
+src/08_homing.c.i:
+	$(MAKE) -f CMakeFiles/homing.out.dir/build.make CMakeFiles/homing.out.dir/src/08_homing.c.i
+.PHONY : src/08_homing.c.i
+
+src/08_homing.s: src/08_homing.c.s
+
+.PHONY : src/08_homing.s
+
+# target to generate assembly for a file
+src/08_homing.c.s:
+	$(MAKE) -f CMakeFiles/homing.out.dir/build.make CMakeFiles/homing.out.dir/src/08_homing.c.s
+.PHONY : src/08_homing.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -401,6 +441,7 @@ help:
 	@echo "... sine_sweep_csp.out"
 	@echo "... sine_sweep_ppm.out"
 	@echo "... csp_poly5.out"
+	@echo "... homing.out"
 	@echo "... csv_with_pi_controller.out"
 	@echo "... two_motors_and_logging.out"
 	@echo "... edit_cache"
@@ -426,6 +467,9 @@ help:
 	@echo "... src/07_sine_sweep_csv.o"
 	@echo "... src/07_sine_sweep_csv.i"
 	@echo "... src/07_sine_sweep_csv.s"
+	@echo "... src/08_homing.o"
+	@echo "... src/08_homing.i"
+	@echo "... src/08_homing.s"
 .PHONY : help
 
 
