@@ -189,38 +189,15 @@ void check_slave_config_states(void)
 
     slave_config_state = s;
 }
-/*****************************************************************************/
-// logging vars.
-float t = 0;
-int idx = 0;
-float *t1_array;
-float *velocity_input_array;
-float *velocity_output_array;
-float *freq_arr;
-
-/*****************************************************************************/
-// sine sweep var.
-# define PI 3.14159265
-#define GEAR_RATIO 35.0
-float vel_t;
-int N = 10;
-float start_frequency = 0.1;
-float end_frequency = 3.0;
-float frequency = 0.1;
 
 /*****************************************************************************/
 // cyclic task vars.
 uint16_t status_word = 0;
-uint16_t prev_status_word = -1;
 uint16_t check_status_word;
 uint16_t control_word = 0;
-uint32_t target_velocity = 0;
 uint16_t error_code = 0;
-bool is_operational = 0;
 
-// 1ms period
-void cyclic_task_csv()
-{
+void cyclic_task_homing(){
     // (마스터가) receive process data
     ecrt_master_receive(master); // 데이터 받아(queue에서 데이터그램 dispatch)
     ecrt_domain_process(domain1); // 정상적인 통신 이루어졌는지 확인, 도메인 상태 업뎃
@@ -264,13 +241,10 @@ void cyclic_task_csv()
                 break;
 
             case 0x0027: // operation enabled
-                is_operational = 1;
-                EC_WRITE_U16(domain1_pd + offset_modes_of_operation, 9); // select csv mode
+                EC_WRITE_U16(domain1_pd + offset_modes_of_operation, 6); // select homing mode
                 break;
 
             case 0x0008: //fault
-                printf("fault at %f Hz\n", frequency);
-
                 // read error code
                 error_code = EC_READ_U16(domain1_pd + offset_error_code);
                 printf("Fault, error code is: 0x%04X\n", error_code);
@@ -281,79 +255,9 @@ void cyclic_task_csv()
                 // fault reset
                 control_word |= 0x0080; 
                 EC_WRITE_U16(domain1_pd + offset_control_word, control_word);
-
-                // following error handling
-                if((error_code & 0xFFFF) == 0x8611){
-                    EC_WRITE_U16(domain1_pd + offset_modes_of_operation, 6); // select homing mode
-                    printf("Homing mode is selected\n");
-
-                    EC_WRITE_U16(domain1_pd + offset_control_word, control_word |= 0x0010);
-
-                    // check if homing is done
-                    while(!(EC_READ_U16(domain1_pd + offset_status_word) & 0xF000)) {
-                        printf("homing..\n");
-                    }
-                    printf("Homing is done\n");
-                }
                 
                 break;
         }
-        // printf("current frequency: %f\n", frequency);
-        // printf("current velocity: %f\n", (EC_READ_S32(domain1_pd + offset_velocity_actual_value))/35.0);
-    } 
-
-    // sine sweep and logging
-    if(is_operational){
-        // generate sine sweep test signal
-        frequency = start_frequency + (end_frequency - start_frequency) * (t / N);
-        vel_t = 180.0 * sin(2 * PI * frequency * t) * GEAR_RATIO; // [rpm]
-
-        // vel_t = 10 * GEAR_RATIO;
-
-        // write a target position
-        EC_WRITE_U32(domain1_pd + offset_target_velocity, vel_t);
-
-        // logging
-        t1_array[idx] = t;
-        freq_arr[idx] = frequency;
-        velocity_input_array[idx] = vel_t / GEAR_RATIO; // [deg]
-        velocity_output_array[idx] = (float)EC_READ_S32(domain1_pd + offset_velocity_actual_value)/GEAR_RATIO;
-        t += 0.001; 
-        idx++;
-    } 
-     
-    // (마스터가) send process data
-    ecrt_domain_queue(domain1);
-    ecrt_master_send(master);
-}
-
-void cyclic_task_homing(){
-    // (마스터가) receive process data
-    ecrt_master_receive(master); // 데이터 받아(queue에서 데이터그램 dispatch)
-    ecrt_domain_process(domain1); // 정상적인 통신 이루어졌는지 확인, 도메인 상태 업뎃
-
-    // check process data state - optional
-    check_domain1_state(); // ecrt_domain_state(), 도메인 상태 확인 
-
-    if (counter) 
-    {
-        counter--;   
-    } 
-    else // 1sec period
-    { 
-        counter = FREQUENCY;  
-        
-        // check for master state
-        check_master_state(); // ecrt_master_state()
-
-        // check for slave configuration state(s)
-        check_slave_config_states(); // ecrt_slave_config_state()
-
-        // select homing mode
-        EC_WRITE_U16(domain1_pd + offset_modes_of_operation, 6); 
-
-        // write controlword for homing
-        EC_WRITE_U16(domain1_pd + offset_control_word, control_word |= 0x0010);
 
         // debugging
         printf("curr statusword: 0x%X\n", (EC_READ_U16(domain1_pd + offset_status_word)));
@@ -487,48 +391,6 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
 
-    /* allocate memory for logging */
-    t1_array = (float *)malloc(N * 1000 * sizeof(float)); 
-    velocity_input_array = (float *)malloc(N * 1000 * sizeof(float));
-    velocity_output_array = (float *)malloc(N * 1000 * sizeof(float));
-    freq_arr = (float *)malloc(N * 1000 * sizeof(float));
-
-    /* Main Task */
-    while (1) 
-    {
-        ret = clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME,
-                &wakeup_time, NULL);
-        if (ret) 
-        {
-            fprintf(stderr, "clock_nanosleep(): %s\n", strerror(ret));
-            break;
-        }
-
-        cyclic_task_csv();
-
-        if(stopSignal=='q' || idx > N*1000) break;
-
-        wakeup_time.tv_nsec += PERIOD_NS;
-        while (wakeup_time.tv_nsec >= NSEC_PER_SEC) {
-            wakeup_time.tv_nsec -= NSEC_PER_SEC;
-            wakeup_time.tv_sec++;
-        }
-    }
-
-    printf("break;");
-
-    FILE* file1 = fopen("/home/ghan/study_ws/epos4_etherCAT/logging/sine_sweep_csv.txt", "w");
-
-    if(file1 != NULL){
-        for(int i=0; i < N*1000; i++){
-            fprintf(file1, "%f %f %f %f\n", t1_array[i], velocity_input_array[i], velocity_output_array[i], freq_arr[i]);
-        }
-    }
-
-    fclose(file1);
-    printf("values saved to file. \n");
-    printf("curr statusword: 0x%X\n", (EC_READ_U16(domain1_pd + offset_status_word)));
-
     /* homing before terminate */
     while ((EC_READ_U16(domain1_pd + offset_status_word) & 0x1000) != 0x1000) 
     {
@@ -551,11 +413,6 @@ int main(int argc, char **argv)
 
     printf("Homing is done\n");
     printf("curr statusword: 0x%X\n", (EC_READ_U16(domain1_pd + offset_status_word)));
-
-    free(t1_array);
-    free(velocity_input_array);
-    free(velocity_output_array);
-    free(freq_arr);
 
     return ret;
 }

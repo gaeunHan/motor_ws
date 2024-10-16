@@ -43,6 +43,9 @@ target_link_libraries(sine_sweep_ppm.out ethercat m)
 add_executable(sine_sweep_csv.out ${SRC_DIR}/07_sine_sweep_csv.c)
 target_link_libraries(sine_sweep_csv.out ethercat m)
 
+add_executable(homing.out ${SRC_DIR}/08_homing.c)
+target_link_libraries(homing.out ethercat m)
+
 # 새로운 프로그램을 추가
 # add_executable(new_program.out ${SRC_DIR}/new_program.c)
 # target_link_libraries(new_program.out ethercat m)
