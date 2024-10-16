@@ -224,6 +224,9 @@ void cyclic_task_homing(){
         
         // write process data   
         check_status_word = status_word & 0x006F; // check 0,1,2,3,5,6th bit only
+        // printf("curr statusword: 0x%X\n", (EC_READ_U16(domain1_pd + offset_status_word)));
+        // printf("curr controlword: 0x%X\n", (EC_READ_U16(domain1_pd + offset_control_word)));
+
         switch(check_status_word){
             case 0x0040: // switch on disabled
                 EC_WRITE_U16(domain1_pd + offset_control_word, 0x0006);
@@ -243,12 +246,13 @@ void cyclic_task_homing(){
             case 0x0027: // operation enabled
                 // select homing mode
                 EC_WRITE_U16(domain1_pd + offset_modes_of_operation, 6); 
+                printf("\n");
 
                 // write controlword for homing
-                EC_WRITE_U16(domain1_pd + offset_control_word, control_word |= 0x0010);
-                
-                // debugging
+                EC_WRITE_U16(domain1_pd + offset_control_word, 0x001F);
                 printf("curr statusword: 0x%X\n", (EC_READ_U16(domain1_pd + offset_status_word)));
+                
+                // homing status
                 switch((EC_READ_U16(domain1_pd + offset_status_word)) & 0x3400){
                     case 0x0000:
                         printf("homing is in progress\n");
@@ -265,7 +269,7 @@ void cyclic_task_homing(){
                         printf("homing error occurred\n");
                         break;
                 }
-                printf("pos: %d\n",EC_READ_S32(domain1_pd + offset_position_actual_value));
+                printf("Position actual value: %d\n",EC_READ_S32(domain1_pd + offset_position_actual_value));
                 break;
 
             case 0x0008: //fault

@@ -217,6 +217,9 @@ uint16_t control_word = 0;
 uint32_t target_velocity = 0;
 uint16_t error_code = 0;
 bool is_operational = 0;
+bool is_stop = 0;
+bool is_shutdown = 0;
+bool is_terminate = 0;
 
 // 1ms period
 void cyclic_task_csv()
@@ -290,7 +293,7 @@ void cyclic_task_csv()
                     EC_WRITE_U16(domain1_pd + offset_control_word, control_word |= 0x0010);
 
                     // check if homing is done
-                    while(!(EC_READ_U16(domain1_pd + offset_status_word) & 0xF000)) {
+                    while(!((EC_READ_U16(domain1_pd + offset_status_word) & 0x3400) == 0x1000 || (EC_READ_U16(domain1_pd + offset_status_word) & 0x3400) == 0x1400)){
                         printf("homing..\n");
                     }
                     printf("Homing is done\n");
@@ -310,7 +313,7 @@ void cyclic_task_csv()
 
         // vel_t = 10 * GEAR_RATIO;
 
-        // write a target position
+        // write a target velocity
         EC_WRITE_U32(domain1_pd + offset_target_velocity, vel_t);
 
         // logging
@@ -321,61 +324,18 @@ void cyclic_task_csv()
         t += 0.001; 
         idx++;
     } 
-     
-    // (마스터가) send process data
-    ecrt_domain_queue(domain1);
-    ecrt_master_send(master);
-}
 
-void cyclic_task_homing(){
-    // (마스터가) receive process data
-    ecrt_master_receive(master); // 데이터 받아(queue에서 데이터그램 dispatch)
-    ecrt_domain_process(domain1); // 정상적인 통신 이루어졌는지 확인, 도메인 상태 업뎃
+    if(is_stop){
+        // stop the motor
+        EC_WRITE_U32(domain1_pd + offset_target_velocity, 0);
+        if(EC_READ_S32(domain1_pd + offset_velocity_actual_value) == 0) is_shutdown = 1;
+    }
 
-    // check process data state - optional
-    check_domain1_state(); // ecrt_domain_state(), 도메인 상태 확인 
-
-    if (counter) 
-    {
-        counter--;   
-    } 
-    else // 1sec period
-    { 
-        counter = FREQUENCY;  
-        
-        // check for master state
-        check_master_state(); // ecrt_master_state()
-
-        // check for slave configuration state(s)
-        check_slave_config_states(); // ecrt_slave_config_state()
-
-        // select homing mode
+    if(is_shutdown){
         EC_WRITE_U16(domain1_pd + offset_modes_of_operation, 6); 
-
-        // write controlword for homing
-        EC_WRITE_U16(domain1_pd + offset_control_word, control_word |= 0x0010);
-
-        // debugging
-        printf("curr statusword: 0x%X\n", (EC_READ_U16(domain1_pd + offset_status_word)));
-        switch((EC_READ_U16(domain1_pd + offset_status_word)) & 0xB400){
-            case 0x0000:
-                printf("homing is in progress\n");
-                break;
-            case 0x0400:
-                printf("homing is interrupted or not started\n");
-                break;
-            case 0x1000:
-            case 0x1400:
-                printf("homing is completed successfully\n");
-                break;
-            case 0x2000:
-            case 0x2400:
-                printf("homing error occurred\n");
-                break;
-        }
-        printf("pos: %d\n",EC_READ_S32(domain1_pd + offset_position_actual_value));
-
-    } 
+        is_terminate = 1;
+    }
+     
     // (마스터가) send process data
     ecrt_domain_queue(domain1);
     ecrt_master_send(master);
@@ -506,7 +466,11 @@ int main(int argc, char **argv)
 
         cyclic_task_csv();
 
-        if(stopSignal=='q' || idx > N*1000) break;
+        if(stopSignal=='q' || idx > N*1000){
+            is_operational = 0;
+            is_stop = 1;
+        } 
+        if(is_terminate == 1) break;
 
         wakeup_time.tv_nsec += PERIOD_NS;
         while (wakeup_time.tv_nsec >= NSEC_PER_SEC) {
@@ -514,8 +478,6 @@ int main(int argc, char **argv)
             wakeup_time.tv_sec++;
         }
     }
-
-    printf("break;");
 
     FILE* file1 = fopen("/home/ghan/study_ws/epos4_etherCAT/logging/sine_sweep_csv.txt", "w");
 
@@ -528,29 +490,7 @@ int main(int argc, char **argv)
     fclose(file1);
     printf("values saved to file. \n");
     printf("curr statusword: 0x%X\n", (EC_READ_U16(domain1_pd + offset_status_word)));
-
-    /* homing before terminate */
-    while ((EC_READ_U16(domain1_pd + offset_status_word) & 0x1000) != 0x1000) 
-    {
-        ret = clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME,
-                &wakeup_time, NULL);
-        if (ret) 
-        {
-            fprintf(stderr, "clock_nanosleep(): %s\n", strerror(ret));
-            break;
-        }
-
-        cyclic_task_homing();
-
-        wakeup_time.tv_nsec += PERIOD_NS;
-        while (wakeup_time.tv_nsec >= NSEC_PER_SEC) {
-            wakeup_time.tv_nsec -= NSEC_PER_SEC;
-            wakeup_time.tv_sec++;
-        }
-    }
-
-    printf("Homing is done\n");
-    printf("curr statusword: 0x%X\n", (EC_READ_U16(domain1_pd + offset_status_word)));
+    printf("Position actual value: %d\n\n",EC_READ_S32(domain1_pd + offset_position_actual_value));
 
     free(t1_array);
     free(velocity_input_array);
