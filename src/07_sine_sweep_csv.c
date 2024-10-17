@@ -311,8 +311,6 @@ void cyclic_task_csv()
         frequency = start_frequency + (end_frequency - start_frequency) * (t / N);
         vel_t = 180.0 * sin(2 * PI * frequency * t) * GEAR_RATIO; // [rpm]
 
-        // vel_t = 10 * GEAR_RATIO;
-
         // write a target velocity
         EC_WRITE_U32(domain1_pd + offset_target_velocity, vel_t);
 
@@ -325,15 +323,24 @@ void cyclic_task_csv()
         idx++;
     } 
 
-    if(is_stop){
-        // stop the motor
+    // stop the motor
+    if(is_stop){        
         EC_WRITE_U32(domain1_pd + offset_target_velocity, 0);
-        if(EC_READ_S32(domain1_pd + offset_velocity_actual_value) == 0) is_shutdown = 1;
+        if(EC_READ_S32(domain1_pd + offset_velocity_actual_value) == 0){
+            printf("motor is stopped\n");
+            is_stop = 0;
+            is_shutdown = 1;
+        } 
     }
 
+    // init the motor controller: switch on disabled
     if(is_shutdown){
-        EC_WRITE_U16(domain1_pd + offset_modes_of_operation, 6); 
-        is_terminate = 1;
+        EC_WRITE_U16(domain1_pd + offset_control_word, 0x0000);
+        if(((EC_READ_U16(domain1_pd + offset_status_word)) & 0x0040) == 0x0040){
+            printf("operation enabled -> switch on disabled\n");
+            is_shutdown = 0;
+            is_terminate = 1;
+        }
     }
      
     // (마스터가) send process data
@@ -466,7 +473,8 @@ int main(int argc, char **argv)
 
         cyclic_task_csv();
 
-        if(stopSignal=='q' || idx > N*1000){
+        if((is_operational == 1) && (stopSignal =='q' || idx > N*1000)){
+            printf("\ntask is done.\n");
             is_operational = 0;
             is_stop = 1;
         } 
@@ -478,6 +486,8 @@ int main(int argc, char **argv)
             wakeup_time.tv_sec++;
         }
     }
+
+    
 
     FILE* file1 = fopen("/home/ghan/study_ws/epos4_etherCAT/logging/sine_sweep_csv.txt", "w");
 
@@ -492,10 +502,15 @@ int main(int argc, char **argv)
     printf("curr statusword: 0x%X\n", (EC_READ_U16(domain1_pd + offset_status_word)));
     printf("Position actual value: %d\n\n",EC_READ_S32(domain1_pd + offset_position_actual_value));
 
+    // release allocated memory
     free(t1_array);
     free(velocity_input_array);
     free(velocity_output_array);
     free(freq_arr);
+
+    // release the EtherCAT master 
+    ecrt_master_deactivate(master);
+    ecrt_release_master(master);
 
     return ret;
 }
