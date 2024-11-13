@@ -203,9 +203,9 @@ float *freq_arr;
 # define PI 3.14159265
 #define GEAR_RATIO 35.0
 float vel_t;
-int N = 10;
+int N = 20;
 float start_frequency = 0.1;
-float end_frequency = 3.0;
+float end_frequency = 10.0;
 float frequency = 0.1;
 
 /*****************************************************************************/
@@ -309,7 +309,7 @@ void cyclic_task_csv()
     if(is_operational){
         // generate sine sweep test signal
         frequency = start_frequency + (end_frequency - start_frequency) * (t / N);
-        vel_t = 180.0 * sin(2 * PI * frequency * t) * GEAR_RATIO; // [rpm]
+        vel_t = 90.0 * sin(2 * PI * frequency * t) * GEAR_RATIO; // [rpm]
 
         // write a target velocity
         EC_WRITE_U32(domain1_pd + offset_target_velocity, vel_t);
@@ -317,7 +317,7 @@ void cyclic_task_csv()
         // logging
         t1_array[idx] = t;
         freq_arr[idx] = frequency;
-        velocity_input_array[idx] = vel_t / GEAR_RATIO; // [deg]
+        velocity_input_array[idx] = vel_t / GEAR_RATIO; // [rpm]
         velocity_output_array[idx] = (float)EC_READ_S32(domain1_pd + offset_velocity_actual_value)/GEAR_RATIO;
         t += 0.001; 
         idx++;
@@ -489,7 +489,7 @@ int main(int argc, char **argv)
 
     
 
-    FILE* file1 = fopen("/home/ghan/study_ws/epos4_etherCAT/logging/sine_sweep_csv.txt", "w");
+    FILE* file1 = fopen("/home/ghan/study_ws/epos4_etherCAT/logging/sine_sweep_csv2.txt", "w");
 
     if(file1 != NULL){
         for(int i=0; i < N*1000; i++){

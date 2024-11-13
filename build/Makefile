@@ -111,6 +111,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named csv_poly5.out
+
+# Build rule for target.
+csv_poly5.out: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 csv_poly5.out
+.PHONY : csv_poly5.out
+
+# fast build rule for target.
+csv_poly5.out/fast:
+	$(MAKE) -f CMakeFiles/csv_poly5.out.dir/build.make CMakeFiles/csv_poly5.out.dir/build
+.PHONY : csv_poly5.out/fast
+
+#=============================================================================
 # Target rules for targets named sine_sweep_csv.out
 
 # Build rule for target.
@@ -430,6 +443,33 @@ src/08_homing.c.s:
 	$(MAKE) -f CMakeFiles/homing.out.dir/build.make CMakeFiles/homing.out.dir/src/08_homing.c.s
 .PHONY : src/08_homing.c.s
 
+src/09_csv_poly5.o: src/09_csv_poly5.c.o
+
+.PHONY : src/09_csv_poly5.o
+
+# target to build an object file
+src/09_csv_poly5.c.o:
+	$(MAKE) -f CMakeFiles/csv_poly5.out.dir/build.make CMakeFiles/csv_poly5.out.dir/src/09_csv_poly5.c.o
+.PHONY : src/09_csv_poly5.c.o
+
+src/09_csv_poly5.i: src/09_csv_poly5.c.i
+
+.PHONY : src/09_csv_poly5.i
+
+# target to preprocess a source file
+src/09_csv_poly5.c.i:
+	$(MAKE) -f CMakeFiles/csv_poly5.out.dir/build.make CMakeFiles/csv_poly5.out.dir/src/09_csv_poly5.c.i
+.PHONY : src/09_csv_poly5.c.i
+
+src/09_csv_poly5.s: src/09_csv_poly5.c.s
+
+.PHONY : src/09_csv_poly5.s
+
+# target to generate assembly for a file
+src/09_csv_poly5.c.s:
+	$(MAKE) -f CMakeFiles/csv_poly5.out.dir/build.make CMakeFiles/csv_poly5.out.dir/src/09_csv_poly5.c.s
+.PHONY : src/09_csv_poly5.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -437,6 +477,7 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
+	@echo "... csv_poly5.out"
 	@echo "... sine_sweep_csv.out"
 	@echo "... sine_sweep_csp.out"
 	@echo "... sine_sweep_ppm.out"
@@ -470,6 +511,9 @@ help:
 	@echo "... src/08_homing.o"
 	@echo "... src/08_homing.i"
 	@echo "... src/08_homing.s"
+	@echo "... src/09_csv_poly5.o"
+	@echo "... src/09_csv_poly5.i"
+	@echo "... src/09_csv_poly5.s"
 .PHONY : help
 
 

@@ -74,7 +74,7 @@ static unsigned int offset_digital_inputs;
 static unsigned int offset_error_code;
     
 
-// MDP Module CSV
+// MDP Module CSP
 const static ec_pdo_entry_reg_t domain1_regs[] = 
 {
     // RxPDO
