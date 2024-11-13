@@ -1,1 +1,0 @@
-/usr/bin/cc    CMakeFiles/csv_poly5.out.dir/src/09_csv_poly5.c.o  -o csv_poly5.out   -L/opt/etherlab/lib  -Wl,-rpath,/opt/etherlab/lib -lethercat -lm 

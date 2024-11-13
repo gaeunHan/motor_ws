@@ -1,0 +1,1 @@
+/usr/bin/cc    CMakeFiles/sine_sweep_csv.out.dir/src/07_sine_sweep_csv.c.o  -o sine_sweep_csv.out   -L/opt/etherlab/lib  -Wl,-rpath,/opt/etherlab/lib -lethercat -lm 

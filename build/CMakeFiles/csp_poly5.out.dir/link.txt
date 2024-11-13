@@ -1,1 +1,0 @@
-/usr/bin/cc    CMakeFiles/csp_poly5.out.dir/src/04_csp_poly5.c.o  -o csp_poly5.out   -L/opt/etherlab/lib  -Wl,-rpath,/opt/etherlab/lib -lethercat -lm 

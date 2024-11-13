@@ -1,1 +1,0 @@
-/usr/bin/cc    CMakeFiles/sine_sweep_csp.out.dir/src/05_sine_sweep_csp.c.o  -o sine_sweep_csp.out   -L/opt/etherlab/lib  -Wl,-rpath,/opt/etherlab/lib -lethercat -lm 
