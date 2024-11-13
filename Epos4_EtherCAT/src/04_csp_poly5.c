@@ -238,7 +238,6 @@ uint16_t prev_status_word = -1;
 uint16_t check_status_word;
 uint16_t control_word = 0;
 uint16_t error_code = 0;
-uint32_t target_velocity = 0;
 bool is_operational = 0;
 
 // 1ms period
@@ -452,7 +451,7 @@ int main(int argc, char **argv)
     }
 
     /* allocate memory for logging */
-    t1_array = (float *)malloc((1000) * sizeof(float)); // t가 0.001씩 즈가 -> 1000이면 되는데 걍 넉넉잡아 2000
+    t1_array = (float *)malloc((1000) * sizeof(float)); // t가 0.001씩 증가 -> 1000이면 되는데 걍 넉넉잡아 2000
     velocity_input_array = (float *)malloc((1000) * sizeof(float));
     position_input_array = (float *)malloc((1000) * sizeof(float));
     velocity_output_array = (uint32_t *)malloc((1000) * sizeof(int32_t));
