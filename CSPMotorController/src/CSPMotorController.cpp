@@ -12,8 +12,8 @@
 #include <time.h>         // 시간 관련 함수
 
 // 생성자 - 멤버 변수 초기화
-CSPMotorController::CSPMotorController() : t(0.0), is_operational(false) {
-    initEcatVar();
+CSPMotorController::CSPMotorController() : t(0.0), is_operational(false), dataNum(0) {
+    initStaticVar();
     initMaster();    
 }
 
@@ -21,7 +21,7 @@ CSPMotorController::~CSPMotorController() {
     ecrt_release_master(master);
 }
 
-void CSPMotorController::initEcatVar() {
+void CSPMotorController::initStaticVar() {
     counter = 0;
 
     master = nullptr;
@@ -316,6 +316,7 @@ void CSPMotorController::cyclicTask()
         velocity_output_array.push_back(EC_READ_S32(domain1_pd + offset_velocity_actual_value) / GEAR_RATIO);
         position_output_array.push_back(((float)EC_READ_S32(domain1_pd + offset_position_actual_value) * 360.0f) / PULSE / GEAR_RATIO);
         t += 0.001; 
+        dataNum = t1_array.size();
     } 
      
     // (마스터가) send process data
@@ -336,14 +337,4 @@ void CSPMotorController::saveData(const std::string &position_filename, const st
 
     pos_file.close();
     vel_file.close();
-}
-
-void* CSPMotorController::stopSignalHandler(void* arg) {
-    char stopSignal;
-    std::cout << "Enter 'q' to stop motor: ";
-    std::cin >> stopSignal;
-    if (stopSignal == 'q') {
-        static_cast<CSPMotorController*>(arg)->is_operational = false;
-    }
-    return nullptr;
 }

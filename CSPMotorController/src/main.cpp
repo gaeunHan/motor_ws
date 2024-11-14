@@ -6,6 +6,14 @@
 #include <iostream>
 #include <cstdlib>
 
+// working in parallel with cyclic_task()
+char stopSignal;
+void *p_function(void *data){
+    // get stop signal
+    printf("Enter 'q' to stop motor");
+    scanf("%c", &stopSignal);
+};
+
 int main() {
     struct sched_param param = {};
     struct timespec wakeup_time;
@@ -42,10 +50,16 @@ int main() {
     /* get trajectory params from the user */
     motorController.initTrajectoryParams();
 
-    /* Create a pthread */    
-    if (pthread_create(&stopThread, nullptr, CSPMotorController::stopSignalHandler, &motorController) != 0) {
-        perror("Failed to create stop signal handler thread");
-        return -1;
+    /* Create a pthread */
+    char p1[] = "thread_1";  //thread
+    int thr_id;
+    pthread_t pthread;
+
+    thr_id = pthread_create(&pthread, NULL, p_function, (void*)p1);
+    if(thr_id < 0)
+    {
+        perror("pthread0 create error");
+        exit(EXIT_FAILURE);
     }
 
     /* Main Task */
@@ -61,7 +75,7 @@ int main() {
 
         motorController.cyclicTask();
 
-        if(stopSignal=='q' || idx > 1000) break;
+        if(stopSignal=='q' || motorController.dataNum > 1000) break;
 
         wakeup_time.tv_nsec += PERIOD_NS;
         while (wakeup_time.tv_nsec >= NSEC_PER_SEC) {

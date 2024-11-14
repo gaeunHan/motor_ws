@@ -49,6 +49,7 @@ private:
     /* logging variables */
     bool is_operational;
     float t;
+    int dataNum;
     std::vector<float> t1_array, velocity_input_array, position_input_array;
     std::vector<int32_t> velocity_output_array;
     std::vector<float> position_output_array;
@@ -57,7 +58,7 @@ private:
     float pos[2], vel[2], acc[2], moveTime[2];
     float pos_t, vel_t, acc_t;
 
-    void initEcatVar();
+    void initStaticVar();
     void initMaster();
     void configurePDOs();
     void checkDomainState();
@@ -66,12 +67,13 @@ private:
     void getTrajectory(float q0, float q1, float v0, float v1, float a0, float a1, float t0, float t1);
 
 public:
+    int dataNum;
+
     CSPMotorController();
     ~CSPMotorController();
     void initTrajectoryParams();
     void cyclicTask();
     void saveData(const std::string &position_filename, const std::string &velocity_filename);
-    static void* stopSignalHandler(void* arg);
 };
 
 #endif // CSP_MOTOR_CONTROLLER_H
