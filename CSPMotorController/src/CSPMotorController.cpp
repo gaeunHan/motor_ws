@@ -11,27 +11,23 @@
 #include <sys/mman.h>     // 메모리 잠금
 #include <time.h>         // 시간 관련 함수
 
+// static variables
+ec_master_t *CSPMotorController::master = nullptr;
+ec_master_state_t CSPMotorController::master_state = {};
+ec_domain_t *CSPMotorController::domain1 = nullptr;
+ec_domain_state_t CSPMotorController::domain1_state = {};
+ec_slave_config_t *CSPMotorController::slave_config = nullptr;
+ec_slave_config_state_t CSPMotorController::slave_config_state = {};
+uint8_t *CSPMotorController::domain1_pd = nullptr;
+unsigned int CSPMotorController::counter = 0;
+
 // 생성자 - 멤버 변수 초기화
 CSPMotorController::CSPMotorController() : t(0.0), is_operational(false), dataNum(0) {
-    initStaticVar();
     initMaster();    
 }
 
 CSPMotorController::~CSPMotorController() {
     ecrt_release_master(master);
-}
-
-void CSPMotorController::initStaticVar() {
-    counter = 0;
-
-    master = nullptr;
-    master_state = {};
-
-    domain1 = nullptr;
-    domain1_state = {};
-
-    slave_config = nullptr;
-    slave_config_state = {};
 }
 
 void CSPMotorController::initMaster() {

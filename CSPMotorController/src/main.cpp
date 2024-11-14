@@ -5,6 +5,9 @@
 #include <time.h>
 #include <iostream>
 #include <cstdlib>
+#include <cstring>
+
+#define MAX_SAFE_STACK (8 * 1024)
 
 // working in parallel with cyclic_task()
 char stopSignal;
@@ -86,7 +89,7 @@ int main() {
 
     /* save data to file */
     motorController.saveData("/home/ghan/motor_ws/CSPMotorController/logging/5th_pos01.txt",
-                             "/home/ghan/motor_ws/CSPMotorController/logging/5th_vel01.txt")
+                             "/home/ghan/motor_ws/CSPMotorController/logging/5th_vel01.txt");
 
 
     return ret;

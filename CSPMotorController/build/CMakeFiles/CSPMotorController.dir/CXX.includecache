@@ -54,3 +54,21 @@ string
 ecrt.h
 /home/ghan/motor_ws/CSPMotorController/src/ecrt.h
 
+/home/ghan/motor_ws/CSPMotorController/src/main.cpp
+CSPMotorController.h
+/home/ghan/motor_ws/CSPMotorController/src/CSPMotorController.h
+pthread.h
+-
+sched.h
+-
+sys/mman.h
+-
+time.h
+-
+iostream
+-
+cstdlib
+-
+cstring
+-
+

@@ -49,7 +49,6 @@ private:
     /* logging variables */
     bool is_operational;
     float t;
-    int dataNum;
     std::vector<float> t1_array, velocity_input_array, position_input_array;
     std::vector<int32_t> velocity_output_array;
     std::vector<float> position_output_array;
@@ -58,7 +57,6 @@ private:
     float pos[2], vel[2], acc[2], moveTime[2];
     float pos_t, vel_t, acc_t;
 
-    void initStaticVar();
     void initMaster();
     void configurePDOs();
     void checkDomainState();
