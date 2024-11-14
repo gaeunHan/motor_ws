@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -I/home/ghan/study_ws/epos4_etherCAT/include
+CFLAGS = -I/home/ghan/motor_ws/Epos4_EtherCAT/include
 LDFLAGS = -L/opt/etherlab/lib -lethercat -lm  # -lm: linking standard c math library
 
 SRC1 = src/01_start_code_epos4_ecat.c

@@ -28,7 +28,7 @@ private:
     static ec_slave_config_state_t slave_config_state;    
 
     /* Process Data */
-    static uint8_t *domain1_pd
+    static uint8_t *domain1_pd;
     static unsigned int counter;
     // RxPDO (master -> slave) offsets for PDO entries
     unsigned int offset_control_word;

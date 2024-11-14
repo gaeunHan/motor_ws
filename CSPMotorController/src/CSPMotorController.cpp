@@ -12,7 +12,7 @@
 #include <time.h>         // 시간 관련 함수
 
 // 생성자 - 멤버 변수 초기화
-CSPMotorController::CSPMotorController() : counter(0), t(0.0), is_operational(false) {
+CSPMotorController::CSPMotorController() : t(0.0), is_operational(false) {
     initEcatVar();
     initMaster();    
 }
@@ -22,13 +22,15 @@ CSPMotorController::~CSPMotorController() {
 }
 
 void CSPMotorController::initEcatVar() {
-    *master = NULL;
+    counter = 0;
+
+    master = nullptr;
     master_state = {};
 
-    *domain1 = NULL;
+    domain1 = nullptr;
     domain1_state = {};
 
-    *slave_config = NULL;
+    slave_config = nullptr;
     slave_config_state = {};
 }
 
@@ -50,7 +52,7 @@ void CSPMotorController::initMaster() {
     if (!(slave_config = ecrt_master_slave_config(master, 0, 0, MAXON_EPOS4_5A))) 
     {
         fprintf(stderr, "Failed to get slave configuration.\n");
-        return -1;
+        return;
     }
 
     printf("Configuring PDOs...\n");
@@ -201,7 +203,7 @@ void CSPMotorController::initTrajectoryParams(){
     std::cout << std::endl << "Trajectory parameters initialized." << std::endl;
 }
 
-void getTrajectory(float q0, float q1, float v0, float v1, float a0, float a1, float t0, float t1){
+void CSPMotorController::getTrajectory(float q0, float q1, float v0, float v1, float a0, float a1, float t0, float t1){
     // calc coefficients
     float b0, b1, b2, b3, b4, b5;
     float T = t1 - t0;
@@ -213,7 +215,7 @@ void getTrajectory(float q0, float q1, float v0, float v1, float a0, float a1, f
     b5 = (1.0 / (2 * T * T * T * T * T)) * (12 * (q1 - q0) - 6 * (v1 + v0) * T + (a1 - a0) * T * T);
 
     // pos, vel, acc formula
-    currTime = t;
+    float currTime = t;
     float dt = currTime - t0;
     pos_t = b0 + b1*dt + b2*pow(dt,2) + b3*pow(dt,3) + b4*pow(dt,4) + b5*pow(dt,5); // [encoder cnt]
     vel_t = b1 + 2*b2*dt + 3*b3*pow(dt,2) + 4*b4*pow(dt,3) + 5*b5*pow(dt,4); // [encoder cnt / sec]
@@ -221,7 +223,7 @@ void getTrajectory(float q0, float q1, float v0, float v1, float a0, float a1, f
 }
 
 // 1ms period
-void cyclic_task_csv()
+void CSPMotorController::cyclicTask()
 {
     // (마스터가) receive process data
     ecrt_master_receive(master); // 데이터 받아(queue에서 데이터그램 dispatch)

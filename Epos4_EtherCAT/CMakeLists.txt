@@ -1,5 +1,5 @@
 # 빌드 명령어
-# cd ~/study_ws/epos4_etherCAT/build
+# cd ~/motor_ws/Epos4_EtherCAT/build
 # cmake ..
 # make
 
@@ -16,7 +16,7 @@ set(CMAKE_C_STANDARD 11)
 set(SRC_DIR ${PROJECT_SOURCE_DIR}/src)
 
 # Include directories (include your custom path and the default include path)
-include_directories(${PROJECT_SOURCE_DIR}/include /home/ghan/study_ws/include)
+include_directories(${PROJECT_SOURCE_DIR}/include /home/ghan/motor_ws/include)
 
 # Library directories (add the necessary library path)
 link_directories(/opt/etherlab/lib)
