@@ -23,15 +23,14 @@ using namespace std;
 /****************************************************************************/
 
 #include "ecrt.h"
+#include "CSVMotorController.h"
 
 /****************************************************************************/
 
 /** Task period in ns. */
 #define PERIOD_NS   (1000000)
 
-#define MAX_SAFE_STACK (8 * 1024) /* The maximum stack size which is
-                                     guranteed safe to access without
-                                     faulting */
+#define MAX_SAFE_STACK (8 * 1024) /* The maximum stack size which is guranteed safe to access without faulting */
 
 /****************************************************************************/
 
@@ -202,45 +201,46 @@ void check_slave_config_states(void)
     slave_config_state = s;
 }
 /*****************************************************************************/
+EPOS4Slave motor1;
 // logging vars.
 float t = 0;
 int idx = 0;
-vector<float> t1_array;
-vector<float> velocity_input_array;
-vector<float> position_input_array;
-vector<float> velocity_output_array;
-vector<float> position_output_array;
+// vector<float> t1_array;
+// vector<float> velocity_input_array;
+// vector<float> position_input_array;
+// vector<float> velocity_output_array;
+// vector<float> position_output_array;
 
 /*****************************************************************************/
-// trajectory generator
-#define CNT_PER_DEGREE 398.0 // 1024*4*35/360
-#define CNT_PER_REVOLUTION 143360.0 // 1024*4*35
-float pos[2] = {0.0, 180.0*CNT_PER_DEGREE};
-float vel[2] = {0.0, 0.0};
-float acc[2] = {0.0, 0.0};
-float moveTime[2] = {0.0, 1.0};
-float currTime;
-float pos_t, vel_t, acc_t;
+// // trajectory generator
+// #define CNT_PER_DEGREE 398.0 // 1024*4*35/360
+// #define CNT_PER_REVOLUTION 143360.0 // 1024*4*35
+// float pos[2] = {0.0, 180.0*CNT_PER_DEGREE};
+// float vel[2] = {0.0, 0.0};
+// float acc[2] = {0.0, 0.0};
+// float moveTime[2] = {0.0, 1.0};
+// float currTime;
+// float pos_t, vel_t, acc_t;
 
-void getTrajectory(float q0, float q1, float v0, float v1, float a0, float a1, float t0, float t1){
-    // calc coefficients
-    float b0, b1, b2, b3, b4, b5;
-    float T = t1 - t0;
-    b0 = q0;
-    b1 = v0;
-    b2 = 0.5 * a0;
-    b3 = (1.0 / (2 * T * T * T)) * (20 * (q1 - q0) - (8 * v1 + 12 * v0) * T - (3 * a0 - a1) * T * T);
-    b4 = (1.0 / (2 * T * T * T * T)) * (-30 * (q1 - q0) + (14 * v1 + 16 * v0) * T + (3 * a0 - 2 * a1) * T * T);
-    b5 = (1.0 / (2 * T * T * T * T * T)) * (12 * (q1 - q0) - 6 * (v1 + v0) * T + (a1 - a0) * T * T);
+// void getTrajectory(float q0, float q1, float v0, float v1, float a0, float a1, float t0, float t1){
+//     // calc coefficients
+//     float b0, b1, b2, b3, b4, b5;
+//     float T = t1 - t0;
+//     b0 = q0;
+//     b1 = v0;
+//     b2 = 0.5 * a0;
+//     b3 = (1.0 / (2 * T * T * T)) * (20 * (q1 - q0) - (8 * v1 + 12 * v0) * T - (3 * a0 - a1) * T * T);
+//     b4 = (1.0 / (2 * T * T * T * T)) * (-30 * (q1 - q0) + (14 * v1 + 16 * v0) * T + (3 * a0 - 2 * a1) * T * T);
+//     b5 = (1.0 / (2 * T * T * T * T * T)) * (12 * (q1 - q0) - 6 * (v1 + v0) * T + (a1 - a0) * T * T);
 
-    // pos, vel, acc formula
-    currTime = t;
-    float dt = currTime - t0;
-    pos_t = b0 + b1*dt + b2*pow(dt,2) + b3*pow(dt,3) + b4*pow(dt,4) + b5*pow(dt,5); // [encoder cnt]
-    vel_t = b1 + 2*b2*dt + 3*b3*pow(dt,2) + 4*b4*pow(dt,3) + 5*b5*pow(dt,4); // [encoder cnt / sec]
-    acc_t = 2*b2 + 6*b3*dt + 12*b4*pow(dt,2) + 20*b5*pow(dt,3);
+//     // pos, vel, acc formula
+//     currTime = t;
+//     float dt = currTime - t0;
+//     pos_t = b0 + b1*dt + b2*pow(dt,2) + b3*pow(dt,3) + b4*pow(dt,4) + b5*pow(dt,5); // [encoder cnt]
+//     vel_t = b1 + 2*b2*dt + 3*b3*pow(dt,2) + 4*b4*pow(dt,3) + 5*b5*pow(dt,4); // [encoder cnt / sec]
+//     acc_t = 2*b2 + 6*b3*dt + 12*b4*pow(dt,2) + 20*b5*pow(dt,3);
 
-}
+// }
 
 /*****************************************************************************/
 // cyclic task vars.
@@ -357,20 +357,23 @@ void cyclic_task_csv()
     // apply trajectory and do logging
     if(is_operational){
         // get target velocity by following 5th-poly trajectory
-        getTrajectory(pos[0], pos[1], vel[0], vel[1], acc[0], acc[1], moveTime[0], moveTime[1]);
+        // getTrajectory(pos[0], pos[1], vel[0], vel[1], acc[0], acc[1], moveTime[0], moveTime[1]);
+        motor1.setTrajectory(t);
 
-        // convert vel_to into [rpm]
-        vel_t = ((vel_t * 60.0) / CNT_PER_REVOLUTION) * 35.0;
+        // convert vel_t into [rpm]
+        float vel = motor1.getVelTick();
+        vel = ((vel * 60.0) / CNT_PER_REVOLUTION) * 35.0;
 
         // write a target velocity
-        EC_WRITE_U32(domain1_pd + offset_target_velocity, vel_t);
+        EC_WRITE_U32(domain1_pd + offset_target_velocity, vel);
 
         // logging
-        t1_array.push_back(t);
-        velocity_input_array.push_back(vel_t / 35.0); // [rpm]
-        position_input_array.push_back((pos_t * 360.0 / 4096.0 / 35.0)); // [deg]
-        velocity_output_array.push_back((EC_READ_S32(domain1_pd + offset_velocity_actual_value))/35.0); // actual velocity 읽을 때 기어비로 나눠줘야 함. 
-        position_output_array.push_back((((float)EC_READ_S32(domain1_pd + offset_position_actual_value) * 360.0f) / 4096.0f) / 35.0); // logging pos in degree - *(360/4096)하면 0 되어버림
+        // t1_array.push_back(t);
+        // velocity_input_array.push_back(vel_t / 35.0); // [rpm]
+        // position_input_array.push_back((pos_t * 360.0 / 4096.0 / 35.0)); // [deg]
+        // velocity_output_array.push_back((EC_READ_S32(domain1_pd + offset_velocity_actual_value))/35.0); // actual velocity 읽을 때 기어비로 나눠줘야 함. 
+        // position_output_array.push_back((((float)EC_READ_S32(domain1_pd + offset_position_actual_value) * 360.0f) / 4096.0f) / 35.0); // logging pos in degree - *(360/4096)하면 0 되어버림
+        motor1.logging();
         t += 0.001; 
         idx++;
     } 
@@ -531,27 +534,29 @@ int main(int argc, char **argv)
         }
     }
 
-    ofstream pos_file("/home/ghan/motor_ws/CSVMotorController/logging/pos01.txt");
-    ofstream vel_file("/home/ghan/motor_ws/CSVMotorController/logging/vel01.txt");
+    // ofstream pos_file("/home/ghan/motor_ws/CSVMotorController/logging/pos01.txt");
+    // ofstream vel_file("/home/ghan/motor_ws/CSVMotorController/logging/vel01.txt");
 
-    if (pos_file.is_open() && vel_file.is_open()) {
-        for (size_t i = 0; i < t1_array.size(); i++) {
-            // store position data
-            pos_file << t1_array[i] << " " 
-                    << position_input_array[i] << " " 
-                    << position_output_array[i] << "\n";
+    // if (pos_file.is_open() && vel_file.is_open()) {
+    //     for (size_t i = 0; i < t1_array.size(); i++) {
+    //         // store position data
+    //         pos_file << t1_array[i] << " " 
+    //                 << position_input_array[i] << " " 
+    //                 << position_output_array[i] << "\n";
             
-            // store velocity data
-            vel_file << t1_array[i] << " "
-                    << velocity_input_array[i] << " "
-                    << velocity_output_array[i] << "\n";
-        }
+    //         // store velocity data
+    //         vel_file << t1_array[i] << " "
+    //                 << velocity_input_array[i] << " "
+    //                 << velocity_output_array[i] << "\n";
+    //     }
         
-        pos_file.close();
-        vel_file.close();
+    //     pos_file.close();
+    //     vel_file.close();
         
-        std::cout << "Values saved to files." << std::endl;
-    }
+    //     std::cout << "Values saved to files." << std::endl;
+    // }
+
+    motor1.saveData("/home/ghan/motor_ws/CSVMotorController/logging/pos01.txt", "/home/ghan/motor_ws/CSVMotorController/logging/vel01.txt");
 
     return ret;
 }
