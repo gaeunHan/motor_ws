@@ -13,7 +13,7 @@
 char stopSignal;
 void *p_function(void *data){
     // get stop signal
-    printf("Enter 'q' to stop motor");
+    printf("Enter 'q' to stop motor\n");
     scanf("%c", &stopSignal);
 };
 
@@ -26,7 +26,7 @@ int main() {
     /* Set priority */    
     param.sched_priority = sched_get_priority_max(SCHED_FIFO);
 
-    printf("Using priority %i.", param.sched_priority);
+    printf("Using priority %i.\n", param.sched_priority);
     if (sched_setscheduler(0, SCHED_FIFO, &param) == -1) {
         perror("sched_setscheduler failed");
     }

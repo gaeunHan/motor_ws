@@ -11,7 +11,7 @@
 #include <sys/mman.h>     // 메모리 잠금
 #include <time.h>         // 시간 관련 함수
 
-// static variables
+// static vars
 ec_master_t *CSPMotorController::master = nullptr;
 ec_master_state_t CSPMotorController::master_state = {};
 ec_domain_t *CSPMotorController::domain1 = nullptr;
@@ -21,8 +21,75 @@ ec_slave_config_state_t CSPMotorController::slave_config_state = {};
 uint8_t *CSPMotorController::domain1_pd = nullptr;
 unsigned int CSPMotorController::counter = 0;
 
+// domain1_regs 초기화
+const ec_pdo_entry_reg_t CSPMotorController::domain1_regs[] = {
+    {0, 0, MAXON_EPOS4_5A, 0x6040, 0x00, &CSPMotorController::offset_control_word},
+    {0, 0, MAXON_EPOS4_5A, 0x607A, 0x00, &CSPMotorController::offset_target_position},
+    {0, 0, MAXON_EPOS4_5A, 0x60B0, 0x00, &CSPMotorController::offset_position_offset},
+    {0, 0, MAXON_EPOS4_5A, 0x60B2, 0x00, &CSPMotorController::offset_torque_offset},
+    {0, 0, MAXON_EPOS4_5A, 0x6060, 0x00, &CSPMotorController::offset_modes_of_operation},
+    {0, 0, MAXON_EPOS4_5A, 0x60FE, 0x01, &CSPMotorController::offset_digital_outputs},
+    {0, 0, MAXON_EPOS4_5A, 0x6041, 0x00, &CSPMotorController::offset_status_word},
+    {0, 0, MAXON_EPOS4_5A, 0x6064, 0x00, &CSPMotorController::offset_position_actual_value},
+    {0, 0, MAXON_EPOS4_5A, 0x606C, 0x00, &CSPMotorController::offset_velocity_actual_value},
+    {0, 0, MAXON_EPOS4_5A, 0x6077, 0x00, &CSPMotorController::offset_torque_actual_value},
+    {0, 0, MAXON_EPOS4_5A, 0x6061, 0x00, &CSPMotorController::offset_modes_of_operation_display},
+    {0, 0, MAXON_EPOS4_5A, 0x60FD, 0x00, &CSPMotorController::offset_digital_inputs},
+    {0, 0, MAXON_EPOS4_5A, 0x603F, 0x00, &CSPMotorController::offset_error_code}
+};
+
+// csp_pdo_entries 초기화
+ec_pdo_entry_info_t CSPMotorController::csp_pdo_entries[] = {
+    {0x6040, 0x00, 16},
+    {0x607A, 0x00, 32},
+    {0x60B0, 0x00, 32},
+    {0x60B2, 0x00, 16},
+    {0x6060, 0x00, 8},
+    {0x60FE, 0x01, 32},
+    {0x6041, 0x00, 16},
+    {0x6064, 0x00, 32},
+    {0x606C, 0x00, 32},
+    {0x6077, 0x00, 16},
+    {0x6061, 0x00, 8},
+    {0x60FD, 0x00, 32},
+    {0x603F, 0x00, 16}
+};
+
+// csp_pdos 초기화
+ec_pdo_info_t CSPMotorController::csp_pdos[] = {
+    {0x1600, 6, csp_pdo_entries + 0},
+    {0x1a00, 7, csp_pdo_entries + 6}
+};
+
+// maxon_epos4_syncs_csp 초기화
+ec_sync_info_t CSPMotorController::maxon_epos4_syncs_csp[] = {
+    {0, EC_DIR_OUTPUT, 0, NULL, EC_WD_DISABLE},
+    {1, EC_DIR_INPUT, 0, NULL, EC_WD_DISABLE},
+    {2, EC_DIR_OUTPUT, 1, csp_pdos + 0, EC_WD_ENABLE},
+    {3, EC_DIR_INPUT, 1, csp_pdos + 1, EC_WD_DISABLE},
+    {0xff}
+};
+
+// PDO 오프셋 변수 초기화
+unsigned int CSPMotorController::offset_control_word = 0;
+unsigned int CSPMotorController::offset_target_position = 0;
+unsigned int CSPMotorController::offset_position_offset = 0;
+unsigned int CSPMotorController::offset_torque_offset = 0;
+unsigned int CSPMotorController::offset_modes_of_operation = 0;
+unsigned int CSPMotorController::offset_digital_outputs = 0;
+
+unsigned int CSPMotorController::offset_status_word = 0;
+unsigned int CSPMotorController::offset_position_actual_value = 0;
+unsigned int CSPMotorController::offset_velocity_actual_value = 0;
+unsigned int CSPMotorController::offset_torque_actual_value = 0;
+unsigned int CSPMotorController::offset_modes_of_operation_display = 0;
+unsigned int CSPMotorController::offset_digital_inputs = 0;
+unsigned int CSPMotorController::offset_error_code = 0;
+
+
 // 생성자 - 멤버 변수 초기화
-CSPMotorController::CSPMotorController() : t(0.0), is_operational(false), dataNum(0) {
+CSPMotorController::CSPMotorController() : t(0.0), is_operational(false), dataNum(0)
+{
     initMaster();    
 }
 
@@ -52,83 +119,20 @@ void CSPMotorController::initMaster() {
     }
 
     printf("Configuring PDOs...\n");
-    configurePDOs();
+    if (ecrt_slave_config_pdos(slave_config, EC_END, maxon_epos4_syncs_csp)) {
+        throw std::runtime_error("Failed to configure PDOs.\n");
+        return;
+    }
+    if (ecrt_domain_reg_pdo_entry_list(domain1, domain1_regs)) {
+        throw std::runtime_error("Failed to register PDO entries.");
+        return;
+    }
 
     printf("Activating master...\n");
     if (ecrt_master_activate(master)) return;
 
     printf("Activating domain...\n");
     if (!(domain1_pd = ecrt_domain_data(domain1))) return;
-}
-
-void CSPMotorController::configurePDOs() {
-    // MDP Module CSP
-    const static ec_pdo_entry_reg_t domain1_regs[] = 
-    {
-        // RxPDO
-        {0,0, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word},
-        {0,0, MAXON_EPOS4_5A, 0x607A, 0x00, &offset_target_position},
-        {0,0, MAXON_EPOS4_5A, 0x60B0, 0x00, &offset_position_offset},
-        {0,0, MAXON_EPOS4_5A, 0x60B2, 0x00, &offset_torque_offset},
-        {0,0, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation},
-        {0,0, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs},
-
-        // TxPDO
-        {0,0, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word},
-        {0,0, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value},
-        {0,0, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value},
-        {0,0, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value},
-        {0,0, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display},
-        {0,0, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs},
-        {0,0, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_error_code}
-    };
-
-    // MDP module CSV mapping
-    static ec_pdo_entry_info_t csp_pdo_entries[] = {
-        // RxPDO (Master -> Slave)
-        {0x6040, 0x00, 16},    // control word
-        {0x607A, 0x00, 32},    // target position
-        {0x60B0, 0x00, 32},    // position offset
-        {0x60B2, 0x00, 16},    // torque offset
-        {0x6060, 0x00, 8},     // modes of operation
-        {0x60FE, 0x01, 32},    // digital outputs
-
-        // TxPDO (Slave -> Master)
-        {0x6041, 0x00, 16},    // status word
-        {0x6064, 0x00, 32},    // position actual value
-        {0x606C, 0x00, 32},    // velocity actual value
-        {0x6077, 0x00, 16},    // torque actual value
-        {0x6061, 0x00, 8},     // modes of operation display
-        {0x60FD, 0x00, 32},    // digital inputs
-        {0x603F, 0x00, 16}     // error code
-    };
-
-    static ec_pdo_info_t csp_pdos[] = {
-        // RxPDO(Master -> Slave) 1 mapping
-        {0x1600, 6,	csp_pdo_entries + 0}, // 6개의 RxPDO entry를 mapping 할 것인데, entry의 시작 위치는 maxon_epos4_pdo_entries[0]이다. 
-
-        // TxPDO(Master <- Slave) 1 mapping
-        {0x1a00, 7,	csp_pdo_entries + 6} // 7개의 TxPDO entry를 mapping 할 것인데, entry의 시작 위치는 maxon_epos4_pdo_entries[6]이다. 
-    };
-
-    // slave sync manager
-    static ec_sync_info_t maxon_epos4_syncs_csp[] = {
-        { 0, EC_DIR_OUTPUT, 0, NULL, EC_WD_DISABLE },
-        { 1, EC_DIR_INPUT, 0, NULL, EC_WD_DISABLE },
-        { 2, EC_DIR_OUTPUT, 1, csp_pdos + 0, EC_WD_ENABLE },
-        { 3, EC_DIR_INPUT,  1, csp_pdos + 1, EC_WD_DISABLE },
-        { 0xff }
-    };
-
-    if (ecrt_slave_config_pdos(slave_config, EC_END, maxon_epos4_syncs_csp)) {
-        throw std::runtime_error("Failed to configure PDOs.\n");
-        return;
-    }
-
-    if (ecrt_domain_reg_pdo_entry_list(domain1, domain1_regs)) {
-        throw std::runtime_error("Failed to register PDO entries.");
-        return;
-    }
 }
 
 void CSPMotorController::checkDomainState() {

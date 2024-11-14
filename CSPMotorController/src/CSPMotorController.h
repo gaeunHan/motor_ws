@@ -31,20 +31,25 @@ private:
     static uint8_t *domain1_pd;
     static unsigned int counter;
     // RxPDO (master -> slave) offsets for PDO entries
-    unsigned int offset_control_word;
-    unsigned int offset_target_position;
-    unsigned int offset_position_offset;
-    unsigned int offset_torque_offset;
-    unsigned int offset_modes_of_operation;
-    unsigned int offset_digital_outputs;
+    static unsigned int offset_control_word;
+    static unsigned int offset_target_position;
+    static unsigned int offset_position_offset;
+    static unsigned int offset_torque_offset;
+    static unsigned int offset_modes_of_operation;
+    static unsigned int offset_digital_outputs;
     // TxPDO (slave -> master) offsets for PDO entries
-    unsigned int offset_status_word;
-    unsigned int offset_position_actual_value;
-    unsigned int offset_velocity_actual_value;
-    unsigned int offset_torque_actual_value;
-    unsigned int offset_modes_of_operation_display;
-    unsigned int offset_digital_inputs;
-    unsigned int offset_error_code;
+    static unsigned int offset_status_word;
+    static unsigned int offset_position_actual_value;
+    static unsigned int offset_velocity_actual_value;
+    static unsigned int offset_torque_actual_value;
+    static unsigned int offset_modes_of_operation_display;
+    static unsigned int offset_digital_inputs;
+    static unsigned int offset_error_code;
+    // PDOs
+    static const ec_pdo_entry_reg_t domain1_regs[];
+    static ec_pdo_entry_info_t csp_pdo_entries[];
+    static ec_pdo_info_t csp_pdos[];
+    static ec_sync_info_t maxon_epos4_syncs_csp[];
 
     /* logging variables */
     bool is_operational;
@@ -58,7 +63,6 @@ private:
     float pos_t, vel_t, acc_t;
 
     void initMaster();
-    void configurePDOs();
     void checkDomainState();
     void checkMasterState();
     void checkSlaveConfigState();
