@@ -68,6 +68,7 @@ void EPOS4Slave::setTrajectory(float tick){
     float dt = currTime - moveTime[0];
     pos_tick = b0 + b1*dt + b2*pow(dt,2) + b3*pow(dt,3) + b4*pow(dt,4) + b5*pow(dt,5); // [encoder cnt]
     vel_tick = b1 + 2*b2*dt + 3*b3*pow(dt,2) + 4*b4*pow(dt,3) + 5*b5*pow(dt,4); // [encoder cnt / sec]
+    vel_tick = ((vel_tick * 60.0) / CNT_PER_REVOLUTION) * 35.0; // convert it into [rpm]
     acc_tick = 2*b2 + 6*b3*dt + 12*b4*pow(dt,2) + 20*b5*pow(dt,3);
 }
 
@@ -79,10 +80,10 @@ float EPOS4Slave::getPosTick(){
     return pos_tick;
 }
 
-void EPOS4Slave::logging(int tick, uint32_t actualVel, uint32_t actualPos){
+void EPOS4Slave::logging(float tick, uint32_t actualVel, uint32_t actualPos){
     t1_array.push_back(tick);
     velocity_input_array.push_back(vel_tick / GEAR_RATIO); // [rpm]
-    position_input_array.push_back((pos_tick * 360.0 / PULSE / GEAR_RATIO)); // [deg]
+    position_input_array.push_back((pos[0] / CNT_PER_DEGREE) + (pos_tick * 360.0 / PULSE / GEAR_RATIO)); // [deg]
     velocity_output_array.push_back(actualVel / GEAR_RATIO); // actual velocity 읽을 때 기어비로 나눠줘야 함. 
     position_output_array.push_back(((actualPos * 360.0f) / PULSE) / GEAR_RATIO); // logging pos in degree 
 }

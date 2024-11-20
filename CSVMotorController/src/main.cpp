@@ -217,6 +217,7 @@ uint16_t check_status_word;
 uint16_t control_word = 0;
 uint16_t epos4_error_code = 0;
 uint32_t target_velocity = 0;
+bool is_init = 0;
 bool is_operational = 0;
 bool is_stop = 0;
 bool is_shutdown = 0;
@@ -269,12 +270,14 @@ void cyclic_task_csv()
                 break;
 
             case 0x0027: // operation enabled
-                if(!is_stop && !is_shutdown && !is_terminate){
-                    is_operational = 1;
+                if(!is_init){                    
                     EC_WRITE_U16(domain1_pd + offset_modes_of_operation, 9); // select csv mode
                     EC_WRITE_U32(domain1_pd + offset_min_position_limit, -1000000000); // set min pos limit
                     EC_WRITE_U32(domain1_pd + offset_max_position_limit, 1000000000); // set max pos limit
-                    printf("curr statusword at OP: 0x%X\n", (EC_READ_U16(domain1_pd + offset_status_word)));
+                    motor1.setTrajectoryParam(0.0, 360.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+                    is_operational = 1;
+                    is_init = 1;
+                    
                 } 
                 break;
 
@@ -303,42 +306,23 @@ void cyclic_task_csv()
                     }
                     printf("Homing is done\n");
                 }
-
-                // software position limit error handling
-                if(epos4_error_code == 0x8A82){
-                    EC_WRITE_U32(domain1_pd + offset_min_position_limit, -1000000000); // set min pos limit
-                    EC_WRITE_U32(domain1_pd + offset_max_position_limit, 1000000000); // set max pos limit
-
-                    EC_WRITE_U16(domain1_pd + offset_modes_of_operation, 6); // select homing mode
-                    printf("Homing mode is selected\n");
-
-                    EC_WRITE_U16(domain1_pd + offset_control_word, control_word |= 0x0010);
-
-                    // check if homing is done
-                    while(!(EC_READ_U16(domain1_pd + offset_status_word) & 0xF000)) {
-                        printf("homing..\n");
-                    }
-                    printf("Homing is done\n");
-                }
                 break;
         }
     } 
 
     // apply trajectory and do logging
     if(is_operational){
-        printf("curr statusword at following status: 0x%X\n", (EC_READ_U16(domain1_pd + offset_status_word)));
         // set target velocity by following 5th-poly trajectory
         motor1.setTrajectory(t);
 
         // convert vel_t into [rpm]
         float vel = motor1.getVelTick();
-        vel = ((vel * 60.0) / CNT_PER_REVOLUTION) * 35.0;
 
         // write a target velocity
         EC_WRITE_U32(domain1_pd + offset_target_velocity, vel);
 
         // logging
-        motor1.logging(t, EC_READ_S32(domain1_pd + offset_velocity_actual_value), (float)EC_READ_S32(domain1_pd + offset_position_actual_value));
+        motor1.logging(t, (float)EC_READ_S32(domain1_pd + offset_velocity_actual_value), (float)EC_READ_S32(domain1_pd + offset_position_actual_value));
         t += 0.001; 
         idx++;
     } 
@@ -474,7 +458,9 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
 
-    motor1.setTrajectoryParam(0.0, 360.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+    // uint32_t init_pos = EC_READ_S32(domain1_pd + offset_position_actual_value);
+    // cout << "init_pos: " << init_pos << endl;
+    // motor1.setTrajectoryParam(init_pos, init_pos + 360.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
 
     /* Main Task */
     while (1) 
