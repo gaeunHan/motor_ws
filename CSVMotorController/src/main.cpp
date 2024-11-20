@@ -201,48 +201,15 @@ void check_slave_config_states(void)
     slave_config_state = s;
 }
 /*****************************************************************************/
+// define motor function: logging, cyclic task ..
+// motor object
+#define CNT_PER_REVOLUTION 143360.0 // 1024*4*35
 EPOS4Slave motor1;
+
 // logging vars.
 float t = 0;
 int idx = 0;
-// vector<float> t1_array;
-// vector<float> velocity_input_array;
-// vector<float> position_input_array;
-// vector<float> velocity_output_array;
-// vector<float> position_output_array;
 
-/*****************************************************************************/
-// // trajectory generator
-// #define CNT_PER_DEGREE 398.0 // 1024*4*35/360
-#define CNT_PER_REVOLUTION 143360.0 // 1024*4*35
-// float pos[2] = {0.0, 180.0*CNT_PER_DEGREE};
-// float vel[2] = {0.0, 0.0};
-// float acc[2] = {0.0, 0.0};
-// float moveTime[2] = {0.0, 1.0};
-// float currTime;
-// float pos_t, vel_t, acc_t;
-
-// void getTrajectory(float q0, float q1, float v0, float v1, float a0, float a1, float t0, float t1){
-//     // calc coefficients
-//     float b0, b1, b2, b3, b4, b5;
-//     float T = t1 - t0;
-//     b0 = q0;
-//     b1 = v0;
-//     b2 = 0.5 * a0;
-//     b3 = (1.0 / (2 * T * T * T)) * (20 * (q1 - q0) - (8 * v1 + 12 * v0) * T - (3 * a0 - a1) * T * T);
-//     b4 = (1.0 / (2 * T * T * T * T)) * (-30 * (q1 - q0) + (14 * v1 + 16 * v0) * T + (3 * a0 - 2 * a1) * T * T);
-//     b5 = (1.0 / (2 * T * T * T * T * T)) * (12 * (q1 - q0) - 6 * (v1 + v0) * T + (a1 - a0) * T * T);
-
-//     // pos, vel, acc formula
-//     currTime = t;
-//     float dt = currTime - t0;
-//     pos_t = b0 + b1*dt + b2*pow(dt,2) + b3*pow(dt,3) + b4*pow(dt,4) + b5*pow(dt,5); // [encoder cnt]
-//     vel_t = b1 + 2*b2*dt + 3*b3*pow(dt,2) + 4*b4*pow(dt,3) + 5*b5*pow(dt,4); // [encoder cnt / sec]
-//     acc_t = 2*b2 + 6*b3*dt + 12*b4*pow(dt,2) + 20*b5*pow(dt,3);
-
-// }
-
-/*****************************************************************************/
 // cyclic task vars.
 uint16_t status_word = 0;
 uint16_t prev_status_word = -1;
@@ -302,10 +269,13 @@ void cyclic_task_csv()
                 break;
 
             case 0x0027: // operation enabled
-                is_operational = 1;
-                EC_WRITE_U16(domain1_pd + offset_modes_of_operation, 9); // select csv mode
-                EC_WRITE_U32(domain1_pd + offset_min_position_limit, -1000000000); // set min pos limit
-                EC_WRITE_U32(domain1_pd + offset_max_position_limit, 1000000000); // set max pos limit
+                if(!is_stop && !is_shutdown && !is_terminate){
+                    is_operational = 1;
+                    EC_WRITE_U16(domain1_pd + offset_modes_of_operation, 9); // select csv mode
+                    EC_WRITE_U32(domain1_pd + offset_min_position_limit, -1000000000); // set min pos limit
+                    EC_WRITE_U32(domain1_pd + offset_max_position_limit, 1000000000); // set max pos limit
+                    printf("curr statusword at OP: 0x%X\n", (EC_READ_U16(domain1_pd + offset_status_word)));
+                } 
                 break;
 
             case 0x0008: //fault
@@ -356,8 +326,8 @@ void cyclic_task_csv()
 
     // apply trajectory and do logging
     if(is_operational){
-        // get target velocity by following 5th-poly trajectory
-        // getTrajectory(pos[0], pos[1], vel[0], vel[1], acc[0], acc[1], moveTime[0], moveTime[1]);
+        printf("curr statusword at following status: 0x%X\n", (EC_READ_U16(domain1_pd + offset_status_word)));
+        // set target velocity by following 5th-poly trajectory
         motor1.setTrajectory(t);
 
         // convert vel_t into [rpm]
@@ -368,11 +338,6 @@ void cyclic_task_csv()
         EC_WRITE_U32(domain1_pd + offset_target_velocity, vel);
 
         // logging
-        // t1_array.push_back(t);
-        // velocity_input_array.push_back(vel_t / 35.0); // [rpm]
-        // position_input_array.push_back((pos_t * 360.0 / 4096.0 / 35.0)); // [deg]
-        // velocity_output_array.push_back((EC_READ_S32(domain1_pd + offset_velocity_actual_value))/35.0); // actual velocity 읽을 때 기어비로 나눠줘야 함. 
-        // position_output_array.push_back((((float)EC_READ_S32(domain1_pd + offset_position_actual_value) * 360.0f) / 4096.0f) / 35.0); // logging pos in degree - *(360/4096)하면 0 되어버림
         motor1.logging(t, EC_READ_S32(domain1_pd + offset_velocity_actual_value), (float)EC_READ_S32(domain1_pd + offset_position_actual_value));
         t += 0.001; 
         idx++;
@@ -382,7 +347,8 @@ void cyclic_task_csv()
     if(is_stop){        
         EC_WRITE_U32(domain1_pd + offset_target_velocity, 0);
         if(EC_READ_S32(domain1_pd + offset_velocity_actual_value) == 0){
-            printf("motor is stopped\n");
+            printf("motor is stopped.\n");
+            is_operational = 0;
             is_stop = 0;
             is_shutdown = 1;
         } 
@@ -392,7 +358,8 @@ void cyclic_task_csv()
     if(is_shutdown){
         EC_WRITE_U16(domain1_pd + offset_control_word, 0x0000);
         if(((EC_READ_U16(domain1_pd + offset_status_word)) & 0x0040) == 0x0040){
-            printf("operation enabled -> switch on disabled\n");
+            printf("operation enabled -> switch on disabled.\n");
+            is_operational = 0;
             is_shutdown = 0;
             is_terminate = 1;
         }
@@ -522,8 +489,8 @@ int main(int argc, char **argv)
 
         cyclic_task_csv();
 
-        if((is_operational == 1) && (stopSignal =='q' || idx > N*1000)){
-            printf("\ntask is done.\n");
+        if((is_operational) && (!is_shutdown) && (stopSignal =='q' || idx > N*1000)){
+            printf("\n**task is done.\n");
             is_operational = 0;
             is_stop = 1;
         } 
@@ -535,28 +502,6 @@ int main(int argc, char **argv)
             wakeup_time.tv_sec++;
         }
     }
-
-    // ofstream pos_file("/home/ghan/motor_ws/CSVMotorController/logging/pos01.txt");
-    // ofstream vel_file("/home/ghan/motor_ws/CSVMotorController/logging/vel01.txt");
-
-    // if (pos_file.is_open() && vel_file.is_open()) {
-    //     for (size_t i = 0; i < t1_array.size(); i++) {
-    //         // store position data
-    //         pos_file << t1_array[i] << " " 
-    //                 << position_input_array[i] << " " 
-    //                 << position_output_array[i] << "\n";
-            
-    //         // store velocity data
-    //         vel_file << t1_array[i] << " "
-    //                 << velocity_input_array[i] << " "
-    //                 << velocity_output_array[i] << "\n";
-    //     }
-        
-    //     pos_file.close();
-    //     vel_file.close();
-        
-    //     std::cout << "Values saved to files." << std::endl;
-    // }
 
     motor1.saveData("/home/ghan/motor_ws/CSVMotorController/logging/pos01.txt", "/home/ghan/motor_ws/CSVMotorController/logging/vel01.txt");
 

@@ -96,7 +96,7 @@ void EPOS4Slave::saveData(const string &position_filename, const string &velocit
         vel_file << t1_array[i] << " " << velocity_input_array[i] << " " << velocity_output_array[i] << "\n";
     }
 
-    cout << "values saved to file." << endl;
+    cout << "\n**values saved to file." << endl;
 
     pos_file.close();
     vel_file.close();
