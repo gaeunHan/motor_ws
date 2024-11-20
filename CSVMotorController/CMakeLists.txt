@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(CSPMotorController)
+project(CSVMotorController)
 
 # 컴파일러 설정
 set(CMAKE_CXX_STANDARD 11)

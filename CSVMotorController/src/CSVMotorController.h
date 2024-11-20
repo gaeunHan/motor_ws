@@ -18,10 +18,10 @@ private:
 public:
     EPOS4Slave();
     ~EPOS4Slave();
-    void setTrajectoryParam();
+    void setTrajectoryParam(float pos0, float pos1, float vel0, float vel1, float acc0, float acc1, float t0, float t1);
     void setTrajectory(float tick);
     float getVelTick();
     float getPosTick();
-    void logging(int tick, uint32 actualVel, uint32 actualPos);
+    void logging(int tick, uint32_t actualVel, uint32_t actualPos);
     void saveData(const string &position_filename, const string &velocity_filename);    
 };

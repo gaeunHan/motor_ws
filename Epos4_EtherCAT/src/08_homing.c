@@ -196,6 +196,7 @@ uint16_t status_word = 0;
 uint16_t check_status_word;
 uint16_t control_word = 0;
 uint16_t error_code = 0;
+bool is_done = false;
 
 void cyclic_task_homing(){
     // (마스터가) receive process data
@@ -263,6 +264,7 @@ void cyclic_task_homing(){
                     case 0x1000:
                     case 0x1400:
                         printf("homing is completed successfully\n");
+                        is_done = true;
                         break;
                     case 0x2000:
                     case 0x2400:
@@ -398,8 +400,8 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
 
-    /* homing before terminate */
-    while (1) 
+    /* homing */
+    while (!is_done) 
     {
         ret = clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME,
                 &wakeup_time, NULL);

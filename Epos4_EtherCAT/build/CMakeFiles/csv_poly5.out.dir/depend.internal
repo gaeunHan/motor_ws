@@ -4,4 +4,4 @@
 CMakeFiles/csv_poly5.out.dir/src/09_csv_poly5.c.o
  ../include/ecrt.h
  ../include/motor.h
- /home/ghan/study_ws/epos4_etherCAT/src/09_csv_poly5.c
+ /home/ghan/motor_ws/Epos4_EtherCAT/src/09_csv_poly5.c

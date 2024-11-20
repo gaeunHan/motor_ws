@@ -214,7 +214,7 @@ int idx = 0;
 /*****************************************************************************/
 // // trajectory generator
 // #define CNT_PER_DEGREE 398.0 // 1024*4*35/360
-// #define CNT_PER_REVOLUTION 143360.0 // 1024*4*35
+#define CNT_PER_REVOLUTION 143360.0 // 1024*4*35
 // float pos[2] = {0.0, 180.0*CNT_PER_DEGREE};
 // float vel[2] = {0.0, 0.0};
 // float acc[2] = {0.0, 0.0};
@@ -373,7 +373,7 @@ void cyclic_task_csv()
         // position_input_array.push_back((pos_t * 360.0 / 4096.0 / 35.0)); // [deg]
         // velocity_output_array.push_back((EC_READ_S32(domain1_pd + offset_velocity_actual_value))/35.0); // actual velocity 읽을 때 기어비로 나눠줘야 함. 
         // position_output_array.push_back((((float)EC_READ_S32(domain1_pd + offset_position_actual_value) * 360.0f) / 4096.0f) / 35.0); // logging pos in degree - *(360/4096)하면 0 되어버림
-        motor1.logging();
+        motor1.logging(t, EC_READ_S32(domain1_pd + offset_velocity_actual_value), (float)EC_READ_S32(domain1_pd + offset_position_actual_value));
         t += 0.001; 
         idx++;
     } 
@@ -409,7 +409,7 @@ char stopSignal;
 // working in parallel with cyclic_task()
 void *p_function(void *data){
     // get stop signal
-    printf("Enter 'q' to stop motor");
+    printf("Enter 'q' to stop motor\n");
     scanf("%c", &stopSignal);
 };
 
@@ -476,7 +476,7 @@ int main(int argc, char **argv)
     struct sched_param param = {};
     param.sched_priority = sched_get_priority_max(SCHED_FIFO);
 
-    printf("Using priority %i.", param.sched_priority);
+    printf("Using priority %i.\n", param.sched_priority);
     if (sched_setscheduler(0, SCHED_FIFO, &param) == -1) {
         perror("sched_setscheduler failed");
     }
@@ -506,6 +506,8 @@ int main(int argc, char **argv)
         perror("pthread0 create error");
         exit(EXIT_FAILURE);
     }
+
+    motor1.setTrajectoryParam(0.0, 360.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
 
     /* Main Task */
     while (1) 

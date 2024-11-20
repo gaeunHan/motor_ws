@@ -28,7 +28,7 @@ netinet/in.h
 stdio.h
 -
 
-/home/ghan/study_ws/epos4_etherCAT/src/09_csv_poly5.c
+/home/ghan/motor_ws/Epos4_EtherCAT/src/09_csv_poly5.c
 errno.h
 -
 signal.h
@@ -58,7 +58,7 @@ math.h
 stdbool.h
 -
 ecrt.h
-/home/ghan/study_ws/epos4_etherCAT/src/ecrt.h
+/home/ghan/motor_ws/Epos4_EtherCAT/src/ecrt.h
 motor.h
-/home/ghan/study_ws/epos4_etherCAT/src/motor.h
+/home/ghan/motor_ws/Epos4_EtherCAT/src/motor.h
 

@@ -6,5 +6,5 @@ C_FLAGS =   -std=gnu11
 
 C_DEFINES = 
 
-C_INCLUDES = -I/home/ghan/study_ws/epos4_etherCAT/include -I/home/ghan/study_ws/include 
+C_INCLUDES = -I/home/ghan/motor_ws/Epos4_EtherCAT/include -I/home/ghan/motor_ws/include 
 

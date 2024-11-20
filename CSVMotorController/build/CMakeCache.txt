@@ -145,7 +145,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=CSPMotorController
+CMAKE_PROJECT_NAME:STATIC=CSVMotorController
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/usr/bin/ranlib
@@ -214,6 +214,12 @@ CSPMotorController_BINARY_DIR:STATIC=/home/ghan/motor_ws/CSVMotorController/buil
 
 //Value Computed by CMake
 CSPMotorController_SOURCE_DIR:STATIC=/home/ghan/motor_ws/CSVMotorController
+
+//Value Computed by CMake
+CSVMotorController_BINARY_DIR:STATIC=/home/ghan/motor_ws/CSVMotorController/build
+
+//Value Computed by CMake
+CSVMotorController_SOURCE_DIR:STATIC=/home/ghan/motor_ws/CSVMotorController
 
 
 ########################

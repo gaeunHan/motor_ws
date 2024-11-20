@@ -1,5 +1,7 @@
 #include <iostream>
+#include <vector>
 #include <fstream>
+#include <cmath>
 #include "CSVMotorController.h"
 #include "ecrt.h"
 using namespace std;
@@ -10,7 +12,7 @@ using namespace std;
 #define CNT_PER_DEGREE (CNT_PER_REVOLUTION / 360.0)
 
 // constructor
-EPOS4Slave() {
+EPOS4Slave::EPOS4Slave() {
     pos[0] = 0.0f; pos[1] = 0.0f;
     vel[0] = 0.0f; vel[1] = 0.0f;
     acc[0] = 0.0f; acc[1] = 0.0f;
@@ -28,33 +30,31 @@ EPOS4Slave() {
 }
 
 // deconstructor
-EPOS4Slave::~EPOS4Slave(){
+EPOS4Slave::EPOS4Slave::~EPOS4Slave(){
 
 }
 
 
-void EPOS4Slave::setTrajectoryParam(){
-    std::cout << "Enter pos[0], pos[1]: ";
-    std::cin >> pos[0] >> pos[1];
-    pos[0] *= CNT_PER_DEGREE;
-    pos[1] *= CNT_PER_DEGREE;
+void EPOS4Slave::setTrajectoryParam(float pos0, float pos1, float vel0, float vel1, float acc0, float acc1, float t0, float t1){
+    pos[0] = pos0 * CNT_PER_DEGREE;
+    pos[1] = pos1 * CNT_PER_DEGREE;
 
-    std::cout << std::endl << "Enter vel[0], vel[1]: ";
-    std::cin >> vel[0] >> vel[1];
+    vel[0] = vel0;
+    vel[1] = vel1;
 
-    std::cout << std::endl << "Enter acc[0], acc[1]: ";
-    std::cin >> acc[0] >> acc[1];
+    acc[0] = acc0;
+    acc[1] = acc1;
 
-    std::cout << std::endl << "Enter moveTime[0], moveTime[1]: ";
-    std::cin >> moveTime[0] >> moveTime[1];    
+    moveTime[0] = t0;
+    moveTime[1] = t1;
 
-    std::cout << std::endl << "Trajectory parameters initialized." << std::endl;
+    cout << endl << "Trajectory parameters initialized." << endl;
 }
 
 void EPOS4Slave::setTrajectory(float tick){
     // calc coefficients
     float b0, b1, b2, b3, b4, b5;
-    float T = t1 - t0;
+    float T = moveTime[1] - moveTime[0];
     float q0 = pos[0], q1 = pos[1], v0 = vel[0], v1 = vel[1], a0 = acc[0], a1 = acc[1];
     b0 = q0;
     b1 = v0;
@@ -65,7 +65,7 @@ void EPOS4Slave::setTrajectory(float tick){
 
     // pos, vel, acc formula
     float currTime = tick;
-    float dt = currTime - t0;
+    float dt = currTime - moveTime[0];
     pos_tick = b0 + b1*dt + b2*pow(dt,2) + b3*pow(dt,3) + b4*pow(dt,4) + b5*pow(dt,5); // [encoder cnt]
     vel_tick = b1 + 2*b2*dt + 3*b3*pow(dt,2) + 4*b4*pow(dt,3) + 5*b5*pow(dt,4); // [encoder cnt / sec]
     acc_tick = 2*b2 + 6*b3*dt + 12*b4*pow(dt,2) + 20*b5*pow(dt,3);
@@ -79,7 +79,7 @@ float EPOS4Slave::getPosTick(){
     return pos_tick;
 }
 
-void EPOS4Slave::logging(int tick, uint32 actualVel, uint32 actualPos){
+void EPOS4Slave::logging(int tick, uint32_t actualVel, uint32_t actualPos){
     t1_array.push_back(tick);
     velocity_input_array.push_back(vel_tick / GEAR_RATIO); // [rpm]
     position_input_array.push_back((pos_tick * 360.0 / PULSE / GEAR_RATIO)); // [deg]

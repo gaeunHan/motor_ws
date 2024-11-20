@@ -1,4 +1,4 @@
-# Install script for directory: /home/ghan/study_ws/epos4_etherCAT
+# Install script for directory: /home/ghan/motor_ws/Epos4_EtherCAT
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/ghan/study_ws/epos4_etherCAT/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/ghan/motor_ws/Epos4_EtherCAT/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

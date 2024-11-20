@@ -24,6 +24,12 @@ sys/time.h
 netinet/in.h
 -
 
+/home/ghan/motor_ws/CSVMotorController/src/CSVMotorController.h
+iostream
+-
+vector
+-
+
 /home/ghan/motor_ws/CSVMotorController/src/main.cpp
 errno.h
 -
@@ -65,4 +71,6 @@ string
 -
 ecrt.h
 /home/ghan/motor_ws/CSVMotorController/src/ecrt.h
+CSVMotorController.h
+/home/ghan/motor_ws/CSVMotorController/src/CSVMotorController.h
 

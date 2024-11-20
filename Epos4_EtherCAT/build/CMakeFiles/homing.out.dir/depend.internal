@@ -4,4 +4,4 @@
 CMakeFiles/homing.out.dir/src/08_homing.c.o
  ../include/ecrt.h
  ../include/motor.h
- /home/ghan/study_ws/epos4_etherCAT/src/08_homing.c
+ /home/ghan/motor_ws/Epos4_EtherCAT/src/08_homing.c

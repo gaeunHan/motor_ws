@@ -4,4 +4,4 @@
 CMakeFiles/two_motors_and_logging.out.dir/src/02_two_motors_and_logging.c.o
  ../include/ecrt.h
  ../include/motor.h
- /home/ghan/study_ws/epos4_etherCAT/src/02_two_motors_and_logging.c
+ /home/ghan/motor_ws/Epos4_EtherCAT/src/02_two_motors_and_logging.c

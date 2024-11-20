@@ -4,4 +4,4 @@
 CMakeFiles/sine_sweep_csp.out.dir/src/05_sine_sweep_csp.c.o
  ../include/ecrt.h
  ../include/motor.h
- /home/ghan/study_ws/epos4_etherCAT/src/05_sine_sweep_csp.c
+ /home/ghan/motor_ws/Epos4_EtherCAT/src/05_sine_sweep_csp.c

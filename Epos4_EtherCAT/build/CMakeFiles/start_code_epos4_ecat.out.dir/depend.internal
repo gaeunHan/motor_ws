@@ -4,4 +4,4 @@
 CMakeFiles/start_code_epos4_ecat.out.dir/src/01_start_code_epos4_ecat.c.o
  ../include/ecrt.h
  ../include/motor.h
- /home/ghan/study_ws/epos4_etherCAT/src/01_start_code_epos4_ecat.c
+ /home/ghan/motor_ws/Epos4_EtherCAT/src/01_start_code_epos4_ecat.c
