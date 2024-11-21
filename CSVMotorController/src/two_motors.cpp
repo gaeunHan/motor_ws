@@ -37,6 +37,7 @@ using namespace std;
 /* Constants */
 #define NSEC_PER_SEC (1000000000)
 #define FREQUENCY (NSEC_PER_SEC / PERIOD_NS)
+#define MOTORNUM 2
 
 /****************************************************************************/
 
@@ -61,46 +62,47 @@ static unsigned int counter = 0;
 
 
 // RxPDO (master -> slave) offsets for PDO entries
-static unsigned int offset_control_word;
-static unsigned int offset_target_velocity;
-static unsigned int offset_velocity_offset;
-static unsigned int offset_modes_of_operation;
-static unsigned int offset_digital_outputs;
-static unsigned int offset_min_position_limit;
-static unsigned int offset_max_position_limit;
+static unsigned int offset_control_word[MOTORNUM];
+static unsigned int offset_target_velocity[MOTORNUM];
+static unsigned int offset_velocity_offset[MOTORNUM];
+static unsigned int offset_modes_of_operation[MOTORNUM];
+static unsigned int offset_digital_outputs[MOTORNUM];
+static unsigned int offset_min_position_limit[MOTORNUM];
+static unsigned int offset_max_position_limit[MOTORNUM];
     
 
 // TxPDO (slave -> master) offsets for PDO entries 
-static unsigned int offset_status_word;
-static unsigned int offset_position_actual_value;
-static unsigned int offset_velocity_actual_value;
-static unsigned int offset_torque_actual_value;
-static unsigned int offset_modes_of_operation_display;
-static unsigned int offset_digital_inputs;
-static unsigned int offset_epos4_error_code;
+static unsigned int offset_status_word[MOTORNUM];
+static unsigned int offset_position_actual_value[MOTORNUM];
+static unsigned int offset_velocity_actual_value[MOTORNUM];
+static unsigned int offset_torque_actual_value[MOTORNUM];
+static unsigned int offset_modes_of_operation_display[MOTORNUM];
+static unsigned int offset_digital_inputs[MOTORNUM];
+static unsigned int offset_epos4_error_code[MOTORNUM];
     
 
 // MDP Module CSV
-const static ec_pdo_entry_reg_t domain1_regs[] = 
-{
+ec_pdo_entry_reg_t* domain1_regs = malloc(sizeof(ec_pdo_entry_reg_t) * MOTORNUM * 7);
+int mem_idx = 0;
+for (int i = 0; i < MOTORNUM; i++) {
     // RxPDO
-    {0,0, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word},
-    {0,0, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity},
-    {0,0, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset},
-    {0,0, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation},
-    {0,0, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs},
-    {0,0, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit},
-    {0,0, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit},
+    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[i]};
+    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[i]};
+    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[i]};
+    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[i]};
+    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[i]};
+    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[i]},
+    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[i]},
 
     // TxPDO
-    {0,0, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word},
-    {0,0, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value},
-    {0,0, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value},
-    {0,0, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value},
-    {0,0, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display},
-    {0,0, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs},
-    {0,0, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code}
-};
+    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[i]};
+    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[i]};
+    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[i]};
+    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[i]};
+    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[i]};
+    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[i]};
+    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[i]};
+}
 
 
 /**************************** MDP module CSV mapping ****************************/
@@ -204,24 +206,21 @@ void check_slave_config_states(void)
 // define motor function: logging, cyclic task ..
 // motor object
 #define CNT_PER_REVOLUTION 143360.0 // 1024*4*35
-EPOS4Slave motor1;
+EPOS4Slave motor[MOTORNUM];
 
 // logging vars.
 float t = 0;
 int idx = 0;
 
 // cyclic task vars.
-uint16_t status_word = 0;
-uint16_t prev_status_word = -1;
-uint16_t check_status_word;
-uint16_t control_word = 0;
-uint16_t epos4_error_code = 0;
-uint32_t target_velocity = 0;
-bool is_init = 0;
-bool is_operational = 0;
-bool is_stop = 0;
-bool is_shutdown = 0;
-bool is_terminate = 0;
+uint16_t status_word[MOTORNUM] = 0;
+uint16_t control_word[MOTORNUM] = 0;
+uint32_t target_velocity[MOTORNUM] = 0;
+bool is_init[MOTORNUM] = 0;
+bool is_operational[MOTORNUM] = 0;
+bool is_stop[MOTORNUM] = 0;
+bool is_shutdown[MOTORNUM] = 0;
+bool is_terminate[MOTORNUM] = 0;
 int N = 1;
 
 // 1ms period
@@ -249,103 +248,146 @@ void cyclic_task_csv()
         check_slave_config_states(); // ecrt_slave_config_state()
 
         // get statusword
-        status_word = EC_READ_U16(domain1_pd + offset_status_word);
+        for(int i=0; i<MOTORNUM; i++){
+            status_word[i] = EC_READ_U16(domain1_pd + offset_status_word[i]);
+        }        
         
-        // write process data   
-        check_status_word = status_word & 0x006F; // check 0,1,2,3,5,6th bit only
-        switch(check_status_word){
+        // write process data on the first slave
+        switch(status_word[0] & 0x006F)
+        { 
             case 0x0040: // switch on disabled
-                EC_WRITE_U16(domain1_pd + offset_control_word, 0x0006);
+                EC_WRITE_U16(domain1_pd + offset_control_word[0], 0x0006);
                 printf("switch on disabled -> ready to switch on\n");
                 break;
 
             case 0x0021: // ready to switch on
-                EC_WRITE_U16(domain1_pd + offset_control_word, 0x0007);
+                EC_WRITE_U16(domain1_pd + offset_control_word[0], 0x0007);
                 printf("ready to switch on -> switched on\n");
                 break;
 
             case 0x0023: // switched on
-                EC_WRITE_U16(domain1_pd + offset_control_word, 0x000F);
+                EC_WRITE_U16(domain1_pd + offset_control_word[0], 0x000F);
                 printf("switched on -> operation enabled\n");
                 break;
 
             case 0x0027: // operation enabled
-                if(!is_init){                    
-                    EC_WRITE_U16(domain1_pd + offset_modes_of_operation, 9); // select csv mode
-                    EC_WRITE_U32(domain1_pd + offset_min_position_limit, -1000000000); // set min pos limit
-                    EC_WRITE_U32(domain1_pd + offset_max_position_limit, 1000000000); // set max pos limit
+                if(!is_init[0]){                    
+                    EC_WRITE_U16(domain1_pd + offset_modes_of_operation[0], 9); // select csv mode
+                    EC_WRITE_U32(domain1_pd + offset_min_position_limit[0], -1000000000); // set min pos limit
+                    EC_WRITE_U32(domain1_pd + offset_max_position_limit[0], 1000000000); // set max pos limit
                     motor1.setTrajectoryParam(0.0, 360.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
-                    is_operational = 1;
-                    is_init = 1;
-                    
+                    is_operational[0] = 1;
+                    is_init[0] = 1;                    
                 } 
                 break;
 
             case 0x0008: //fault
                 // read error code
-                epos4_error_code = EC_READ_U16(domain1_pd + offset_epos4_error_code);
-                printf("Fault, error code is: 0x%04X\n", epos4_error_code);
+                printf("Fault, error code: 0x%04X\n", EC_READ_U16(domain1_pd + offset_epos4_error_code[0]));
 
                 // get controlword
-                control_word = EC_READ_U16(domain1_pd + offset_control_word);
+                control_word[0] = EC_READ_U16(domain1_pd + offset_control_word[0]);
 
                 // fault reset
-                control_word |= 0x0080; 
-                EC_WRITE_U16(domain1_pd + offset_control_word, control_word);
+                control_word[0] |= 0x0080; 
+                EC_WRITE_U16(domain1_pd + offset_control_word[0], control_word[0]);
+                break;
+        }
 
-                // following error handling
-                if((epos4_error_code & 0xFFFF) == 0x8611){
-                    EC_WRITE_U16(domain1_pd + offset_modes_of_operation, 6); // select homing mode
-                    printf("Homing mode is selected\n");
+        // write process data on the second slave
+        switch(status_word[1] & 0x006F)
+        { 
+            case 0x0040: // switch on disabled
+                EC_WRITE_U16(domain1_pd + offset_control_word[1], 0x0006);
+                printf("switch on disabled -> ready to switch on\n");
+                break;
 
-                    EC_WRITE_U16(domain1_pd + offset_control_word, control_word |= 0x0010);
+            case 0x0021: // ready to switch on
+                EC_WRITE_U16(domain1_pd + offset_control_word[1], 0x0007);
+                printf("ready to switch on -> switched on\n");
+                break;
 
-                    // check if homing is done
-                    while(!(EC_READ_U16(domain1_pd + offset_status_word) & 0xF000)) {
-                        printf("homing..\n");
-                    }
-                    printf("Homing is done\n");
-                }
+            case 0x0023: // switched on
+                EC_WRITE_U16(domain1_pd + offset_control_word[1], 0x000F);
+                printf("switched on -> operation enabled\n");
+                break;
+
+            case 0x0027: // operation enabled
+                if(!is_init[1]){                    
+                    EC_WRITE_U16(domain1_pd + offset_modes_of_operation[1], 9); // select csv mode
+                    EC_WRITE_U32(domain1_pd + offset_min_position_limit[1], -1000000000); // set min pos limit
+                    EC_WRITE_U32(domain1_pd + offset_max_position_limit[1], 1000000000); // set max pos limit
+                    motor2.setTrajectoryParam(0.0, 180.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+                    is_operational[1] = 1;
+                    is_init[1] = 1;                    
+                } 
+                break;
+
+            case 0x0008: //fault
+                // read error code
+                printf("Fault, error code: 0x%04X\n", EC_READ_U16(domain1_pd + offset_epos4_error_code[1]));
+
+                // get controlword
+                control_word[1] = EC_READ_U16(domain1_pd + offset_control_word[1]);
+
+                // fault reset
+                control_word[1] |= 0x0080; 
+                EC_WRITE_U16(domain1_pd + offset_control_word[1], control_word[1]);
                 break;
         }
     } 
 
     // apply trajectory and do logging
-    if(is_operational){
+    if(is_operational[0] * is_operational[1]){
         // set target velocity by following 5th-poly trajectory
         motor1.setTrajectory(t);
-
-        // convert vel_t into [rpm]
-        float vel = motor1.getVelTick();
+        motor2.setTrajectory(t);
 
         // write a target velocity
-        EC_WRITE_U32(domain1_pd + offset_target_velocity, vel);
+        EC_WRITE_U32(domain1_pd + offset_target_velocity[0], motor1.getVelTick());
+        EC_WRITE_U32(domain1_pd + offset_target_velocity[1], motor2.getVelTick());
 
         // logging
-        motor1.logging(t, (float)EC_READ_S32(domain1_pd + offset_velocity_actual_value), (float)EC_READ_S32(domain1_pd + offset_position_actual_value));
+        motor1.logging(t, (float)EC_READ_S32(domain1_pd + offset_velocity_actual_value[0]), (float)EC_READ_S32(domain1_pd + offset_position_actual_value[0]));
+        motor2.logging(t, (float)EC_READ_S32(domain1_pd + offset_velocity_actual_value[1]), (float)EC_READ_S32(domain1_pd + offset_position_actual_value[1]));
+
         t += 0.001; 
         idx++;
     } 
 
     // stop the motor
-    if(is_stop){        
-        EC_WRITE_U32(domain1_pd + offset_target_velocity, 0);
-        if(EC_READ_S32(domain1_pd + offset_velocity_actual_value) == 0){
-            printf("motor is stopped.\n");
-            is_operational = 0;
-            is_stop = 0;
-            is_shutdown = 1;
+    if(is_stop[0] * is_stop[1]){        
+        EC_WRITE_U32(domain1_pd + offset_target_velocity[0], 0);
+        if(EC_READ_S32(domain1_pd + offset_velocity_actual_value[0]) == 0){
+            printf("motor1 is stopped.\n");
+            is_operational[0] = 0;
+            is_stop[0] = 0;
+            is_shutdown[0] = 1;
+        } 
+        EC_WRITE_U32(domain1_pd + offset_target_velocity[1], 0);
+        if(EC_READ_S32(domain1_pd + offset_velocity_actual_value[1]) == 0){
+            printf("motor2 is stopped.\n");
+            is_operational[1] = 0;
+            is_stop[1] = 0;
+            is_shutdown[1] = 1;
         } 
     }
 
     // init the motor controller: switch on disabled
-    if(is_shutdown){
-        EC_WRITE_U16(domain1_pd + offset_control_word, 0x0000);
-        if(((EC_READ_U16(domain1_pd + offset_status_word)) & 0x0040) == 0x0040){
-            printf("operation enabled -> switch on disabled.\n");
-            is_operational = 0;
-            is_shutdown = 0;
-            is_terminate = 1;
+    if(is_shutdown[0] * is_shutdown[1]){
+        EC_WRITE_U16(domain1_pd + offset_control_word[0], 0x0000);
+        if(((EC_READ_U16(domain1_pd + offset_status_word[0])) & 0x0040) == 0x0040){
+            printf("Motor1 operation enabled -> switch on disabled.\n");
+            is_operational[0] = 0;
+            is_shutdown[0] = 0;
+            is_terminate[0] = 1;
+        }
+        EC_WRITE_U16(domain1_pd + offset_control_word[1], 0x0000);
+        if(((EC_READ_U16(domain1_pd + offset_status_word[1])) & 0x0040) == 0x0040){
+            printf("Motor1 operation enabled -> switch on disabled.\n");
+            is_operational[1] = 0;
+            is_shutdown[1] = 0;
+            is_terminate[1] = 1;
         }
     }
 
@@ -458,10 +500,6 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
 
-    // uint32_t init_pos = EC_READ_S32(domain1_pd + offset_position_actual_value);
-    // cout << "init_pos: " << init_pos << endl;
-    // motor1.setTrajectoryParam(init_pos, init_pos + 360.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
-
     /* Main Task */
     while (1) 
     {
@@ -475,12 +513,14 @@ int main(int argc, char **argv)
 
         cyclic_task_csv();
 
-        if((is_operational) && (!is_shutdown) && (stopSignal =='q' || idx > N*1000)){
+        if((is_operational[0] * is_operational[1]) && (!is_shutdown[0] * !is_shutdown[1]) && (stopSignal =='q' || idx > N*1000)){
             printf("\n**task is done.\n");
-            is_operational = 0;
-            is_stop = 1;
+            is_operational[0] = 0;
+            is_operational[1] = 0;
+            is_stop[0] = 1;
+            is_stop[1] = 1;
         } 
-        if(is_terminate == 1) break;
+        if(is_terminate[0] * is_terminate[1] == 1) break;
 
         wakeup_time.tv_nsec += PERIOD_NS;
         while (wakeup_time.tv_nsec >= NSEC_PER_SEC) {
@@ -489,7 +529,10 @@ int main(int argc, char **argv)
         }
     }
 
-    motor1.saveData("/home/ghan/motor_ws/CSVMotorController/logging/pos01.txt", "/home/ghan/motor_ws/CSVMotorController/logging/vel01.txt");
+    motor1.saveData("/home/ghan/motor_ws/CSVMotorController/logging/pos_motor1_01.txt", "/home/ghan/motor_ws/CSVMotorController/logging/vel_motor1_01.txt");
+    motor2.saveData("/home/ghan/motor_ws/CSVMotorController/logging/pos_motor2_01.txt", "/home/ghan/motor_ws/CSVMotorController/logging/vel_motor2_01.txt")
+
+    free(domain1_regs);
 
     return ret;
 }
