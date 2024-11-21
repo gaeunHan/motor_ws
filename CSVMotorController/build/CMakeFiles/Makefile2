@@ -53,6 +53,7 @@ CMAKE_BINARY_DIR = /home/ghan/motor_ws/CSVMotorController/build
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
+all: CMakeFiles/TwoController.dir/all
 all: CMakeFiles/CSVMotorController.dir/all
 
 .PHONY : all
@@ -63,9 +64,37 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
+clean: CMakeFiles/TwoController.dir/clean
 clean: CMakeFiles/CSVMotorController.dir/clean
 
 .PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/TwoController.dir
+
+# All Build rule for target.
+CMakeFiles/TwoController.dir/all:
+	$(MAKE) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/depend
+	$(MAKE) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ghan/motor_ws/CSVMotorController/build/CMakeFiles --progress-num=4,5,6 "Built target TwoController"
+.PHONY : CMakeFiles/TwoController.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/TwoController.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ghan/motor_ws/CSVMotorController/build/CMakeFiles 3
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/TwoController.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ghan/motor_ws/CSVMotorController/build/CMakeFiles 0
+.PHONY : CMakeFiles/TwoController.dir/rule
+
+# Convenience name for target.
+TwoController: CMakeFiles/TwoController.dir/rule
+
+.PHONY : TwoController
+
+# clean rule for target.
+CMakeFiles/TwoController.dir/clean:
+	$(MAKE) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/clean
+.PHONY : CMakeFiles/TwoController.dir/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/CSVMotorController.dir

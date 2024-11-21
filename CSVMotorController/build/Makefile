@@ -111,6 +111,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named TwoController
+
+# Build rule for target.
+TwoController: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 TwoController
+.PHONY : TwoController
+
+# fast build rule for target.
+TwoController/fast:
+	$(MAKE) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/build
+.PHONY : TwoController/fast
+
+#=============================================================================
 # Target rules for targets named CSVMotorController
 
 # Build rule for target.
@@ -129,6 +142,7 @@ src/CSVMotorController.o: src/CSVMotorController.cpp.o
 
 # target to build an object file
 src/CSVMotorController.cpp.o:
+	$(MAKE) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/src/CSVMotorController.cpp.o
 	$(MAKE) -f CMakeFiles/CSVMotorController.dir/build.make CMakeFiles/CSVMotorController.dir/src/CSVMotorController.cpp.o
 .PHONY : src/CSVMotorController.cpp.o
 
@@ -138,6 +152,7 @@ src/CSVMotorController.i: src/CSVMotorController.cpp.i
 
 # target to preprocess a source file
 src/CSVMotorController.cpp.i:
+	$(MAKE) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/src/CSVMotorController.cpp.i
 	$(MAKE) -f CMakeFiles/CSVMotorController.dir/build.make CMakeFiles/CSVMotorController.dir/src/CSVMotorController.cpp.i
 .PHONY : src/CSVMotorController.cpp.i
 
@@ -147,6 +162,7 @@ src/CSVMotorController.s: src/CSVMotorController.cpp.s
 
 # target to generate assembly for a file
 src/CSVMotorController.cpp.s:
+	$(MAKE) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/src/CSVMotorController.cpp.s
 	$(MAKE) -f CMakeFiles/CSVMotorController.dir/build.make CMakeFiles/CSVMotorController.dir/src/CSVMotorController.cpp.s
 .PHONY : src/CSVMotorController.cpp.s
 
@@ -177,6 +193,33 @@ src/main.cpp.s:
 	$(MAKE) -f CMakeFiles/CSVMotorController.dir/build.make CMakeFiles/CSVMotorController.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/two_motors.o: src/two_motors.cpp.o
+
+.PHONY : src/two_motors.o
+
+# target to build an object file
+src/two_motors.cpp.o:
+	$(MAKE) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/src/two_motors.cpp.o
+.PHONY : src/two_motors.cpp.o
+
+src/two_motors.i: src/two_motors.cpp.i
+
+.PHONY : src/two_motors.i
+
+# target to preprocess a source file
+src/two_motors.cpp.i:
+	$(MAKE) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/src/two_motors.cpp.i
+.PHONY : src/two_motors.cpp.i
+
+src/two_motors.s: src/two_motors.cpp.s
+
+.PHONY : src/two_motors.s
+
+# target to generate assembly for a file
+src/two_motors.cpp.s:
+	$(MAKE) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/src/two_motors.cpp.s
+.PHONY : src/two_motors.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -185,6 +228,7 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
+	@echo "... TwoController"
 	@echo "... CSVMotorController"
 	@echo "... src/CSVMotorController.o"
 	@echo "... src/CSVMotorController.i"
@@ -192,6 +236,9 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/two_motors.o"
+	@echo "... src/two_motors.i"
+	@echo "... src/two_motors.s"
 .PHONY : help
 
 

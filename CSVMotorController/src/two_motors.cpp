@@ -60,7 +60,6 @@ static uint8_t *domain1_pd = NULL;
 
 static unsigned int counter = 0;
 
-
 // RxPDO (master -> slave) offsets for PDO entries
 static unsigned int offset_control_word[MOTORNUM];
 static unsigned int offset_target_velocity[MOTORNUM];
@@ -80,29 +79,45 @@ static unsigned int offset_modes_of_operation_display[MOTORNUM];
 static unsigned int offset_digital_inputs[MOTORNUM];
 static unsigned int offset_epos4_error_code[MOTORNUM];
     
-
 // MDP Module CSV
-ec_pdo_entry_reg_t* domain1_regs = malloc(sizeof(ec_pdo_entry_reg_t) * MOTORNUM * 7);
-int mem_idx = 0;
-for (int i = 0; i < MOTORNUM; i++) {
+const static ec_pdo_entry_reg_t domain1_regs[] = 
+{
     // RxPDO
-    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[i]};
-    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[i]};
-    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[i]};
-    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[i]};
-    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[i]};
-    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[i]},
-    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[i]},
+    {0,0, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[0]},
+    {0,0, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[0]},
+    {0,0, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[0]},
+    {0,0, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[0]},
+    {0,0, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[0]},
+    {0,0, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[0]},
+    {0,0, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[0]},
 
     // TxPDO
-    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[i]};
-    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[i]};
-    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[i]};
-    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[i]};
-    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[i]};
-    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[i]};
-    domain1_regs[mem_idx++] = (ec_pdo_entry_reg_t){0, i, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[i]};
-}
+    {0,0, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[0]},
+    {0,0, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[0]},
+    {0,0, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[0]},
+    {0,0, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[0]},
+    {0,0, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[0]},
+    {0,0, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[0]},
+    {0,0, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[0]},
+
+    // RxPDO
+    {0,1, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[1]},
+    {0,1, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[1]},
+    {0,1, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[1]},
+    {0,1, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[1]},
+    {0,1, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[1]},
+    {0,1, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[1]},
+    {0,1, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[1]},
+
+    // TxPDO
+    {0,1, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[1]},
+    {0,1, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[1]},
+    {0,1, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[1]},
+    {0,1, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[1]},
+    {0,1, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[1]},
+    {0,1, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[1]},
+    {0,1, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[1]}
+};
 
 
 /**************************** MDP module CSV mapping ****************************/
@@ -213,14 +228,14 @@ float t = 0;
 int idx = 0;
 
 // cyclic task vars.
-uint16_t status_word[MOTORNUM] = 0;
-uint16_t control_word[MOTORNUM] = 0;
-uint32_t target_velocity[MOTORNUM] = 0;
-bool is_init[MOTORNUM] = 0;
-bool is_operational[MOTORNUM] = 0;
-bool is_stop[MOTORNUM] = 0;
-bool is_shutdown[MOTORNUM] = 0;
-bool is_terminate[MOTORNUM] = 0;
+uint16_t status_word[MOTORNUM] = {0, };
+uint16_t control_word[MOTORNUM] = {0, };
+uint32_t target_velocity[MOTORNUM] = {0, };
+bool is_init[MOTORNUM] = {0, };
+bool is_operational[MOTORNUM] = {0, };
+bool is_stop[MOTORNUM] = {0, };
+bool is_shutdown[MOTORNUM] = {0, };
+bool is_terminate[MOTORNUM] = {0, };
 int N = 1;
 
 // 1ms period
@@ -275,7 +290,7 @@ void cyclic_task_csv()
                     EC_WRITE_U16(domain1_pd + offset_modes_of_operation[0], 9); // select csv mode
                     EC_WRITE_U32(domain1_pd + offset_min_position_limit[0], -1000000000); // set min pos limit
                     EC_WRITE_U32(domain1_pd + offset_max_position_limit[0], 1000000000); // set max pos limit
-                    motor1.setTrajectoryParam(0.0, 360.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+                    motor[0].setTrajectoryParam(0.0, 360.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
                     is_operational[0] = 1;
                     is_init[0] = 1;                    
                 } 
@@ -317,7 +332,7 @@ void cyclic_task_csv()
                     EC_WRITE_U16(domain1_pd + offset_modes_of_operation[1], 9); // select csv mode
                     EC_WRITE_U32(domain1_pd + offset_min_position_limit[1], -1000000000); // set min pos limit
                     EC_WRITE_U32(domain1_pd + offset_max_position_limit[1], 1000000000); // set max pos limit
-                    motor2.setTrajectoryParam(0.0, 180.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+                    motor[1].setTrajectoryParam(0.0, 180.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
                     is_operational[1] = 1;
                     is_init[1] = 1;                    
                 } 
@@ -340,16 +355,16 @@ void cyclic_task_csv()
     // apply trajectory and do logging
     if(is_operational[0] * is_operational[1]){
         // set target velocity by following 5th-poly trajectory
-        motor1.setTrajectory(t);
-        motor2.setTrajectory(t);
+        motor[0].setTrajectory(t);
+        motor[1].setTrajectory(t);
 
         // write a target velocity
-        EC_WRITE_U32(domain1_pd + offset_target_velocity[0], motor1.getVelTick());
-        EC_WRITE_U32(domain1_pd + offset_target_velocity[1], motor2.getVelTick());
+        EC_WRITE_U32(domain1_pd + offset_target_velocity[0], motor[0].getVelTick());
+        EC_WRITE_U32(domain1_pd + offset_target_velocity[1], motor[1].getVelTick());
 
         // logging
-        motor1.logging(t, (float)EC_READ_S32(domain1_pd + offset_velocity_actual_value[0]), (float)EC_READ_S32(domain1_pd + offset_position_actual_value[0]));
-        motor2.logging(t, (float)EC_READ_S32(domain1_pd + offset_velocity_actual_value[1]), (float)EC_READ_S32(domain1_pd + offset_position_actual_value[1]));
+        motor[0].logging(t, (float)EC_READ_S32(domain1_pd + offset_velocity_actual_value[0]), (float)EC_READ_S32(domain1_pd + offset_position_actual_value[0]));
+        motor[1].logging(t, (float)EC_READ_S32(domain1_pd + offset_velocity_actual_value[1]), (float)EC_READ_S32(domain1_pd + offset_position_actual_value[1]));
 
         t += 0.001; 
         idx++;
@@ -359,14 +374,14 @@ void cyclic_task_csv()
     if(is_stop[0] * is_stop[1]){        
         EC_WRITE_U32(domain1_pd + offset_target_velocity[0], 0);
         if(EC_READ_S32(domain1_pd + offset_velocity_actual_value[0]) == 0){
-            printf("motor1 is stopped.\n");
+            printf("motor[0] is stopped.\n");
             is_operational[0] = 0;
             is_stop[0] = 0;
             is_shutdown[0] = 1;
         } 
         EC_WRITE_U32(domain1_pd + offset_target_velocity[1], 0);
         if(EC_READ_S32(domain1_pd + offset_velocity_actual_value[1]) == 0){
-            printf("motor2 is stopped.\n");
+            printf("motor[1] is stopped.\n");
             is_operational[1] = 0;
             is_stop[1] = 0;
             is_shutdown[1] = 1;
@@ -377,14 +392,14 @@ void cyclic_task_csv()
     if(is_shutdown[0] * is_shutdown[1]){
         EC_WRITE_U16(domain1_pd + offset_control_word[0], 0x0000);
         if(((EC_READ_U16(domain1_pd + offset_status_word[0])) & 0x0040) == 0x0040){
-            printf("Motor1 operation enabled -> switch on disabled.\n");
+            printf("motor[0] operation enabled -> switch on disabled.\n");
             is_operational[0] = 0;
             is_shutdown[0] = 0;
             is_terminate[0] = 1;
         }
         EC_WRITE_U16(domain1_pd + offset_control_word[1], 0x0000);
         if(((EC_READ_U16(domain1_pd + offset_status_word[1])) & 0x0040) == 0x0040){
-            printf("Motor1 operation enabled -> switch on disabled.\n");
+            printf("motor[0] operation enabled -> switch on disabled.\n");
             is_operational[1] = 0;
             is_shutdown[1] = 0;
             is_terminate[1] = 1;
@@ -436,12 +451,25 @@ int main(int argc, char **argv)
         return -1;
     }
 
+    // slave 1
     if (!(slave_config = ecrt_master_slave_config(master, 0, 0, MAXON_EPOS4_5A))) 
     {
-        fprintf(stderr, "Failed to get slave configuration.\n");
+        fprintf(stderr, "Failed to get slave 1 configuration.\n");
+        return -1;
+    }
+    printf("Configuring PDOs...\n");
+    if (ecrt_slave_config_pdos(slave_config, EC_END, maxon_epos4_syncs_csv)) 
+    {
+        fprintf(stderr, "Failed to configure PDOs.\n");
         return -1;
     }
 
+    // slave 2
+    if (!(slave_config = ecrt_master_slave_config(master, 0, 1, MAXON_EPOS4_5A))) 
+    {
+        fprintf(stderr, "Failed to get slave 2 configuration.\n");
+        return -1;
+    }
     printf("Configuring PDOs...\n");
     if (ecrt_slave_config_pdos(slave_config, EC_END, maxon_epos4_syncs_csv)) 
     {
@@ -529,10 +557,8 @@ int main(int argc, char **argv)
         }
     }
 
-    motor1.saveData("/home/ghan/motor_ws/CSVMotorController/logging/pos_motor1_01.txt", "/home/ghan/motor_ws/CSVMotorController/logging/vel_motor1_01.txt");
-    motor2.saveData("/home/ghan/motor_ws/CSVMotorController/logging/pos_motor2_01.txt", "/home/ghan/motor_ws/CSVMotorController/logging/vel_motor2_01.txt")
-
-    free(domain1_regs);
+    motor[0].saveData("/home/ghan/motor_ws/CSVMotorController/logging/pos_motor[0]_01.txt", "/home/ghan/motor_ws/CSVMotorController/logging/vel_motor[0]_01.txt");
+    motor[1].saveData("/home/ghan/motor_ws/CSVMotorController/logging/pos_motor[1]_01.txt", "/home/ghan/motor_ws/CSVMotorController/logging/vel_motor[1]_01.txt");
 
     return ret;
 }
