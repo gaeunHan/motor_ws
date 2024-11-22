@@ -203,8 +203,7 @@ void check_slave_config_states(void)
 /*****************************************************************************/
 // define motor function: logging, cyclic task ..
 // motor object
-#define CNT_PER_REVOLUTION 143360.0 // 1024*4*35
-EPOS4Slave motor1;
+EPOS4Slave motor1(1024.0, 35.0);
 
 // logging vars.
 float t = 0;

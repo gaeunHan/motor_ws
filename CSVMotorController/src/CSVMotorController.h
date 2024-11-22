@@ -4,6 +4,12 @@ using namespace std;
 
 class EPOS4Slave{
 private:
+    /* motor vars.  */
+    float PULSE;
+    float GEAR_RATIO;
+    float CNT_PER_REVOLUTION;
+    float CNT_PER_DEGREE; 
+
     /* trajectory variables */
     float pos[2], vel[2], acc[2], moveTime[2];
     float pos_tick, vel_tick, acc_tick;

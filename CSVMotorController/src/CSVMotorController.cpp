@@ -6,13 +6,11 @@
 #include "ecrt.h"
 using namespace std;
 
-#define PULSE (1024.0 * 4.0)
-#define GEAR_RATIO 35.0
-#define CNT_PER_REVOLUTION (PULSE * GEAR_RATIO)
-#define CNT_PER_DEGREE (CNT_PER_REVOLUTION / 360.0)
-
 // constructor
-EPOS4Slave::EPOS4Slave() {
+EPOS4Slave::EPOS4Slave()(float pulse, float gear_ratio) : PULSE(pulse * 4.0), GEAR_RATIO(gear_ratio),
+                                                        CNT_PER_REVOLUTION(pulse * gear_ratio),
+                                                        CNT_PER_DEGREE((pulse * gear_ratio) / 360.0f) 
+{
     pos[0] = 0.0f; pos[1] = 0.0f;
     vel[0] = 0.0f; vel[1] = 0.0f;
     acc[0] = 0.0f; acc[1] = 0.0f;
