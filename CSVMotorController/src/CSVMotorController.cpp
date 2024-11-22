@@ -78,6 +78,10 @@ float EPOS4Slave::getPosTick(){
     return pos_tick;
 }
 
+float EPOS4Slave::getMoveTime(){
+    return moveTime[1] - moveTime[0];
+}
+
 void EPOS4Slave::logging(float tick, uint32_t actualVel, uint32_t actualPos){
     t1_array.push_back(tick);
     velocity_input_array.push_back(vel_tick / GEAR_RATIO); // [rpm]

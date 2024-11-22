@@ -28,6 +28,7 @@ public:
     void setTrajectory(float tick);
     float getVelTick();
     float getPosTick();
+    float getMoveTime();
     void logging(float tick, uint32_t actualVel, uint32_t actualPos);
     void saveData(const string &position_filename, const string &velocity_filename);    
 };
