@@ -28,6 +28,7 @@ using namespace std;
 #define NSEC_PER_SEC (1000000000)
 #define FREQUENCY (NSEC_PER_SEC / PERIOD_NS)
 #define MAXON_EPOS4_5A 0x000000fb, 0x61500000 // Product Number 확인 필요(ESI file)
+#define TARGET_NUM 2
 
 /****************************************************************************/
 // EtherCAT
@@ -189,10 +190,17 @@ void check_slave_config_states(void)
 // motor object
 EPOS4Slave motor1(1024.0, 35.0);
 
+// trajectories
+float trajectories[TARGET_NUM][8] = {
+    {0.0, 360.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
+    {360.0, 360.0 + 180.0, 0.0, 0.0, 0.0, 0.0, 1.0, 3.0}
+};
+int targetIdx = 0;
+
 // logging vars.
 float t = 0;
 int idx = 0;
-float command_time;
+float command_time = 0.0;
 
 // cyclic task vars.
 uint16_t status_word = 0;
@@ -206,6 +214,7 @@ bool is_operational = 0;
 bool is_stop = 0;
 bool is_shutdown = 0;
 bool is_terminate = 0;
+bool is_new_command = 1;
 int N = 1;
 
 // 1ms period
@@ -258,12 +267,15 @@ void cyclic_task_csv()
                     EC_WRITE_U16(domain1_pd + offset_modes_of_operation, 9); // select csv mode
                     EC_WRITE_U32(domain1_pd + offset_min_position_limit, -1000000000); // set min pos limit
                     EC_WRITE_U32(domain1_pd + offset_max_position_limit, 1000000000); // set max pos limit
-                    motor1.setTrajectoryParam(0.0, 360.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
-                    command_time = motor1.getMoveTime();
-                    is_operational = 1;
-                    is_init = 1;
                     
+                    is_operational = 1;
+                    is_init = 1;                   
                 } 
+                if(is_new_command){
+                    motor1.setTrajectoryParam(trajectories[targetIdx][0], trajectories[targetIdx][1], trajectories[targetIdx][2], trajectories[targetIdx][3], trajectories[targetIdx][4], trajectories[targetIdx][5], trajectories[targetIdx][6], trajectories[targetIdx][7]);
+                    command_time = command_time + motor1.getMoveTime();
+                    is_new_command = 0;
+                }
                 break;
 
             case 0x0008: //fault
@@ -302,6 +314,7 @@ void cyclic_task_csv()
 
         // convert vel_t into [rpm]
         float vel = motor1.getVelTick();
+        cout << "pos_tick: " << motor1.getPosTick()/ ((1024.0 * 35.0) / 360.0f) << endl;
 
         // write a target velocity
         EC_WRITE_U32(domain1_pd + offset_target_velocity, vel);
@@ -457,23 +470,27 @@ int main(int argc, char **argv)
         cyclic_task_csv();
 
         if(stopSignal == 'q'){
+            printf("@@ Emergency Stop @@\n");
             is_stop = 1;
             is_operational = 0;
         }
 
+        if(is_terminate == 1){
+            printf("Terminate the program. Bye~ \n");
+            break;
+        }
 
-        if((is_operational) && (!is_shutdown) && (idx > command_time*1000)){
-            printf("\n**task is done.\n");
-
-            // set new trajectory
-            float start_pos, end_pos, start_vel, end_vel, start_acc, end_acc, start_time, end_time;
-            cout << "\n--Enter a new target: ";
-            cin >> start_pos >> end_pos >> start_vel >> end_vel >> start_acc >> end_acc >> start_time >> end_time;
-            motor1.setTrajectoryParam(start_pos, end_pos, start_vel, end_vel, start_acc, end_acc, start_time, end_time);
-            command_time += motor1.getMoveTime();
-        } 
-
-        if(is_terminate == 1) break;
+        if((is_operational) && (!is_shutdown) && (targetIdx < TARGET_NUM) && (idx > command_time*1000)){
+            printf("idx: %d / command_time: %f\n", idx, command_time);
+            printf("**targetIdx %d task is done.\n", targetIdx);
+            targetIdx++;
+            if(targetIdx >= TARGET_NUM){
+                printf("\nAll the targets are finished\n");
+                is_operational = 0;
+                is_stop = 1;
+            }
+            else is_new_command = 1;
+        }         
 
         wakeup_time.tv_nsec += PERIOD_NS;
         while (wakeup_time.tv_nsec >= NSEC_PER_SEC) {
@@ -482,7 +499,7 @@ int main(int argc, char **argv)
         }
     }
 
-    motor1.saveData("/home/ghan/motor_ws/CSVMotorController/logging/pos01.txt", "/home/ghan/motor_ws/CSVMotorController/logging/vel01.txt");
+    motor1.saveData("/home/robogram/motor_ws/CSVMotorController/logging/pos02.txt", "/home/robogram/motor_ws/CSVMotorController/logging/vel02.txt");
 
     return ret;
 }

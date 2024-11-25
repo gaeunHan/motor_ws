@@ -7,7 +7,7 @@
 using namespace std;
 
 // constructor
-EPOS4Slave::EPOS4Slave(float pulse, float gear_ratio) : PULSE(pulse * 4.0), GEAR_RATIO(gear_ratio),
+EPOS4Slave::EPOS4Slave(float pulse, float gear_ratio) : PULSE(pulse), GEAR_RATIO(gear_ratio),
                                                         CNT_PER_REVOLUTION(pulse * gear_ratio),
                                                         CNT_PER_DEGREE((pulse * gear_ratio) / 360.0f) 
 {
@@ -85,9 +85,9 @@ float EPOS4Slave::getMoveTime(){
 void EPOS4Slave::logging(float tick, uint32_t actualVel, uint32_t actualPos){
     t1_array.push_back(tick);
     velocity_input_array.push_back(vel_tick / GEAR_RATIO); // [rpm]
-    position_input_array.push_back((pos[0] / CNT_PER_DEGREE) + (pos_tick * 360.0 / PULSE / GEAR_RATIO)); // [deg]
+    position_input_array.push_back(pos_tick * 360.0 / PULSE / GEAR_RATIO); // [deg]
     velocity_output_array.push_back(actualVel / GEAR_RATIO); // actual velocity 읽을 때 기어비로 나눠줘야 함. 
-    position_output_array.push_back(((actualPos * 360.0f) / PULSE) / GEAR_RATIO); // logging pos in degree 
+    position_output_array.push_back(((actualPos * 360.0f) / (PULSE * 4)) / GEAR_RATIO); // logging pos in degree 
 }
 
 void EPOS4Slave::saveData(const string &position_filename, const string &velocity_filename) {
