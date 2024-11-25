@@ -10,13 +10,18 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 # Library directory
 link_directories(/opt/etherlab/lib)
 
-# 첫 번째 실행 파일: CSVMotorController
+# executable file 1: CSVMotorController
 set(CSV_SOURCES src/CSVMotorController.cpp src/main.cpp)
 add_executable(CSVMotorController ${CSV_SOURCES})
 target_link_libraries(CSVMotorController ethercat)
 
-# 두 번째 실행 파일: TwoController
+# executable file 2: TwoController
 set(TWO_SOURCES src/CSVMotorController.cpp src/two_motors.cpp)
 add_executable(TwoController ${TWO_SOURCES})
 target_link_libraries(TwoController ethercat)
+
+# executable file 3: MultipleTarget
+set(MULTIPLE_SOURCE src/CSVMotorController.cpp src/multiple_target.cpp)
+add_executable(MultipleTarget ${MULTIPLE_SOURCE})
+target_link_libraries(MultipleTarget ethercat)
 

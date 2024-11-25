@@ -7,7 +7,7 @@
 using namespace std;
 
 // constructor
-EPOS4Slave::EPOS4Slave()(float pulse, float gear_ratio) : PULSE(pulse * 4.0), GEAR_RATIO(gear_ratio),
+EPOS4Slave::EPOS4Slave(float pulse, float gear_ratio) : PULSE(pulse * 4.0), GEAR_RATIO(gear_ratio),
                                                         CNT_PER_REVOLUTION(pulse * gear_ratio),
                                                         CNT_PER_DEGREE((pulse * gear_ratio) / 360.0f) 
 {

@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/CSVMotorController.dir/src/CSVMotorController.cpp.o"
+  "CMakeFiles/CSVMotorController.dir/src/CSVMotorController.cpp.o.d"
   "CMakeFiles/CSVMotorController.dir/src/main.cpp.o"
+  "CMakeFiles/CSVMotorController.dir/src/main.cpp.o.d"
   "CSVMotorController"
   "CSVMotorController.pdb"
 )

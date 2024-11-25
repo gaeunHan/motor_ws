@@ -22,7 +22,7 @@ private:
     vector<float> position_output_array;
 
 public:
-    EPOS4Slave();
+    EPOS4Slave(float pulse, float gear_ratio);
     ~EPOS4Slave();
     void setTrajectoryParam(float pos0, float pos1, float vel0, float vel1, float acc0, float acc1, float t0, float t1);
     void setTrajectory(float tick);

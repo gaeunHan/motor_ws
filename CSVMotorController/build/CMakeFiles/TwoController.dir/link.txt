@@ -1,1 +1,1 @@
-/usr/bin/c++     CMakeFiles/TwoController.dir/src/CSVMotorController.cpp.o CMakeFiles/TwoController.dir/src/two_motors.cpp.o  -o TwoController   -L/opt/etherlab/lib  -Wl,-rpath,/opt/etherlab/lib -lethercat 
+/usr/bin/c++ CMakeFiles/TwoController.dir/src/CSVMotorController.cpp.o CMakeFiles/TwoController.dir/src/two_motors.cpp.o -o TwoController   -L/opt/etherlab/lib  -Wl,-rpath,/opt/etherlab/lib -lethercat 
