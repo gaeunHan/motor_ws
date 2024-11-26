@@ -25,3 +25,7 @@ set(MULTIPLE_SOURCE src/CSVMotorController.cpp src/multiple_target.cpp)
 add_executable(MultipleTarget ${MULTIPLE_SOURCE})
 target_link_libraries(MultipleTarget ethercat)
 
+# executable file 4: Robot1DOF
+set(ROBOT_SOURCE src/CSVMotorController.cpp src/robot_1DOF.cpp)
+add_executable(Robot1DOF ${ROBOT_SOURCE})
+target_link_libraries(Robot1DOF ethercat)
