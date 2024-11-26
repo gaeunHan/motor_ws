@@ -28,7 +28,7 @@ using namespace std;
 #define NSEC_PER_SEC (1000000000)
 #define FREQUENCY (NSEC_PER_SEC / PERIOD_NS)
 #define MAXON_EPOS4_5A 0x000000fb, 0x61500000 // Product Number 확인 필요(ESI file)
-#define TARGET_NUM 3
+#define TARGET_NUM 5
 
 /****************************************************************************/
 // EtherCAT
@@ -194,7 +194,9 @@ EPOS4Slave motor1(1024.0, 35.0);
 float trajectories[TARGET_NUM][8] = {
     {0.0, 360.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
     {360.0, 360.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
-    {360.0, 360.0 + 180.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0}
+    {360.0, 360.0 + 180.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
+    {540.0, 540.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
+    {540.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
 };
 int targetIdx = 0;
 
