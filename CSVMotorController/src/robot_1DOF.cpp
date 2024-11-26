@@ -229,12 +229,12 @@ float trajectories[MOTORNUM][TARGET_NUM][8] = {
         {540.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
     }
 };
-int targetIdx[MOTORNUM] = 0;
+int targetIdx[MOTORNUM] = {0, };
 
 // logging vars.
 float t = 0;
 int idx = 0;
-float command_time[MOTORNUM] = 0.0;
+float command_time[MOTORNUM] = {0.0, };
 
 // cyclic task vars.
 uint16_t status_word[MOTORNUM] = {0, };
