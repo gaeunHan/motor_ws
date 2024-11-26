@@ -27,7 +27,7 @@ using namespace std;
 #define MAX_SAFE_STACK (8 * 1024) /* The maximum stack size which is guranteed safe to access without faulting */
 #define NSEC_PER_SEC (1000000000)
 #define FREQUENCY (NSEC_PER_SEC / PERIOD_NS)
-#define MAXON_EPOS4_5A 0x000000fb, 0x61500000 // Product Number 확인 필요(ESI file)
+#define MAXON_EPOS4_5A 0x000000fb, 0x60500000 // Product Number 확인 필요(ESI file)
 #define TARGET_NUM 5
 #define MOTORNUM 8
 
@@ -108,111 +108,111 @@ const static ec_pdo_entry_reg_t domain1_regs[] =
 
     /* Motor 3 */
     // RxPDO
-    {0,1, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[2]},
-    {0,1, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[2]},
-    {0,1, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[2]},
-    {0,1, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[2]},
-    {0,1, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[2]},
-    {0,1, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[2]},
-    {0,1, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[2]},
+    {0,2, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[2]},
+    {0,2, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[2]},
+    {0,2, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[2]},
+    {0,2, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[2]},
+    {0,2, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[2]},
+    {0,2, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[2]},
+    {0,2, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[2]},
     // TxPDO
-    {0,1, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[2]},
-    {0,1, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[2]},
-    {0,1, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[2]},
-    {0,1, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[2]},
-    {0,1, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[2]},
-    {0,1, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[2]},
-    {0,1, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[2]},
+    {0,2, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[2]},
+    {0,2, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[2]},
+    {0,2, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[2]},
+    {0,2, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[2]},
+    {0,2, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[2]},
+    {0,2, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[2]},
+    {0,2, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[2]},
 
     /* Motor 4 */
     // RxPDO
-    {0,1, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[3]},
-    {0,1, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[3]},
-    {0,1, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[3]},
-    {0,1, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[3]},
-    {0,1, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[3]},
-    {0,1, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[3]},
-    {0,1, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[3]},
+    {0,3, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[3]},
+    {0,3, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[3]},
+    {0,3, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[3]},
+    {0,3, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[3]},
+    {0,3, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[3]},
+    {0,3, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[3]},
+    {0,3, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[3]},
     // TxPDO
-    {0,1, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[3]},
-    {0,1, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[3]},
-    {0,1, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[3]},
-    {0,1, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[3]},
-    {0,1, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[3]},
-    {0,1, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[3]},
-    {0,1, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[3]},
+    {0,3, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[3]},
+    {0,3, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[3]},
+    {0,3, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[3]},
+    {0,3, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[3]},
+    {0,3, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[3]},
+    {0,3, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[3]},
+    {0,3, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[3]},
 
     /* Motor 5 */
     // RxPDO
-    {0,1, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[4]},
-    {0,1, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[4]},
-    {0,1, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[4]},
-    {0,1, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[4]},
-    {0,1, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[4]},
-    {0,1, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[4]},
-    {0,1, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[4]},
+    {0,4, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[4]},
+    {0,4, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[4]},
+    {0,4, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[4]},
+    {0,4, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[4]},
+    {0,4, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[4]},
+    {0,4, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[4]},
+    {0,4, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[4]},
     // TxPDO
-    {0,1, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[4]},
-    {0,1, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[4]},
-    {0,1, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[4]},
-    {0,1, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[4]},
-    {0,1, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[4]},
-    {0,1, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[4]},
-    {0,1, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[4]},
+    {0,4, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[4]},
+    {0,4, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[4]},
+    {0,4, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[4]},
+    {0,4, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[4]},
+    {0,4, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[4]},
+    {0,4, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[4]},
+    {0,4, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[4]},
 
     /* Motor 6 */
     // RxPDO
-    {0,1, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[5]},
-    {0,1, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[5]},
-    {0,1, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[5]},
-    {0,1, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[5]},
-    {0,1, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[5]},
-    {0,1, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[5]},
-    {0,1, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[5]},
+    {0,5, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[5]},
+    {0,5, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[5]},
+    {0,5, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[5]},
+    {0,5, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[5]},
+    {0,5, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[5]},
+    {0,5, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[5]},
+    {0,5, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[5]},
     // TxPDO
-    {0,1, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[5]},
-    {0,1, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[5]},
-    {0,1, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[5]},
-    {0,1, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[5]},
-    {0,1, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[5]},
-    {0,1, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[5]},
-    {0,1, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[5]},
+    {0,5, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[5]},
+    {0,5, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[5]},
+    {0,5, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[5]},
+    {0,5, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[5]},
+    {0,5, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[5]},
+    {0,5, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[5]},
+    {0,5, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[5]},
 
     /* Motor 7 */
     // RxPDO
-    {0,1, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[6]},
-    {0,1, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[6]},
-    {0,1, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[6]},
-    {0,1, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[6]},
-    {0,1, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[6]},
-    {0,1, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[6]},
-    {0,1, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[6]},
+    {0,6, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[6]},
+    {0,6, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[6]},
+    {0,6, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[6]},
+    {0,6, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[6]},
+    {0,6, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[6]},
+    {0,6, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[6]},
+    {0,6, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[6]},
     // TxPDO
-    {0,1, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[6]},
-    {0,1, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[6]},
-    {0,1, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[6]},
-    {0,1, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[6]},
-    {0,1, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[6]},
-    {0,1, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[6]},
-    {0,1, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[6]},
+    {0,6, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[6]},
+    {0,6, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[6]},
+    {0,6, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[6]},
+    {0,6, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[6]},
+    {0,6, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[6]},
+    {0,6, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[6]},
+    {0,6, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[6]},
 
-    /* Motor 9 */
+    /* Motor 8 */
     // RxPDO
-    {0,1, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[7]},
-    {0,1, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[7]},
-    {0,1, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[7]},
-    {0,1, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[7]},
-    {0,1, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[7]},
-    {0,1, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[7]},
-    {0,1, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[7]},
+    {0,7, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[7]},
+    {0,7, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[7]},
+    {0,7, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[7]},
+    {0,7, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[7]},
+    {0,7, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[7]},
+    {0,7, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[7]},
+    {0,7, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[7]},
     // TxPDO
-    {0,1, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[7]},
-    {0,1, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[7]},
-    {0,1, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[7]},
-    {0,1, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[7]},
-    {0,1, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[7]},
-    {0,1, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[7]},
-    {0,1, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[7]}
+    {0,7, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[7]},
+    {0,7, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[7]},
+    {0,7, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[7]},
+    {0,7, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[7]},
+    {0,7, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[7]},
+    {0,7, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[7]},
+    {0,7, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[7]}
 };
 
 
@@ -325,67 +325,67 @@ EPOS4Slave motor[MOTORNUM] = {
 float trajectories[MOTORNUM][TARGET_NUM][8] = {
     // trajectory for Motor 1
     { 
-        {0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
-        {10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
-        {10.0, 20.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
-        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
-        {20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
+        {0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
+        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
+        {20.0, 40.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
+        {40.0, 40.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
+        {40.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
     },
     // trajectory for Motor 2
     { 
-        {0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
-        {10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
-        {10.0, 20.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
-        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
-        {20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
+        {0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
+        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
+        {20.0, 40.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
+        {40.0, 40.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
+        {40.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
     },
     // trajectory for Motor 3
     { 
-        {0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
-        {10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
-        {10.0, 20.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
-        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
-        {20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
+        {0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
+        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
+        {20.0, 40.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
+        {40.0, 40.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
+        {40.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
     },
     // trajectory for Motor 4
     { 
-        {0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
-        {10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
-        {10.0, 20.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
-        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
-        {20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
+        {0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
+        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
+        {20.0, 40.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
+        {40.0, 40.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
+        {40.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
     },
     // trajectory for Motor 5
     { 
-        {0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
-        {10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
-        {10.0, 20.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
-        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
-        {20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
+        {0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
+        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
+        {20.0, 40.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
+        {40.0, 40.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
+        {40.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
     },
     // trajectory for Motor 6
     { 
-        {0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
-        {10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
-        {10.0, 20.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
-        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
-        {20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
+        {0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
+        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
+        {20.0, 40.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
+        {40.0, 40.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
+        {40.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
     },
     // trajectory for Motor 7
     { 
-        {0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
-        {10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
-        {10.0, 20.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
-        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
-        {20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
+        {0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
+        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
+        {20.0, 40.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
+        {40.0, 40.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
+        {40.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
     },
     // trajectory for Motor 8
     { 
-        {0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
-        {10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
-        {10.0, 20.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
-        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
-        {20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
+        {0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
+        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
+        {20.0, 40.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
+        {40.0, 40.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
+        {40.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
     }
 };
 int targetIdx[MOTORNUM] = {0, };
@@ -1114,7 +1114,6 @@ int main(int argc, char **argv)
         fprintf(stderr, "Failed to configure PDOs.\n");
         return -1;
     }
-
     // slave 2
     if (!(slave_config = ecrt_master_slave_config(master, 0, 1, MAXON_EPOS4_5A))) 
     {
@@ -1122,6 +1121,78 @@ int main(int argc, char **argv)
         return -1;
     }
     printf("Configuring PDOs of Slave 2...\n");
+    if (ecrt_slave_config_pdos(slave_config, EC_END, maxon_epos4_syncs_csv)) 
+    {
+        fprintf(stderr, "Failed to configure PDOs.\n");
+        return -1;
+    }
+    // slave 3
+    if (!(slave_config = ecrt_master_slave_config(master, 0, 2, MAXON_EPOS4_5A))) 
+    {
+        fprintf(stderr, "Failed to get slave 3 configuration.\n");
+        return -1;
+    }
+    printf("Configuring PDOs of Slave 3...\n");
+    if (ecrt_slave_config_pdos(slave_config, EC_END, maxon_epos4_syncs_csv)) 
+    {
+        fprintf(stderr, "Failed to configure PDOs.\n");
+        return -1;
+    }
+    // slave 4
+    if (!(slave_config = ecrt_master_slave_config(master, 0, 3, MAXON_EPOS4_5A))) 
+    {
+        fprintf(stderr, "Failed to get slave 4 configuration.\n");
+        return -1;
+    }
+    printf("Configuring PDOs of Slave 4...\n");
+    if (ecrt_slave_config_pdos(slave_config, EC_END, maxon_epos4_syncs_csv)) 
+    {
+        fprintf(stderr, "Failed to configure PDOs.\n");
+        return -1;
+    }
+    // slave 5
+    if (!(slave_config = ecrt_master_slave_config(master, 0, 4, MAXON_EPOS4_5A))) 
+    {
+        fprintf(stderr, "Failed to get slave 5 configuration.\n");
+        return -1;
+    }
+    printf("Configuring PDOs of Slave 5...\n");
+    if (ecrt_slave_config_pdos(slave_config, EC_END, maxon_epos4_syncs_csv)) 
+    {
+        fprintf(stderr, "Failed to configure PDOs.\n");
+        return -1;
+    }
+    // slave 6
+    if (!(slave_config = ecrt_master_slave_config(master, 0, 5, MAXON_EPOS4_5A))) 
+    {
+        fprintf(stderr, "Failed to get slave 6 configuration.\n");
+        return -1;
+    }
+    printf("Configuring PDOs of Slave 6...\n");
+    if (ecrt_slave_config_pdos(slave_config, EC_END, maxon_epos4_syncs_csv)) 
+    {
+        fprintf(stderr, "Failed to configure PDOs.\n");
+        return -1;
+    }
+    // slave 7
+    if (!(slave_config = ecrt_master_slave_config(master, 0, 6, MAXON_EPOS4_5A))) 
+    {
+        fprintf(stderr, "Failed to get slave 7 configuration.\n");
+        return -1;
+    }
+    printf("Configuring PDOs of Slave 7...\n");
+    if (ecrt_slave_config_pdos(slave_config, EC_END, maxon_epos4_syncs_csv)) 
+    {
+        fprintf(stderr, "Failed to configure PDOs.\n");
+        return -1;
+    }
+    // slave 8
+    if (!(slave_config = ecrt_master_slave_config(master, 0, 7, MAXON_EPOS4_5A))) 
+    {
+        fprintf(stderr, "Failed to get slave 8 configuration.\n");
+        return -1;
+    }
+    printf("Configuring PDOs of Slave 8...\n");
     if (ecrt_slave_config_pdos(slave_config, EC_END, maxon_epos4_syncs_csv)) 
     {
         fprintf(stderr, "Failed to configure PDOs.\n");
