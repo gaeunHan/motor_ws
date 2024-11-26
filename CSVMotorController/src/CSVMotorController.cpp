@@ -45,8 +45,6 @@ void EPOS4Slave::setTrajectoryParam(float pos0, float pos1, float vel0, float ve
 
     moveTime[0] = t0;
     moveTime[1] = t1;
-
-    cout << endl << "Trajectory parameters initialized." << endl;
 }
 
 void EPOS4Slave::setTrajectory(float tick){
