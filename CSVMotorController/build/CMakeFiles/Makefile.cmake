@@ -46,4 +46,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/CSVMotorController.dir/DependInfo.cmake"
   "CMakeFiles/TwoController.dir/DependInfo.cmake"
   "CMakeFiles/MultipleTarget.dir/DependInfo.cmake"
+  "CMakeFiles/Robot1DOF.dir/DependInfo.cmake"
   )

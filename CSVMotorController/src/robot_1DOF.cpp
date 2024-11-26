@@ -216,7 +216,7 @@ float trajectories[MOTORNUM][TARGET_NUM][8] = {
     { 
         {0.0, 360.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
         {360.0, 360.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
-        {360.0, 360.0 + 180.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
+        {360.0, 540.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
         {540.0, 540.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
         {540.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
     },
@@ -246,7 +246,7 @@ bool is_operational[MOTORNUM] = {0, };
 bool is_stop[MOTORNUM] = {0, };
 bool is_shutdown[MOTORNUM] = {0, };
 bool is_terminate[MOTORNUM] = {0, };
-bool is_new_command[MOTORNUM] = {1, };
+bool is_new_command[MOTORNUM] = {1, 1};
 
 // 1ms period
 void cyclic_task_csv()
@@ -280,18 +280,24 @@ void cyclic_task_csv()
         // write process data on Motor 1
         switch(status_word[0] & 0x006F){   // check 0,1,2,3,5,6th bit only
             case 0x0040: // switch on disabled
-                EC_WRITE_U16(domain1_pd + offset_control_word[0], 0x0006);
-                printf("Motor 1: switch on disabled -> ready to switch on\n");
+                if(!is_init[0]){
+                    EC_WRITE_U16(domain1_pd + offset_control_word[0], 0x0006);
+                    printf("Motor 1: switch on disabled -> ready to switch on\n");
+                }   
                 break;
 
             case 0x0021: // ready to switch on
-                EC_WRITE_U16(domain1_pd + offset_control_word[0], 0x0007);
-                printf("Motor 1: ready to switch on -> switched on\n");
+                if(!is_init[0]){
+                    EC_WRITE_U16(domain1_pd + offset_control_word[0], 0x0007);
+                    printf("Motor 1: ready to switch on -> switched on\n");
+                }
                 break;
 
             case 0x0023: // switched on
-                EC_WRITE_U16(domain1_pd + offset_control_word[0], 0x000F);
-                printf("Motor 1: switched on -> operation enabled\n");
+                if(!is_init[0]){
+                    EC_WRITE_U16(domain1_pd + offset_control_word[0], 0x000F);
+                    printf("Motor 1: switched on -> operation enabled\n");
+                }
                 break;
 
             case 0x0027: // operation enabled
@@ -317,24 +323,31 @@ void cyclic_task_csv()
                 // fault reset
                 control_word[0] |= 0x0080; 
                 EC_WRITE_U16(domain1_pd + offset_control_word[0], control_word[0]);
+                is_init[0] = 0;
                 break;
         }
 
         // write process data on Motor 2
         switch(status_word[1] & 0x006F){   // check 0,1,2,3,5,6th bit only
             case 0x0040: // switch on disabled
-                EC_WRITE_U16(domain1_pd + offset_control_word[1], 0x0006);
-                printf("Motor 2: switch on disabled -> ready to switch on\n");
+                if(!is_init[1]){ 
+                    EC_WRITE_U16(domain1_pd + offset_control_word[1], 0x0006);
+                    printf("Motor 2: switch on disabled -> ready to switch on\n");
+                }
                 break;
 
             case 0x0021: // ready to switch on
-                EC_WRITE_U16(domain1_pd + offset_control_word[1], 0x0007);
-                printf("Motor 2: ready to switch on -> switched on\n");
+                if(!is_init[1]){ 
+                    EC_WRITE_U16(domain1_pd + offset_control_word[1], 0x0007);
+                    printf("Motor 2: ready to switch on -> switched on\n");
+                }
                 break;
 
             case 0x0023: // switched on
-                EC_WRITE_U16(domain1_pd + offset_control_word[1], 0x000F);
-                printf("Motor 2: switched on -> operation enabled\n");
+                if(!is_init[1]){ 
+                    EC_WRITE_U16(domain1_pd + offset_control_word[1], 0x000F);
+                    printf("Motor 2: switched on -> operation enabled\n");
+                }
                 break;
 
             case 0x0027: // operation enabled
@@ -360,19 +373,20 @@ void cyclic_task_csv()
                 // fault reset
                 control_word[1] |= 0x0080; 
                 EC_WRITE_U16(domain1_pd + offset_control_word[1], control_word[1]);
+                is_init[1] = 0;  
                 break;
         }
     } 
 
     // set new trajectory
     if(is_new_command[0]){
-        motor[0].setTrajectoryParam(trajectories[0][targetIdx][0], trajectories[0][targetIdx][1], trajectories[0][targetIdx][2], trajectories[0][targetIdx][3], trajectories[0][targetIdx][4], trajectories[0][targetIdx][5], trajectories[0][targetIdx][6], trajectories[0][targetIdx][7]);
+        motor[0].setTrajectoryParam(trajectories[0][targetIdx[0]][0], trajectories[0][targetIdx[0]][1], trajectories[0][targetIdx[0]][2], trajectories[0][targetIdx[0]][3], trajectories[0][targetIdx[0]][4], trajectories[0][targetIdx[0]][5], trajectories[0][targetIdx[0]][6], trajectories[0][targetIdx[0]][7]);
         command_time[0] = command_time[0] + motor[0].getMoveTime();
         is_new_command[0] = 0;
         cout << endl << "Motor 1: Trajectory parameters initialized." << endl;
     }
     if(is_new_command[1]){
-        motor[1].setTrajectoryParam(trajectories[1][targetIdx][1], trajectories[1][targetIdx][1], trajectories[1][targetIdx][2], trajectories[1][targetIdx][3], trajectories[1][targetIdx][4], trajectories[1][targetIdx][5], trajectories[1][targetIdx][6], trajectories[1][targetIdx][7]);
+        motor[1].setTrajectoryParam(trajectories[1][targetIdx[1]][0], trajectories[1][targetIdx[1]][1], trajectories[1][targetIdx[1]][2], trajectories[1][targetIdx[1]][3], trajectories[1][targetIdx[1]][4], trajectories[1][targetIdx[1]][5], trajectories[1][targetIdx[1]][6], trajectories[1][targetIdx[1]][7]);
         command_time[1] = command_time[1] + motor[1].getMoveTime();
         is_new_command[1] = 0;
         cout << endl << "Motor 2: Trajectory parameters initialized." << endl;
@@ -485,7 +499,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "Failed to get slave 1 configuration.\n");
         return -1;
     }
-    printf("Configuring PDOs...\n");
+    printf("Configuring PDOs of Slave 1...\n");
     if (ecrt_slave_config_pdos(slave_config, EC_END, maxon_epos4_syncs_csv)) 
     {
         fprintf(stderr, "Failed to configure PDOs.\n");
@@ -498,7 +512,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "Failed to get slave 2 configuration.\n");
         return -1;
     }
-    printf("Configuring PDOs...\n");
+    printf("Configuring PDOs of Slave 2...\n");
     if (ecrt_slave_config_pdos(slave_config, EC_END, maxon_epos4_syncs_csv)) 
     {
         fprintf(stderr, "Failed to configure PDOs.\n");
@@ -617,7 +631,7 @@ int main(int argc, char **argv)
     }
 
     motor[0].saveData("/home/robogram/motor_ws/CSVMotorController/logging/M1_pos01.txt", "/home/robogram/motor_ws/CSVMotorController/logging/M1_vel01.txt");
-    motor[1].saveData("/home/robogram/motor_ws/CSVMotorController/logging/M1_pos01.txt", "/home/robogram/motor_ws/CSVMotorController/logging/M1_vel01.txt");
+    motor[1].saveData("/home/robogram/motor_ws/CSVMotorController/logging/M2_pos01.txt", "/home/robogram/motor_ws/CSVMotorController/logging/M2_vel01.txt");
 
     return ret;
 }

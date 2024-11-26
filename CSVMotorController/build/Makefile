@@ -155,6 +155,19 @@ MultipleTarget/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultipleTarget.dir/build.make CMakeFiles/MultipleTarget.dir/build
 .PHONY : MultipleTarget/fast
 
+#=============================================================================
+# Target rules for targets named Robot1DOF
+
+# Build rule for target.
+Robot1DOF: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Robot1DOF
+.PHONY : Robot1DOF
+
+# fast build rule for target.
+Robot1DOF/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Robot1DOF.dir/build.make CMakeFiles/Robot1DOF.dir/build
+.PHONY : Robot1DOF/fast
+
 src/CSVMotorController.o: src/CSVMotorController.cpp.o
 .PHONY : src/CSVMotorController.o
 
@@ -163,6 +176,7 @@ src/CSVMotorController.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CSVMotorController.dir/build.make CMakeFiles/CSVMotorController.dir/src/CSVMotorController.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/src/CSVMotorController.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultipleTarget.dir/build.make CMakeFiles/MultipleTarget.dir/src/CSVMotorController.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Robot1DOF.dir/build.make CMakeFiles/Robot1DOF.dir/src/CSVMotorController.cpp.o
 .PHONY : src/CSVMotorController.cpp.o
 
 src/CSVMotorController.i: src/CSVMotorController.cpp.i
@@ -173,6 +187,7 @@ src/CSVMotorController.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CSVMotorController.dir/build.make CMakeFiles/CSVMotorController.dir/src/CSVMotorController.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/src/CSVMotorController.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultipleTarget.dir/build.make CMakeFiles/MultipleTarget.dir/src/CSVMotorController.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Robot1DOF.dir/build.make CMakeFiles/Robot1DOF.dir/src/CSVMotorController.cpp.i
 .PHONY : src/CSVMotorController.cpp.i
 
 src/CSVMotorController.s: src/CSVMotorController.cpp.s
@@ -183,6 +198,7 @@ src/CSVMotorController.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CSVMotorController.dir/build.make CMakeFiles/CSVMotorController.dir/src/CSVMotorController.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/src/CSVMotorController.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultipleTarget.dir/build.make CMakeFiles/MultipleTarget.dir/src/CSVMotorController.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Robot1DOF.dir/build.make CMakeFiles/Robot1DOF.dir/src/CSVMotorController.cpp.s
 .PHONY : src/CSVMotorController.cpp.s
 
 src/main.o: src/main.cpp.o
@@ -233,6 +249,30 @@ src/multiple_target.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultipleTarget.dir/build.make CMakeFiles/MultipleTarget.dir/src/multiple_target.cpp.s
 .PHONY : src/multiple_target.cpp.s
 
+src/robot_1DOF.o: src/robot_1DOF.cpp.o
+.PHONY : src/robot_1DOF.o
+
+# target to build an object file
+src/robot_1DOF.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Robot1DOF.dir/build.make CMakeFiles/Robot1DOF.dir/src/robot_1DOF.cpp.o
+.PHONY : src/robot_1DOF.cpp.o
+
+src/robot_1DOF.i: src/robot_1DOF.cpp.i
+.PHONY : src/robot_1DOF.i
+
+# target to preprocess a source file
+src/robot_1DOF.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Robot1DOF.dir/build.make CMakeFiles/Robot1DOF.dir/src/robot_1DOF.cpp.i
+.PHONY : src/robot_1DOF.cpp.i
+
+src/robot_1DOF.s: src/robot_1DOF.cpp.s
+.PHONY : src/robot_1DOF.s
+
+# target to generate assembly for a file
+src/robot_1DOF.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Robot1DOF.dir/build.make CMakeFiles/Robot1DOF.dir/src/robot_1DOF.cpp.s
+.PHONY : src/robot_1DOF.cpp.s
+
 src/two_motors.o: src/two_motors.cpp.o
 .PHONY : src/two_motors.o
 
@@ -267,6 +307,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... CSVMotorController"
 	@echo "... MultipleTarget"
+	@echo "... Robot1DOF"
 	@echo "... TwoController"
 	@echo "... src/CSVMotorController.o"
 	@echo "... src/CSVMotorController.i"
@@ -277,6 +318,9 @@ help:
 	@echo "... src/multiple_target.o"
 	@echo "... src/multiple_target.i"
 	@echo "... src/multiple_target.s"
+	@echo "... src/robot_1DOF.o"
+	@echo "... src/robot_1DOF.i"
+	@echo "... src/robot_1DOF.s"
 	@echo "... src/two_motors.o"
 	@echo "... src/two_motors.i"
 	@echo "... src/two_motors.s"
