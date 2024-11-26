@@ -29,7 +29,7 @@ using namespace std;
 #define FREQUENCY (NSEC_PER_SEC / PERIOD_NS)
 #define MAXON_EPOS4_5A 0x000000fb, 0x61500000 // Product Number 확인 필요(ESI file)
 #define TARGET_NUM 5
-#define MOTORNUM 2
+#define MOTORNUM 8
 
 /****************************************************************************/
 // EtherCAT
@@ -70,6 +70,7 @@ static unsigned int offset_epos4_error_code[MOTORNUM];
 // MDP Module CSV
 const static ec_pdo_entry_reg_t domain1_regs[] = 
 {
+    /* Motor 1 */
     // RxPDO
     {0,0, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[0]},
     {0,0, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[0]},
@@ -78,7 +79,6 @@ const static ec_pdo_entry_reg_t domain1_regs[] =
     {0,0, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[0]},
     {0,0, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[0]},
     {0,0, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[0]},
-
     // TxPDO
     {0,0, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[0]},
     {0,0, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[0]},
@@ -88,6 +88,7 @@ const static ec_pdo_entry_reg_t domain1_regs[] =
     {0,0, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[0]},
     {0,0, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[0]},
 
+    /* Motor 2 */
     // RxPDO
     {0,1, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[1]},
     {0,1, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[1]},
@@ -96,7 +97,6 @@ const static ec_pdo_entry_reg_t domain1_regs[] =
     {0,1, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[1]},
     {0,1, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[1]},
     {0,1, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[1]},
-
     // TxPDO
     {0,1, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[1]},
     {0,1, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[1]},
@@ -104,7 +104,115 @@ const static ec_pdo_entry_reg_t domain1_regs[] =
     {0,1, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[1]},
     {0,1, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[1]},
     {0,1, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[1]},
-    {0,1, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[1]}
+    {0,1, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[1]},
+
+    /* Motor 3 */
+    // RxPDO
+    {0,1, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[2]},
+    {0,1, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[2]},
+    {0,1, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[2]},
+    {0,1, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[2]},
+    {0,1, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[2]},
+    {0,1, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[2]},
+    {0,1, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[2]},
+    // TxPDO
+    {0,1, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[2]},
+    {0,1, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[2]},
+    {0,1, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[2]},
+    {0,1, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[2]},
+    {0,1, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[2]},
+    {0,1, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[2]},
+    {0,1, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[2]},
+
+    /* Motor 4 */
+    // RxPDO
+    {0,1, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[3]},
+    {0,1, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[3]},
+    {0,1, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[3]},
+    {0,1, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[3]},
+    {0,1, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[3]},
+    {0,1, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[3]},
+    {0,1, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[3]},
+    // TxPDO
+    {0,1, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[3]},
+    {0,1, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[3]},
+    {0,1, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[3]},
+    {0,1, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[3]},
+    {0,1, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[3]},
+    {0,1, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[3]},
+    {0,1, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[3]},
+
+    /* Motor 5 */
+    // RxPDO
+    {0,1, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[4]},
+    {0,1, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[4]},
+    {0,1, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[4]},
+    {0,1, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[4]},
+    {0,1, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[4]},
+    {0,1, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[4]},
+    {0,1, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[4]},
+    // TxPDO
+    {0,1, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[4]},
+    {0,1, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[4]},
+    {0,1, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[4]},
+    {0,1, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[4]},
+    {0,1, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[4]},
+    {0,1, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[4]},
+    {0,1, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[4]},
+
+    /* Motor 6 */
+    // RxPDO
+    {0,1, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[5]},
+    {0,1, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[5]},
+    {0,1, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[5]},
+    {0,1, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[5]},
+    {0,1, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[5]},
+    {0,1, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[5]},
+    {0,1, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[5]},
+    // TxPDO
+    {0,1, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[5]},
+    {0,1, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[5]},
+    {0,1, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[5]},
+    {0,1, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[5]},
+    {0,1, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[5]},
+    {0,1, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[5]},
+    {0,1, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[5]},
+
+    /* Motor 7 */
+    // RxPDO
+    {0,1, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[6]},
+    {0,1, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[6]},
+    {0,1, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[6]},
+    {0,1, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[6]},
+    {0,1, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[6]},
+    {0,1, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[6]},
+    {0,1, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[6]},
+    // TxPDO
+    {0,1, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[6]},
+    {0,1, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[6]},
+    {0,1, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[6]},
+    {0,1, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[6]},
+    {0,1, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[6]},
+    {0,1, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[6]},
+    {0,1, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[6]},
+
+    /* Motor 9 */
+    // RxPDO
+    {0,1, MAXON_EPOS4_5A, 0x6040, 0x00, &offset_control_word[7]},
+    {0,1, MAXON_EPOS4_5A, 0x60FF, 0x00, &offset_target_velocity[7]},
+    {0,1, MAXON_EPOS4_5A, 0x60B1, 0x00, &offset_velocity_offset[7]},
+    {0,1, MAXON_EPOS4_5A, 0x6060, 0x00, &offset_modes_of_operation[7]},
+    {0,1, MAXON_EPOS4_5A, 0x60FE, 0x01, &offset_digital_outputs[7]},
+    {0,1, MAXON_EPOS4_5A, 0x607D, 0x01, &offset_min_position_limit[7]},
+    {0,1, MAXON_EPOS4_5A, 0x607D, 0x02, &offset_max_position_limit[7]},
+    // TxPDO
+    {0,1, MAXON_EPOS4_5A, 0x6041, 0x00, &offset_status_word[7]},
+    {0,1, MAXON_EPOS4_5A, 0x6064, 0x00, &offset_position_actual_value[7]},
+    {0,1, MAXON_EPOS4_5A, 0x606C, 0x00, &offset_velocity_actual_value[7]},
+    {0,1, MAXON_EPOS4_5A, 0x6077, 0x00, &offset_torque_actual_value[7]},
+    {0,1, MAXON_EPOS4_5A, 0x6061, 0x00, &offset_modes_of_operation_display[7]},
+    {0,1, MAXON_EPOS4_5A, 0x60FD, 0x00, &offset_digital_inputs[7]},
+    {0,1, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_epos4_error_code[7]}
 };
 
 
@@ -207,26 +315,77 @@ void check_slave_config_states(void)
 }
 /*****************************************************************************/
 // define motor function: logging, cyclic task ..
-// motor object
-EPOS4Slave motor[MOTORNUM] = {EPOS4Slave(1024.0f, 35.0f), EPOS4Slave(1024.0f, 35.0f)};
+// motor objects (Joint 1: Motor 1, Joint 2: Motor 2, .. Motor 7, 8 as a gripper)
+EPOS4Slave motor[MOTORNUM] = {
+    EPOS4Slave(1024.0f, 30.0f), EPOS4Slave(1024.0f, 8.0f), EPOS4Slave(1024.0f, 1.0f), EPOS4Slave(1024.0f, 1.0f), 
+    EPOS4Slave(512.0f, 100.0f), EPOS4Slave(512.0f, 100.0f), EPOS4Slave(512.0f, 100.0f), EPOS4Slave(512.0f, 100.0f)
+};
 
 // trajectories
 float trajectories[MOTORNUM][TARGET_NUM][8] = {
     // trajectory for Motor 1
     { 
-        {0.0, 360.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
-        {360.0, 360.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
-        {360.0, 540.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
-        {540.0, 540.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
-        {540.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
+        {0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
+        {10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
+        {10.0, 20.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
+        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
+        {20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
     },
     // trajectory for Motor 2
     { 
-        {0.0, 180.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
-        {180.0, 180.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
-        {180.0, 540.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
-        {540.0, 540.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
-        {540.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
+        {0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
+        {10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
+        {10.0, 20.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
+        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
+        {20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
+    },
+    // trajectory for Motor 3
+    { 
+        {0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
+        {10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
+        {10.0, 20.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
+        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
+        {20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
+    },
+    // trajectory for Motor 4
+    { 
+        {0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
+        {10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
+        {10.0, 20.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
+        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
+        {20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
+    },
+    // trajectory for Motor 5
+    { 
+        {0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
+        {10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
+        {10.0, 20.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
+        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
+        {20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
+    },
+    // trajectory for Motor 6
+    { 
+        {0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
+        {10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
+        {10.0, 20.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
+        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
+        {20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
+    },
+    // trajectory for Motor 7
+    { 
+        {0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
+        {10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
+        {10.0, 20.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
+        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
+        {20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
+    },
+    // trajectory for Motor 8
+    { 
+        {0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
+        {10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
+        {10.0, 20.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0},
+        {20.0, 20.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.5},
+        {20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 6.5}
     }
 };
 int targetIdx[MOTORNUM] = {0, };
@@ -246,7 +405,7 @@ bool is_operational[MOTORNUM] = {0, };
 bool is_stop[MOTORNUM] = {0, };
 bool is_shutdown[MOTORNUM] = {0, };
 bool is_terminate[MOTORNUM] = {0, };
-bool is_new_command[MOTORNUM] = {1, 1};
+bool is_new_command[MOTORNUM] = {1, 1, 1, 1, 1, 1, 1, 1};
 
 // 1ms period
 void cyclic_task_csv()
@@ -376,6 +535,306 @@ void cyclic_task_csv()
                 is_init[1] = 0;  
                 break;
         }
+
+        // write process data on Motor 3
+        switch(status_word[2] & 0x006F){   // check 0,1,2,3,5,6th bit only
+            case 0x0040: // switch on disabled
+                if(!is_init[2]){ 
+                    EC_WRITE_U16(domain1_pd + offset_control_word[2], 0x0006);
+                    printf("Motor 3: switch on disabled -> ready to switch on\n");
+                }
+                break;
+
+            case 0x0021: // ready to switch on
+                if(!is_init[2]){ 
+                    EC_WRITE_U16(domain1_pd + offset_control_word[2], 0x0007);
+                    printf("Motor 3: ready to switch on -> switched on\n");
+                }
+                break;
+
+            case 0x0023: // switched on
+                if(!is_init[2]){ 
+                    EC_WRITE_U16(domain1_pd + offset_control_word[2], 0x000F);
+                    printf("Motor 3: switched on -> operation enabled\n");
+                }
+                break;
+
+            case 0x0027: // operation enabled
+                if(!is_init[2]){                    
+                    EC_WRITE_U16(domain1_pd + offset_modes_of_operation[2], 9); // select csv mode
+                    EC_WRITE_U32(domain1_pd + offset_min_position_limit[2], -1000000000); // set min pos limit
+                    EC_WRITE_U32(domain1_pd + offset_max_position_limit[2], 1000000000); // set max pos limit
+                    
+                    is_operational[2] = 1;
+                    is_init[2] = 1;                   
+                } 
+                
+                break;
+
+            case 0x0008: //fault
+                // read error code
+                epos4_error_code[2] = EC_READ_U16(domain1_pd + offset_epos4_error_code[2]);
+                printf("Motor 3: Fault, error code is: 0x%04X\n", epos4_error_code[2]);
+
+                // get controlword
+                control_word[2] = EC_READ_U16(domain1_pd + offset_control_word[2]);
+
+                // fault reset
+                control_word[2] |= 0x0080; 
+                EC_WRITE_U16(domain1_pd + offset_control_word[2], control_word[2]);
+                is_init[2] = 0;  
+                break;
+        }
+
+        // write process data on Motor 4
+        switch(status_word[3] & 0x006F){   // check 0,1,2,3,5,6th bit only
+            case 0x0040: // switch on disabled
+                if(!is_init[3]){ 
+                    EC_WRITE_U16(domain1_pd + offset_control_word[3], 0x0006);
+                    printf("Motor 4: switch on disabled -> ready to switch on\n");
+                }
+                break;
+
+            case 0x0021: // ready to switch on
+                if(!is_init[3]){ 
+                    EC_WRITE_U16(domain1_pd + offset_control_word[3], 0x0007);
+                    printf("Motor 4: ready to switch on -> switched on\n");
+                }
+                break;
+
+            case 0x0023: // switched on
+                if(!is_init[3]){ 
+                    EC_WRITE_U16(domain1_pd + offset_control_word[3], 0x000F);
+                    printf("Motor 4: switched on -> operation enabled\n");
+                }
+                break;
+
+            case 0x0027: // operation enabled
+                if(!is_init[3]){                    
+                    EC_WRITE_U16(domain1_pd + offset_modes_of_operation[3], 9); // select csv mode
+                    EC_WRITE_U32(domain1_pd + offset_min_position_limit[3], -1000000000); // set min pos limit
+                    EC_WRITE_U32(domain1_pd + offset_max_position_limit[3], 1000000000); // set max pos limit
+                    
+                    is_operational[3] = 1;
+                    is_init[3] = 1;                   
+                } 
+                
+                break;
+
+            case 0x0008: //fault
+                // read error code
+                epos4_error_code[3] = EC_READ_U16(domain1_pd + offset_epos4_error_code[3]);
+                printf("Motor 4: Fault, error code is: 0x%04X\n", epos4_error_code[3]);
+
+                // get controlword
+                control_word[3] = EC_READ_U16(domain1_pd + offset_control_word[3]);
+
+                // fault reset
+                control_word[3] |= 0x0080; 
+                EC_WRITE_U16(domain1_pd + offset_control_word[3], control_word[3]);
+                is_init[3] = 0;  
+                break;
+        }
+
+        // write process data on Motor 5
+        switch(status_word[4] & 0x006F){   // check 0,1,2,3,5,6th bit only
+            case 0x0040: // switch on disabled
+                if(!is_init[4]){ 
+                    EC_WRITE_U16(domain1_pd + offset_control_word[4], 0x0006);
+                    printf("Motor 5: switch on disabled -> ready to switch on\n");
+                }
+                break;
+
+            case 0x0021: // ready to switch on
+                if(!is_init[4]){ 
+                    EC_WRITE_U16(domain1_pd + offset_control_word[4], 0x0007);
+                    printf("Motor 5: ready to switch on -> switched on\n");
+                }
+                break;
+
+            case 0x0023: // switched on
+                if(!is_init[4]){ 
+                    EC_WRITE_U16(domain1_pd + offset_control_word[4], 0x000F);
+                    printf("Motor 5: switched on -> operation enabled\n");
+                }
+                break;
+
+            case 0x0027: // operation enabled
+                if(!is_init[4]){                    
+                    EC_WRITE_U16(domain1_pd + offset_modes_of_operation[4], 9); // select csv mode
+                    EC_WRITE_U32(domain1_pd + offset_min_position_limit[4], -1000000000); // set min pos limit
+                    EC_WRITE_U32(domain1_pd + offset_max_position_limit[4], 1000000000); // set max pos limit
+                    
+                    is_operational[4] = 1;
+                    is_init[4] = 1;                   
+                } 
+                
+                break;
+
+            case 0x0008: //fault
+                // read error code
+                epos4_error_code[4] = EC_READ_U16(domain1_pd + offset_epos4_error_code[4]);
+                printf("Motor 5: Fault, error code is: 0x%04X\n", epos4_error_code[4]);
+
+                // get controlword
+                control_word[4] = EC_READ_U16(domain1_pd + offset_control_word[4]);
+
+                // fault reset
+                control_word[4] |= 0x0080; 
+                EC_WRITE_U16(domain1_pd + offset_control_word[4], control_word[4]);
+                is_init[4] = 0;  
+                break;
+        }
+
+        // write process data on Motor 6
+        switch(status_word[5] & 0x006F){   // check 0,1,2,3,5,6th bit only
+            case 0x0040: // switch on disabled
+                if(!is_init[5]){ 
+                    EC_WRITE_U16(domain1_pd + offset_control_word[5], 0x0006);
+                    printf("Motor 6: switch on disabled -> ready to switch on\n");
+                }
+                break;
+
+            case 0x0021: // ready to switch on
+                if(!is_init[5]){ 
+                    EC_WRITE_U16(domain1_pd + offset_control_word[5], 0x0007);
+                    printf("Motor 6: ready to switch on -> switched on\n");
+                }
+                break;
+
+            case 0x0023: // switched on
+                if(!is_init[5]){ 
+                    EC_WRITE_U16(domain1_pd + offset_control_word[5], 0x000F);
+                    printf("Motor 6: switched on -> operation enabled\n");
+                }
+                break;
+
+            case 0x0027: // operation enabled
+                if(!is_init[5]){                    
+                    EC_WRITE_U16(domain1_pd + offset_modes_of_operation[5], 9); // select csv mode
+                    EC_WRITE_U32(domain1_pd + offset_min_position_limit[5], -1000000000); // set min pos limit
+                    EC_WRITE_U32(domain1_pd + offset_max_position_limit[5], 1000000000); // set max pos limit
+                    
+                    is_operational[5] = 1;
+                    is_init[5] = 1;                   
+                } 
+                
+                break;
+
+            case 0x0008: //fault
+                // read error code
+                epos4_error_code[5] = EC_READ_U16(domain1_pd + offset_epos4_error_code[5]);
+                printf("Motor 6: Fault, error code is: 0x%04X\n", epos4_error_code[5]);
+
+                // get controlword
+                control_word[5] = EC_READ_U16(domain1_pd + offset_control_word[5]);
+
+                // fault reset
+                control_word[5] |= 0x0080; 
+                EC_WRITE_U16(domain1_pd + offset_control_word[5], control_word[5]);
+                is_init[5] = 0;  
+                break;
+        }
+
+        // write process data on Motor 7
+        switch(status_word[6] & 0x006F){   // check 0,1,2,3,5,6th bit only
+            case 0x0040: // switch on disabled
+                if(!is_init[6]){ 
+                    EC_WRITE_U16(domain1_pd + offset_control_word[6], 0x0006);
+                    printf("Motor 7: switch on disabled -> ready to switch on\n");
+                }
+                break;
+
+            case 0x0021: // ready to switch on
+                if(!is_init[6]){ 
+                    EC_WRITE_U16(domain1_pd + offset_control_word[6], 0x0007);
+                    printf("Motor 7: ready to switch on -> switched on\n");
+                }
+                break;
+
+            case 0x0023: // switched on
+                if(!is_init[6]){ 
+                    EC_WRITE_U16(domain1_pd + offset_control_word[6], 0x000F);
+                    printf("Motor 7: switched on -> operation enabled\n");
+                }
+                break;
+
+            case 0x0027: // operation enabled
+                if(!is_init[6]){                    
+                    EC_WRITE_U16(domain1_pd + offset_modes_of_operation[6], 9); // select csv mode
+                    EC_WRITE_U32(domain1_pd + offset_min_position_limit[6], -1000000000); // set min pos limit
+                    EC_WRITE_U32(domain1_pd + offset_max_position_limit[6], 1000000000); // set max pos limit
+                    
+                    is_operational[6] = 1;
+                    is_init[6] = 1;                   
+                } 
+                
+                break;
+
+            case 0x0008: //fault
+                // read error code
+                epos4_error_code[6] = EC_READ_U16(domain1_pd + offset_epos4_error_code[6]);
+                printf("Motor 7: Fault, error code is: 0x%04X\n", epos4_error_code[6]);
+
+                // get controlword
+                control_word[6] = EC_READ_U16(domain1_pd + offset_control_word[6]);
+
+                // fault reset
+                control_word[6] |= 0x0080; 
+                EC_WRITE_U16(domain1_pd + offset_control_word[6], control_word[6]);
+                is_init[6] = 0;  
+                break;
+        }
+
+        // write process data on Motor 8
+        switch(status_word[7] & 0x006F){   // check 0,1,2,3,5,6th bit only
+            case 0x0040: // switch on disabled
+                if(!is_init[7]){ 
+                    EC_WRITE_U16(domain1_pd + offset_control_word[7], 0x0006);
+                    printf("Motor 8: switch on disabled -> ready to switch on\n");
+                }
+                break;
+
+            case 0x0021: // ready to switch on
+                if(!is_init[7]){ 
+                    EC_WRITE_U16(domain1_pd + offset_control_word[7], 0x0007);
+                    printf("Motor 8: ready to switch on -> switched on\n");
+                }
+                break;
+
+            case 0x0023: // switched on
+                if(!is_init[7]){ 
+                    EC_WRITE_U16(domain1_pd + offset_control_word[7], 0x000F);
+                    printf("Motor 8: switched on -> operation enabled\n");
+                }
+                break;
+
+            case 0x0027: // operation enabled
+                if(!is_init[7]){                    
+                    EC_WRITE_U16(domain1_pd + offset_modes_of_operation[7], 9); // select csv mode
+                    EC_WRITE_U32(domain1_pd + offset_min_position_limit[7], -1000000000); // set min pos limit
+                    EC_WRITE_U32(domain1_pd + offset_max_position_limit[7], 1000000000); // set max pos limit
+                    
+                    is_operational[7] = 1;
+                    is_init[7] = 1;                   
+                } 
+                
+                break;
+
+            case 0x0008: //fault
+                // read error code
+                epos4_error_code[7] = EC_READ_U16(domain1_pd + offset_epos4_error_code[7]);
+                printf("Motor 8: Fault, error code is: 0x%04X\n", epos4_error_code[7]);
+
+                // get controlword
+                control_word[7] = EC_READ_U16(domain1_pd + offset_control_word[7]);
+
+                // fault reset
+                control_word[7] |= 0x0080; 
+                EC_WRITE_U16(domain1_pd + offset_control_word[7], control_word[7]);
+                is_init[7] = 0;  
+                break;
+        }
     } 
 
     // set new trajectory
@@ -391,20 +850,74 @@ void cyclic_task_csv()
         is_new_command[1] = 0;
         cout << endl << "Motor 2: Trajectory parameters initialized." << endl;
     }
+     if(is_new_command[2]){
+        motor[2].setTrajectoryParam(trajectories[2][targetIdx[2]][0], trajectories[2][targetIdx[2]][1], trajectories[2][targetIdx[2]][2], trajectories[2][targetIdx[2]][3], trajectories[2][targetIdx[2]][4], trajectories[2][targetIdx[2]][5], trajectories[2][targetIdx[2]][6], trajectories[2][targetIdx[2]][7]);
+        command_time[2] = command_time[2] + motor[2].getMoveTime();
+        is_new_command[2] = 0;
+        cout << endl << "Motor 3: Trajectory parameters initialized." << endl;
+    }
+     if(is_new_command[3]){
+        motor[3].setTrajectoryParam(trajectories[3][targetIdx[3]][0], trajectories[3][targetIdx[3]][1], trajectories[3][targetIdx[3]][2], trajectories[3][targetIdx[3]][3], trajectories[3][targetIdx[3]][4], trajectories[3][targetIdx[3]][5], trajectories[3][targetIdx[3]][6], trajectories[3][targetIdx[3]][7]);
+        command_time[3] = command_time[3] + motor[3].getMoveTime();
+        is_new_command[3] = 0;
+        cout << endl << "Motor 4: Trajectory parameters initialized." << endl;
+    }
+     if(is_new_command[4]){
+        motor[4].setTrajectoryParam(trajectories[4][targetIdx[4]][0], trajectories[4][targetIdx[4]][1], trajectories[4][targetIdx[4]][2], trajectories[4][targetIdx[4]][3], trajectories[4][targetIdx[4]][4], trajectories[4][targetIdx[4]][5], trajectories[4][targetIdx[4]][6], trajectories[4][targetIdx[4]][7]);
+        command_time[4] = command_time[4] + motor[4].getMoveTime();
+        is_new_command[4] = 0;
+        cout << endl << "Motor 5: Trajectory parameters initialized." << endl;
+    }
+     if(is_new_command[5]){
+        motor[5].setTrajectoryParam(trajectories[5][targetIdx[5]][0], trajectories[5][targetIdx[5]][1], trajectories[5][targetIdx[5]][2], trajectories[5][targetIdx[5]][3], trajectories[5][targetIdx[5]][4], trajectories[5][targetIdx[5]][5], trajectories[5][targetIdx[5]][6], trajectories[5][targetIdx[5]][7]);
+        command_time[5] = command_time[5] + motor[5].getMoveTime();
+        is_new_command[5] = 0;
+        cout << endl << "Motor 6: Trajectory parameters initialized." << endl;
+    }
+     if(is_new_command[6]){
+        motor[6].setTrajectoryParam(trajectories[6][targetIdx[6]][0], trajectories[6][targetIdx[6]][1], trajectories[6][targetIdx[6]][2], trajectories[6][targetIdx[6]][3], trajectories[6][targetIdx[6]][4], trajectories[6][targetIdx[6]][5], trajectories[6][targetIdx[6]][6], trajectories[6][targetIdx[6]][7]);
+        command_time[6] = command_time[6] + motor[6].getMoveTime();
+        is_new_command[6] = 0;
+        cout << endl << "Motor 7: Trajectory parameters initialized." << endl;
+    }
+     if(is_new_command[7]){
+        motor[7].setTrajectoryParam(trajectories[7][targetIdx[7]][0], trajectories[7][targetIdx[7]][1], trajectories[7][targetIdx[7]][2], trajectories[7][targetIdx[7]][3], trajectories[7][targetIdx[7]][4], trajectories[7][targetIdx[7]][5], trajectories[7][targetIdx[7]][6], trajectories[7][targetIdx[7]][7]);
+        command_time[7] = command_time[7] + motor[7].getMoveTime();
+        is_new_command[7] = 0;
+        cout << endl << "Motor 8: Trajectory parameters initialized." << endl;
+    }
 
     // apply trajectory and do logging
-    if(is_operational[0] * is_operational[1]){
+    if(is_operational[0] * is_operational[1] * is_operational[2] * is_operational[3] * is_operational[4] * is_operational[5] * is_operational[6] * is_operational[7]){
         // set target velocity by following 5th-poly trajectory
         motor[0].setTrajectory(t);
         motor[1].setTrajectory(t);
+        motor[2].setTrajectory(t);
+        motor[3].setTrajectory(t);
+        motor[4].setTrajectory(t);
+        motor[5].setTrajectory(t);
+        motor[6].setTrajectory(t);
+        motor[7].setTrajectory(t);
 
         // write a target velocity
         EC_WRITE_U32(domain1_pd + offset_target_velocity[0], motor[0].getVelTick());
         EC_WRITE_U32(domain1_pd + offset_target_velocity[1], motor[1].getVelTick());
+        EC_WRITE_U32(domain1_pd + offset_target_velocity[2], motor[2].getVelTick());
+        EC_WRITE_U32(domain1_pd + offset_target_velocity[3], motor[3].getVelTick());
+        EC_WRITE_U32(domain1_pd + offset_target_velocity[4], motor[4].getVelTick());
+        EC_WRITE_U32(domain1_pd + offset_target_velocity[5], motor[5].getVelTick());
+        EC_WRITE_U32(domain1_pd + offset_target_velocity[6], motor[6].getVelTick());
+        EC_WRITE_U32(domain1_pd + offset_target_velocity[7], motor[7].getVelTick());
 
         // logging
         motor[0].logging(t, (float)EC_READ_S32(domain1_pd + offset_velocity_actual_value[0]), (float)EC_READ_S32(domain1_pd + offset_position_actual_value[0]));
         motor[1].logging(t, (float)EC_READ_S32(domain1_pd + offset_velocity_actual_value[1]), (float)EC_READ_S32(domain1_pd + offset_position_actual_value[1]));
+        motor[2].logging(t, (float)EC_READ_S32(domain1_pd + offset_velocity_actual_value[2]), (float)EC_READ_S32(domain1_pd + offset_position_actual_value[2]));
+        motor[3].logging(t, (float)EC_READ_S32(domain1_pd + offset_velocity_actual_value[3]), (float)EC_READ_S32(domain1_pd + offset_position_actual_value[3]));
+        motor[4].logging(t, (float)EC_READ_S32(domain1_pd + offset_velocity_actual_value[4]), (float)EC_READ_S32(domain1_pd + offset_position_actual_value[4]));
+        motor[5].logging(t, (float)EC_READ_S32(domain1_pd + offset_velocity_actual_value[5]), (float)EC_READ_S32(domain1_pd + offset_position_actual_value[5]));
+        motor[6].logging(t, (float)EC_READ_S32(domain1_pd + offset_velocity_actual_value[6]), (float)EC_READ_S32(domain1_pd + offset_position_actual_value[6]));
+        motor[7].logging(t, (float)EC_READ_S32(domain1_pd + offset_velocity_actual_value[7]), (float)EC_READ_S32(domain1_pd + offset_position_actual_value[7]));
         t += 0.001; 
         idx++;
     } 
@@ -428,11 +941,71 @@ void cyclic_task_csv()
             is_shutdown[1] = 1;
         } 
     }
+    if(is_stop[2]){        
+        EC_WRITE_U32(domain1_pd + offset_target_velocity[2], 0);
+        if(EC_READ_S32(domain1_pd + offset_velocity_actual_value[2]) == 0){
+            printf("Motor 3 is stopped.\n");
+            is_operational[2] = 0;
+            is_stop[2] = 0;
+            is_shutdown[2] = 1;
+        } 
+    }
+    if(is_stop[3]){        
+        EC_WRITE_U32(domain1_pd + offset_target_velocity[3], 0);
+        if(EC_READ_S32(domain1_pd + offset_velocity_actual_value[3]) == 0){
+            printf("Motor 4 is stopped.\n");
+            is_operational[3] = 0;
+            is_stop[3] = 0;
+            is_shutdown[3] = 1;
+        } 
+    }
+    if(is_stop[4]){        
+        EC_WRITE_U32(domain1_pd + offset_target_velocity[4], 0);
+        if(EC_READ_S32(domain1_pd + offset_velocity_actual_value[4]) == 0){
+            printf("Motor 5 is stopped.\n");
+            is_operational[4] = 0;
+            is_stop[4] = 0;
+            is_shutdown[4] = 1;
+        } 
+    }
+    if(is_stop[5]){        
+        EC_WRITE_U32(domain1_pd + offset_target_velocity[5], 0);
+        if(EC_READ_S32(domain1_pd + offset_velocity_actual_value[5]) == 0){
+            printf("Motor 6 is stopped.\n");
+            is_operational[5] = 0;
+            is_stop[5] = 0;
+            is_shutdown[5] = 1;
+        } 
+    }
+    if(is_stop[6]){        
+        EC_WRITE_U32(domain1_pd + offset_target_velocity[6], 0);
+        if(EC_READ_S32(domain1_pd + offset_velocity_actual_value[6]) == 0){
+            printf("Motor 7 is stopped.\n");
+            is_operational[6] = 0;
+            is_stop[6] = 0;
+            is_shutdown[6] = 1;
+        } 
+    }
+    if(is_stop[7]){        
+        EC_WRITE_U32(domain1_pd + offset_target_velocity[7], 0);
+        if(EC_READ_S32(domain1_pd + offset_velocity_actual_value[7]) == 0){
+            printf("Motor 8 is stopped.\n");
+            is_operational[7] = 0;
+            is_stop[7] = 0;
+            is_shutdown[7] = 1;
+        } 
+    }
 
     // init the motor controller: switch on disabled
-    if(is_shutdown[0] * is_shutdown[1]){
+    if(is_shutdown[0] * is_shutdown[1] * is_shutdown[2] * is_shutdown[3] * is_shutdown[4] * is_shutdown[5] * is_shutdown[6] * is_shutdown[7]){
         EC_WRITE_U16(domain1_pd + offset_control_word[0], 0x0000);
         EC_WRITE_U16(domain1_pd + offset_control_word[1], 0x0000);
+        EC_WRITE_U16(domain1_pd + offset_control_word[2], 0x0000);
+        EC_WRITE_U16(domain1_pd + offset_control_word[3], 0x0000);
+        EC_WRITE_U16(domain1_pd + offset_control_word[4], 0x0000);
+        EC_WRITE_U16(domain1_pd + offset_control_word[5], 0x0000);
+        EC_WRITE_U16(domain1_pd + offset_control_word[6], 0x0000);
+        EC_WRITE_U16(domain1_pd + offset_control_word[7], 0x0000);
 
         if(((EC_READ_U16(domain1_pd + offset_status_word[0])) & 0x0040) == 0x0040){
             printf("Motor 1: operation enabled -> switch on disabled.\n");
@@ -445,6 +1018,42 @@ void cyclic_task_csv()
             is_operational[1] = 0;
             is_shutdown[1] = 0;
             is_terminate[1] = 1;
+        }
+        if(((EC_READ_U16(domain1_pd + offset_status_word[2])) & 0x0040) == 0x0040){
+            printf("Motor 3: operation enabled -> switch on disabled.\n");
+            is_operational[2] = 0;
+            is_shutdown[2] = 0;
+            is_terminate[2] = 1;
+        }
+        if(((EC_READ_U16(domain1_pd + offset_status_word[3])) & 0x0040) == 0x0040){
+            printf("Motor 4: operation enabled -> switch on disabled.\n");
+            is_operational[3] = 0;
+            is_shutdown[3] = 0;
+            is_terminate[3] = 1;
+        }
+        if(((EC_READ_U16(domain1_pd + offset_status_word[4])) & 0x0040) == 0x0040){
+            printf("Motor 5: operation enabled -> switch on disabled.\n");
+            is_operational[4] = 0;
+            is_shutdown[4] = 0;
+            is_terminate[4] = 1;
+        }
+        if(((EC_READ_U16(domain1_pd + offset_status_word[5])) & 0x0040) == 0x0040){
+            printf("Motor 6: operation enabled -> switch on disabled.\n");
+            is_operational[5] = 0;
+            is_shutdown[5] = 0;
+            is_terminate[5] = 1;
+        }
+        if(((EC_READ_U16(domain1_pd + offset_status_word[6])) & 0x0040) == 0x0040){
+            printf("Motor 7: operation enabled -> switch on disabled.\n");
+            is_operational[6] = 0;
+            is_shutdown[6] = 0;
+            is_terminate[6] = 1;
+        }
+        if(((EC_READ_U16(domain1_pd + offset_status_word[7])) & 0x0040) == 0x0040){
+            printf("Motor 8: operation enabled -> switch on disabled.\n");
+            is_operational[7] = 0;
+            is_shutdown[7] = 0;
+            is_terminate[7] = 1;
         }
     }
 
@@ -591,7 +1200,7 @@ int main(int argc, char **argv)
             }            
         }
 
-        if(is_terminate[0] == 1 && is_terminate[1] == 1){
+        if(is_terminate[0] == 1 || is_terminate[1] == 1 || is_terminate[2] == 1 || is_terminate[3] == 1 || is_terminate[4] == 1 || is_terminate[5] == 1 || is_terminate[6] == 1 || is_terminate[7] == 1){
             printf("Terminate the program. Bye~ \n");
             break;
         }
@@ -600,12 +1209,12 @@ int main(int argc, char **argv)
         if((is_operational[0]) && (!is_shutdown[0]) && (targetIdx[0] < TARGET_NUM) && (idx > command_time[0]*1000)){
             targetIdx[0]++;
             if(targetIdx[0] >= TARGET_NUM){
-                printf("\nAll the targets are finished\n");
+                printf("\nMotor1: All the targets are finished\n");
                 is_operational[0] = 0;
                 is_stop[0] = 1;
             }
             else{
-                printf("Continue to the next target\n");
+                // printf("Continue to the next target\n");
                 is_new_command[0] = 1;
             } 
         }       
@@ -613,15 +1222,93 @@ int main(int argc, char **argv)
         if((is_operational[1]) && (!is_shutdown[1]) && (targetIdx[1] < TARGET_NUM) && (idx > command_time[1]*1000)){
             targetIdx[1]++;
             if(targetIdx[1] >= TARGET_NUM){
-                printf("\nAll the targets are finished\n");
+                printf("\nMotor 2: All the targets are finished\n");
                 is_operational[1] = 0;
                 is_stop[1] = 1;
             }
             else{
-                printf("Continue to the next target\n");
+                // printf("Continue to the next target\n");
                 is_new_command[1] = 1;
             } 
         }        
+        // Motor 3 handling
+        if((is_operational[2]) && (!is_shutdown[2]) && (targetIdx[2] < TARGET_NUM) && (idx > command_time[2]*1000)){
+            targetIdx[2]++;
+            if(targetIdx[2] >= TARGET_NUM){
+                printf("\nMotor 3: All the targets are finished\n");
+                is_operational[2] = 0;
+                is_stop[2] = 1;
+            }
+            else{
+                // printf("Continue to the next target\n");
+                is_new_command[2] = 1;
+            } 
+        }  
+        // Motor 4 handling
+        if((is_operational[3]) && (!is_shutdown[3]) && (targetIdx[3] < TARGET_NUM) && (idx > command_time[3]*1000)){
+            targetIdx[3]++;
+            if(targetIdx[3] >= TARGET_NUM){
+                printf("\nMotor 4: All the targets are finished\n");
+                is_operational[3] = 0;
+                is_stop[3] = 1;
+            }
+            else{
+                // printf("Continue to the next target\n");
+                is_new_command[3] = 1;
+            } 
+        }  
+        // Motor 5 handling
+        if((is_operational[4]) && (!is_shutdown[4]) && (targetIdx[4] < TARGET_NUM) && (idx > command_time[4]*1000)){
+            targetIdx[4]++;
+            if(targetIdx[4] >= TARGET_NUM){
+                printf("\nMotor 5: All the targets are finished\n");
+                is_operational[4] = 0;
+                is_stop[4] = 1;
+            }
+            else{
+                // printf("Continue to the next target\n");
+                is_new_command[4] = 1;
+            } 
+        }  
+        // Motor 6 handling
+        if((is_operational[5]) && (!is_shutdown[5]) && (targetIdx[5] < TARGET_NUM) && (idx > command_time[5]*1000)){
+            targetIdx[5]++;
+            if(targetIdx[5] >= TARGET_NUM){
+                printf("\nMotor 6: All the targets are finished\n");
+                is_operational[5] = 0;
+                is_stop[5] = 1;
+            }
+            else{
+                // printf("Continue to the next target\n");
+                is_new_command[5] = 1;
+            } 
+        }  
+        // Motor 7 handling
+        if((is_operational[6]) && (!is_shutdown[6]) && (targetIdx[6] < TARGET_NUM) && (idx > command_time[6]*1000)){
+            targetIdx[6]++;
+            if(targetIdx[6] >= TARGET_NUM){
+                printf("\nMotor 7: All the targets are finished\n");
+                is_operational[6] = 0;
+                is_stop[6] = 1;
+            }
+            else{
+                // printf("Continue to the next target\n");
+                is_new_command[6] = 1;
+            } 
+        }  
+        // Motor 8 handling
+        if((is_operational[7]) && (!is_shutdown[7]) && (targetIdx[7] < TARGET_NUM) && (idx > command_time[7]*1000)){
+            targetIdx[7]++;
+            if(targetIdx[7] >= TARGET_NUM){
+                printf("\nMotor 8: All the targets are finished\n");
+                is_operational[7] = 0;
+                is_stop[7] = 1;
+            }
+            else{
+                // printf("Continue to the next target\n");
+                is_new_command[7] = 1;
+            } 
+        }  
 
         wakeup_time.tv_nsec += PERIOD_NS;
         while (wakeup_time.tv_nsec >= NSEC_PER_SEC) {
@@ -630,8 +1317,14 @@ int main(int argc, char **argv)
         }
     }
 
-    motor[0].saveData("/home/robogram/motor_ws/CSVMotorController/logging/M1_pos01.txt", "/home/robogram/motor_ws/CSVMotorController/logging/M1_vel01.txt");
-    motor[1].saveData("/home/robogram/motor_ws/CSVMotorController/logging/M2_pos01.txt", "/home/robogram/motor_ws/CSVMotorController/logging/M2_vel01.txt");
+    motor[0].saveData("/home/robogram/motor_ws/CSVMotorController/logging/robot_M1_pos01.txt", "/home/robogram/motor_ws/CSVMotorController/logging/robot_M1_vel01.txt");
+    motor[1].saveData("/home/robogram/motor_ws/CSVMotorController/logging/robot_M2_pos01.txt", "/home/robogram/motor_ws/CSVMotorController/logging/robot_M2_vel01.txt");
+    motor[2].saveData("/home/robogram/motor_ws/CSVMotorController/logging/robot_M3_pos01.txt", "/home/robogram/motor_ws/CSVMotorController/logging/robot_M3_vel01.txt");
+    motor[3].saveData("/home/robogram/motor_ws/CSVMotorController/logging/robot_M4_pos01.txt", "/home/robogram/motor_ws/CSVMotorController/logging/robot_M4_vel01.txt");
+    motor[4].saveData("/home/robogram/motor_ws/CSVMotorController/logging/robot_M5_pos01.txt", "/home/robogram/motor_ws/CSVMotorController/logging/robot_M5_vel01.txt");
+    motor[5].saveData("/home/robogram/motor_ws/CSVMotorController/logging/robot_M6_pos01.txt", "/home/robogram/motor_ws/CSVMotorController/logging/robot_M6_vel01.txt");
+    motor[6].saveData("/home/robogram/motor_ws/CSVMotorController/logging/robot_M7_pos01.txt", "/home/robogram/motor_ws/CSVMotorController/logging/robot_M7_vel01.txt");
+    motor[7].saveData("/home/robogram/motor_ws/CSVMotorController/logging/robot_M8_pos01.txt", "/home/robogram/motor_ws/CSVMotorController/logging/robot_M8_vel01.txt");
 
     return ret;
 }

@@ -156,6 +156,19 @@ MultipleTarget/fast:
 .PHONY : MultipleTarget/fast
 
 #=============================================================================
+# Target rules for targets named MultiMotorTarget
+
+# Build rule for target.
+MultiMotorTarget: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 MultiMotorTarget
+.PHONY : MultiMotorTarget
+
+# fast build rule for target.
+MultiMotorTarget/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiMotorTarget.dir/build.make CMakeFiles/MultiMotorTarget.dir/build
+.PHONY : MultiMotorTarget/fast
+
+#=============================================================================
 # Target rules for targets named Robot1DOF
 
 # Build rule for target.
@@ -176,6 +189,7 @@ src/CSVMotorController.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CSVMotorController.dir/build.make CMakeFiles/CSVMotorController.dir/src/CSVMotorController.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/src/CSVMotorController.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultipleTarget.dir/build.make CMakeFiles/MultipleTarget.dir/src/CSVMotorController.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiMotorTarget.dir/build.make CMakeFiles/MultiMotorTarget.dir/src/CSVMotorController.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Robot1DOF.dir/build.make CMakeFiles/Robot1DOF.dir/src/CSVMotorController.cpp.o
 .PHONY : src/CSVMotorController.cpp.o
 
@@ -187,6 +201,7 @@ src/CSVMotorController.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CSVMotorController.dir/build.make CMakeFiles/CSVMotorController.dir/src/CSVMotorController.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/src/CSVMotorController.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultipleTarget.dir/build.make CMakeFiles/MultipleTarget.dir/src/CSVMotorController.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiMotorTarget.dir/build.make CMakeFiles/MultiMotorTarget.dir/src/CSVMotorController.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Robot1DOF.dir/build.make CMakeFiles/Robot1DOF.dir/src/CSVMotorController.cpp.i
 .PHONY : src/CSVMotorController.cpp.i
 
@@ -198,6 +213,7 @@ src/CSVMotorController.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CSVMotorController.dir/build.make CMakeFiles/CSVMotorController.dir/src/CSVMotorController.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/src/CSVMotorController.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultipleTarget.dir/build.make CMakeFiles/MultipleTarget.dir/src/CSVMotorController.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiMotorTarget.dir/build.make CMakeFiles/MultiMotorTarget.dir/src/CSVMotorController.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Robot1DOF.dir/build.make CMakeFiles/Robot1DOF.dir/src/CSVMotorController.cpp.s
 .PHONY : src/CSVMotorController.cpp.s
 
@@ -224,6 +240,30 @@ src/main.s: src/main.cpp.s
 src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CSVMotorController.dir/build.make CMakeFiles/CSVMotorController.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
+
+src/multi_motor_target.o: src/multi_motor_target.cpp.o
+.PHONY : src/multi_motor_target.o
+
+# target to build an object file
+src/multi_motor_target.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiMotorTarget.dir/build.make CMakeFiles/MultiMotorTarget.dir/src/multi_motor_target.cpp.o
+.PHONY : src/multi_motor_target.cpp.o
+
+src/multi_motor_target.i: src/multi_motor_target.cpp.i
+.PHONY : src/multi_motor_target.i
+
+# target to preprocess a source file
+src/multi_motor_target.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiMotorTarget.dir/build.make CMakeFiles/MultiMotorTarget.dir/src/multi_motor_target.cpp.i
+.PHONY : src/multi_motor_target.cpp.i
+
+src/multi_motor_target.s: src/multi_motor_target.cpp.s
+.PHONY : src/multi_motor_target.s
+
+# target to generate assembly for a file
+src/multi_motor_target.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiMotorTarget.dir/build.make CMakeFiles/MultiMotorTarget.dir/src/multi_motor_target.cpp.s
+.PHONY : src/multi_motor_target.cpp.s
 
 src/multiple_target.o: src/multiple_target.cpp.o
 .PHONY : src/multiple_target.o
@@ -306,6 +346,7 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... CSVMotorController"
+	@echo "... MultiMotorTarget"
 	@echo "... MultipleTarget"
 	@echo "... Robot1DOF"
 	@echo "... TwoController"
@@ -315,6 +356,9 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/multi_motor_target.o"
+	@echo "... src/multi_motor_target.i"
+	@echo "... src/multi_motor_target.s"
 	@echo "... src/multiple_target.o"
 	@echo "... src/multiple_target.i"
 	@echo "... src/multiple_target.s"
