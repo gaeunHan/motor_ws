@@ -28,7 +28,7 @@ using namespace std;
 #define NSEC_PER_SEC (1000000000)
 #define FREQUENCY (NSEC_PER_SEC / PERIOD_NS)
 #define MAXON_EPOS4_5A 0x000000fb, 0x61500000 // Product Number 확인 필요(ESI file)
-#define TARGET_NUM 2
+#define TARGET_NUM 3
 
 /****************************************************************************/
 // EtherCAT
@@ -193,7 +193,8 @@ EPOS4Slave motor1(1024.0, 35.0);
 // trajectories
 float trajectories[TARGET_NUM][8] = {
     {0.0, 360.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
-    {360.0, 360.0 + 180.0, 0.0, 0.0, 0.0, 0.0, 1.0, 3.0}
+    {360.0, 360.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
+    {360.0, 360.0 + 180.0, 0.0, 0.0, 0.0, 0.0, 2.0, 4.0}
 };
 int targetIdx = 0;
 
@@ -271,11 +272,7 @@ void cyclic_task_csv()
                     is_operational = 1;
                     is_init = 1;                   
                 } 
-                if(is_new_command){
-                    motor1.setTrajectoryParam(trajectories[targetIdx][0], trajectories[targetIdx][1], trajectories[targetIdx][2], trajectories[targetIdx][3], trajectories[targetIdx][4], trajectories[targetIdx][5], trajectories[targetIdx][6], trajectories[targetIdx][7]);
-                    command_time = command_time + motor1.getMoveTime();
-                    is_new_command = 0;
-                }
+                
                 break;
 
             case 0x0008: //fault
@@ -307,6 +304,13 @@ void cyclic_task_csv()
         }
     } 
 
+    // set new trajectory
+    if(is_new_command){
+        motor1.setTrajectoryParam(trajectories[targetIdx][0], trajectories[targetIdx][1], trajectories[targetIdx][2], trajectories[targetIdx][3], trajectories[targetIdx][4], trajectories[targetIdx][5], trajectories[targetIdx][6], trajectories[targetIdx][7]);
+        command_time = command_time + motor1.getMoveTime();
+        is_new_command = 0;
+    }
+
     // apply trajectory and do logging
     if(is_operational){
         // set target velocity by following 5th-poly trajectory
@@ -314,7 +318,6 @@ void cyclic_task_csv()
 
         // convert vel_t into [rpm]
         float vel = motor1.getVelTick();
-        cout << "pos_tick: " << motor1.getPosTick()/ ((1024.0 * 35.0) / 360.0f) << endl;
 
         // write a target velocity
         EC_WRITE_U32(domain1_pd + offset_target_velocity, vel);
@@ -489,7 +492,10 @@ int main(int argc, char **argv)
                 is_operational = 0;
                 is_stop = 1;
             }
-            else is_new_command = 1;
+            else{
+                printf("Continue to the next target\n");
+                is_new_command = 1;
+            } 
         }         
 
         wakeup_time.tv_nsec += PERIOD_NS;
