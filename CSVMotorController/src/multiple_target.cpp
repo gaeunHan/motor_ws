@@ -324,8 +324,12 @@ void cyclic_task_csv()
         // write a target velocity
         EC_WRITE_U32(domain1_pd + offset_target_velocity, vel);
 
+        // debugging
+        // cout << "pos: " << EC_READ_S32(domain1_pd + offset_position_actual_value) << endl;
+        // cout << "vel: " << EC_READ_S32(domain1_pd + offset_velocity_actual_value) << endl;
+
         // logging
-        motor1.logging(t, (float)EC_READ_S32(domain1_pd + offset_velocity_actual_value), (float)EC_READ_S32(domain1_pd + offset_position_actual_value));
+        motor1.logging(t, EC_READ_S32(domain1_pd + offset_velocity_actual_value), EC_READ_S32(domain1_pd + offset_position_actual_value));
         t += 0.001; 
         idx++;
     } 

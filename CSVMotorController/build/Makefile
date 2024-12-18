@@ -117,80 +117,107 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named CSVMotorController
+# Target rules for targets named 01_CSVMotorController
 
 # Build rule for target.
-CSVMotorController: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CSVMotorController
-.PHONY : CSVMotorController
+01_CSVMotorController: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 01_CSVMotorController
+.PHONY : 01_CSVMotorController
 
 # fast build rule for target.
-CSVMotorController/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CSVMotorController.dir/build.make CMakeFiles/CSVMotorController.dir/build
-.PHONY : CSVMotorController/fast
+01_CSVMotorController/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/01_CSVMotorController.dir/build.make CMakeFiles/01_CSVMotorController.dir/build
+.PHONY : 01_CSVMotorController/fast
 
 #=============================================================================
-# Target rules for targets named TwoController
+# Target rules for targets named 02_TwoController
 
 # Build rule for target.
-TwoController: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 TwoController
-.PHONY : TwoController
+02_TwoController: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 02_TwoController
+.PHONY : 02_TwoController
 
 # fast build rule for target.
-TwoController/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/build
-.PHONY : TwoController/fast
+02_TwoController/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/02_TwoController.dir/build.make CMakeFiles/02_TwoController.dir/build
+.PHONY : 02_TwoController/fast
 
 #=============================================================================
-# Target rules for targets named MultipleTarget
+# Target rules for targets named 03_MultipleTarget
 
 # Build rule for target.
-MultipleTarget: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 MultipleTarget
-.PHONY : MultipleTarget
+03_MultipleTarget: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 03_MultipleTarget
+.PHONY : 03_MultipleTarget
 
 # fast build rule for target.
-MultipleTarget/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultipleTarget.dir/build.make CMakeFiles/MultipleTarget.dir/build
-.PHONY : MultipleTarget/fast
+03_MultipleTarget/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/03_MultipleTarget.dir/build.make CMakeFiles/03_MultipleTarget.dir/build
+.PHONY : 03_MultipleTarget/fast
 
 #=============================================================================
-# Target rules for targets named MultiMotorTarget
+# Target rules for targets named 04_MultiMotorTarget
 
 # Build rule for target.
-MultiMotorTarget: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 MultiMotorTarget
-.PHONY : MultiMotorTarget
+04_MultiMotorTarget: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 04_MultiMotorTarget
+.PHONY : 04_MultiMotorTarget
 
 # fast build rule for target.
-MultiMotorTarget/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiMotorTarget.dir/build.make CMakeFiles/MultiMotorTarget.dir/build
-.PHONY : MultiMotorTarget/fast
+04_MultiMotorTarget/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/04_MultiMotorTarget.dir/build.make CMakeFiles/04_MultiMotorTarget.dir/build
+.PHONY : 04_MultiMotorTarget/fast
 
 #=============================================================================
-# Target rules for targets named Robot1DOF
+# Target rules for targets named 05_Robot1DOF
 
 # Build rule for target.
-Robot1DOF: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Robot1DOF
-.PHONY : Robot1DOF
+05_Robot1DOF: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 05_Robot1DOF
+.PHONY : 05_Robot1DOF
 
 # fast build rule for target.
-Robot1DOF/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Robot1DOF.dir/build.make CMakeFiles/Robot1DOF.dir/build
-.PHONY : Robot1DOF/fast
+05_Robot1DOF/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/05_Robot1DOF.dir/build.make CMakeFiles/05_Robot1DOF.dir/build
+.PHONY : 05_Robot1DOF/fast
+
+#=============================================================================
+# Target rules for targets named 06_rosQueueTest
+
+# Build rule for target.
+06_rosQueueTest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 06_rosQueueTest
+.PHONY : 06_rosQueueTest
+
+# fast build rule for target.
+06_rosQueueTest/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/06_rosQueueTest.dir/build.make CMakeFiles/06_rosQueueTest.dir/build
+.PHONY : 06_rosQueueTest/fast
+
+#=============================================================================
+# Target rules for targets named 07_rosMotorTest
+
+# Build rule for target.
+07_rosMotorTest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 07_rosMotorTest
+.PHONY : 07_rosMotorTest
+
+# fast build rule for target.
+07_rosMotorTest/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/07_rosMotorTest.dir/build.make CMakeFiles/07_rosMotorTest.dir/build
+.PHONY : 07_rosMotorTest/fast
 
 src/CSVMotorController.o: src/CSVMotorController.cpp.o
 .PHONY : src/CSVMotorController.o
 
 # target to build an object file
 src/CSVMotorController.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CSVMotorController.dir/build.make CMakeFiles/CSVMotorController.dir/src/CSVMotorController.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/src/CSVMotorController.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultipleTarget.dir/build.make CMakeFiles/MultipleTarget.dir/src/CSVMotorController.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiMotorTarget.dir/build.make CMakeFiles/MultiMotorTarget.dir/src/CSVMotorController.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Robot1DOF.dir/build.make CMakeFiles/Robot1DOF.dir/src/CSVMotorController.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/01_CSVMotorController.dir/build.make CMakeFiles/01_CSVMotorController.dir/src/CSVMotorController.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/02_TwoController.dir/build.make CMakeFiles/02_TwoController.dir/src/CSVMotorController.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/03_MultipleTarget.dir/build.make CMakeFiles/03_MultipleTarget.dir/src/CSVMotorController.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/04_MultiMotorTarget.dir/build.make CMakeFiles/04_MultiMotorTarget.dir/src/CSVMotorController.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/05_Robot1DOF.dir/build.make CMakeFiles/05_Robot1DOF.dir/src/CSVMotorController.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/07_rosMotorTest.dir/build.make CMakeFiles/07_rosMotorTest.dir/src/CSVMotorController.cpp.o
 .PHONY : src/CSVMotorController.cpp.o
 
 src/CSVMotorController.i: src/CSVMotorController.cpp.i
@@ -198,11 +225,12 @@ src/CSVMotorController.i: src/CSVMotorController.cpp.i
 
 # target to preprocess a source file
 src/CSVMotorController.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CSVMotorController.dir/build.make CMakeFiles/CSVMotorController.dir/src/CSVMotorController.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/src/CSVMotorController.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultipleTarget.dir/build.make CMakeFiles/MultipleTarget.dir/src/CSVMotorController.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiMotorTarget.dir/build.make CMakeFiles/MultiMotorTarget.dir/src/CSVMotorController.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Robot1DOF.dir/build.make CMakeFiles/Robot1DOF.dir/src/CSVMotorController.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/01_CSVMotorController.dir/build.make CMakeFiles/01_CSVMotorController.dir/src/CSVMotorController.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/02_TwoController.dir/build.make CMakeFiles/02_TwoController.dir/src/CSVMotorController.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/03_MultipleTarget.dir/build.make CMakeFiles/03_MultipleTarget.dir/src/CSVMotorController.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/04_MultiMotorTarget.dir/build.make CMakeFiles/04_MultiMotorTarget.dir/src/CSVMotorController.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/05_Robot1DOF.dir/build.make CMakeFiles/05_Robot1DOF.dir/src/CSVMotorController.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/07_rosMotorTest.dir/build.make CMakeFiles/07_rosMotorTest.dir/src/CSVMotorController.cpp.i
 .PHONY : src/CSVMotorController.cpp.i
 
 src/CSVMotorController.s: src/CSVMotorController.cpp.s
@@ -210,11 +238,12 @@ src/CSVMotorController.s: src/CSVMotorController.cpp.s
 
 # target to generate assembly for a file
 src/CSVMotorController.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CSVMotorController.dir/build.make CMakeFiles/CSVMotorController.dir/src/CSVMotorController.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/src/CSVMotorController.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultipleTarget.dir/build.make CMakeFiles/MultipleTarget.dir/src/CSVMotorController.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiMotorTarget.dir/build.make CMakeFiles/MultiMotorTarget.dir/src/CSVMotorController.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Robot1DOF.dir/build.make CMakeFiles/Robot1DOF.dir/src/CSVMotorController.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/01_CSVMotorController.dir/build.make CMakeFiles/01_CSVMotorController.dir/src/CSVMotorController.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/02_TwoController.dir/build.make CMakeFiles/02_TwoController.dir/src/CSVMotorController.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/03_MultipleTarget.dir/build.make CMakeFiles/03_MultipleTarget.dir/src/CSVMotorController.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/04_MultiMotorTarget.dir/build.make CMakeFiles/04_MultiMotorTarget.dir/src/CSVMotorController.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/05_Robot1DOF.dir/build.make CMakeFiles/05_Robot1DOF.dir/src/CSVMotorController.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/07_rosMotorTest.dir/build.make CMakeFiles/07_rosMotorTest.dir/src/CSVMotorController.cpp.s
 .PHONY : src/CSVMotorController.cpp.s
 
 src/main.o: src/main.cpp.o
@@ -222,7 +251,7 @@ src/main.o: src/main.cpp.o
 
 # target to build an object file
 src/main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CSVMotorController.dir/build.make CMakeFiles/CSVMotorController.dir/src/main.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/01_CSVMotorController.dir/build.make CMakeFiles/01_CSVMotorController.dir/src/main.cpp.o
 .PHONY : src/main.cpp.o
 
 src/main.i: src/main.cpp.i
@@ -230,7 +259,7 @@ src/main.i: src/main.cpp.i
 
 # target to preprocess a source file
 src/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CSVMotorController.dir/build.make CMakeFiles/CSVMotorController.dir/src/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/01_CSVMotorController.dir/build.make CMakeFiles/01_CSVMotorController.dir/src/main.cpp.i
 .PHONY : src/main.cpp.i
 
 src/main.s: src/main.cpp.s
@@ -238,7 +267,7 @@ src/main.s: src/main.cpp.s
 
 # target to generate assembly for a file
 src/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CSVMotorController.dir/build.make CMakeFiles/CSVMotorController.dir/src/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/01_CSVMotorController.dir/build.make CMakeFiles/01_CSVMotorController.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
 src/multi_motor_target.o: src/multi_motor_target.cpp.o
@@ -246,7 +275,7 @@ src/multi_motor_target.o: src/multi_motor_target.cpp.o
 
 # target to build an object file
 src/multi_motor_target.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiMotorTarget.dir/build.make CMakeFiles/MultiMotorTarget.dir/src/multi_motor_target.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/04_MultiMotorTarget.dir/build.make CMakeFiles/04_MultiMotorTarget.dir/src/multi_motor_target.cpp.o
 .PHONY : src/multi_motor_target.cpp.o
 
 src/multi_motor_target.i: src/multi_motor_target.cpp.i
@@ -254,7 +283,7 @@ src/multi_motor_target.i: src/multi_motor_target.cpp.i
 
 # target to preprocess a source file
 src/multi_motor_target.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiMotorTarget.dir/build.make CMakeFiles/MultiMotorTarget.dir/src/multi_motor_target.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/04_MultiMotorTarget.dir/build.make CMakeFiles/04_MultiMotorTarget.dir/src/multi_motor_target.cpp.i
 .PHONY : src/multi_motor_target.cpp.i
 
 src/multi_motor_target.s: src/multi_motor_target.cpp.s
@@ -262,7 +291,7 @@ src/multi_motor_target.s: src/multi_motor_target.cpp.s
 
 # target to generate assembly for a file
 src/multi_motor_target.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiMotorTarget.dir/build.make CMakeFiles/MultiMotorTarget.dir/src/multi_motor_target.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/04_MultiMotorTarget.dir/build.make CMakeFiles/04_MultiMotorTarget.dir/src/multi_motor_target.cpp.s
 .PHONY : src/multi_motor_target.cpp.s
 
 src/multiple_target.o: src/multiple_target.cpp.o
@@ -270,7 +299,7 @@ src/multiple_target.o: src/multiple_target.cpp.o
 
 # target to build an object file
 src/multiple_target.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultipleTarget.dir/build.make CMakeFiles/MultipleTarget.dir/src/multiple_target.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/03_MultipleTarget.dir/build.make CMakeFiles/03_MultipleTarget.dir/src/multiple_target.cpp.o
 .PHONY : src/multiple_target.cpp.o
 
 src/multiple_target.i: src/multiple_target.cpp.i
@@ -278,7 +307,7 @@ src/multiple_target.i: src/multiple_target.cpp.i
 
 # target to preprocess a source file
 src/multiple_target.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultipleTarget.dir/build.make CMakeFiles/MultipleTarget.dir/src/multiple_target.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/03_MultipleTarget.dir/build.make CMakeFiles/03_MultipleTarget.dir/src/multiple_target.cpp.i
 .PHONY : src/multiple_target.cpp.i
 
 src/multiple_target.s: src/multiple_target.cpp.s
@@ -286,7 +315,7 @@ src/multiple_target.s: src/multiple_target.cpp.s
 
 # target to generate assembly for a file
 src/multiple_target.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultipleTarget.dir/build.make CMakeFiles/MultipleTarget.dir/src/multiple_target.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/03_MultipleTarget.dir/build.make CMakeFiles/03_MultipleTarget.dir/src/multiple_target.cpp.s
 .PHONY : src/multiple_target.cpp.s
 
 src/robot_1DOF.o: src/robot_1DOF.cpp.o
@@ -294,7 +323,7 @@ src/robot_1DOF.o: src/robot_1DOF.cpp.o
 
 # target to build an object file
 src/robot_1DOF.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Robot1DOF.dir/build.make CMakeFiles/Robot1DOF.dir/src/robot_1DOF.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/05_Robot1DOF.dir/build.make CMakeFiles/05_Robot1DOF.dir/src/robot_1DOF.cpp.o
 .PHONY : src/robot_1DOF.cpp.o
 
 src/robot_1DOF.i: src/robot_1DOF.cpp.i
@@ -302,7 +331,7 @@ src/robot_1DOF.i: src/robot_1DOF.cpp.i
 
 # target to preprocess a source file
 src/robot_1DOF.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Robot1DOF.dir/build.make CMakeFiles/Robot1DOF.dir/src/robot_1DOF.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/05_Robot1DOF.dir/build.make CMakeFiles/05_Robot1DOF.dir/src/robot_1DOF.cpp.i
 .PHONY : src/robot_1DOF.cpp.i
 
 src/robot_1DOF.s: src/robot_1DOF.cpp.s
@@ -310,15 +339,63 @@ src/robot_1DOF.s: src/robot_1DOF.cpp.s
 
 # target to generate assembly for a file
 src/robot_1DOF.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Robot1DOF.dir/build.make CMakeFiles/Robot1DOF.dir/src/robot_1DOF.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/05_Robot1DOF.dir/build.make CMakeFiles/05_Robot1DOF.dir/src/robot_1DOF.cpp.s
 .PHONY : src/robot_1DOF.cpp.s
+
+src/ros_motor.o: src/ros_motor.cpp.o
+.PHONY : src/ros_motor.o
+
+# target to build an object file
+src/ros_motor.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/07_rosMotorTest.dir/build.make CMakeFiles/07_rosMotorTest.dir/src/ros_motor.cpp.o
+.PHONY : src/ros_motor.cpp.o
+
+src/ros_motor.i: src/ros_motor.cpp.i
+.PHONY : src/ros_motor.i
+
+# target to preprocess a source file
+src/ros_motor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/07_rosMotorTest.dir/build.make CMakeFiles/07_rosMotorTest.dir/src/ros_motor.cpp.i
+.PHONY : src/ros_motor.cpp.i
+
+src/ros_motor.s: src/ros_motor.cpp.s
+.PHONY : src/ros_motor.s
+
+# target to generate assembly for a file
+src/ros_motor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/07_rosMotorTest.dir/build.make CMakeFiles/07_rosMotorTest.dir/src/ros_motor.cpp.s
+.PHONY : src/ros_motor.cpp.s
+
+src/ros_queue_test.o: src/ros_queue_test.cpp.o
+.PHONY : src/ros_queue_test.o
+
+# target to build an object file
+src/ros_queue_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/06_rosQueueTest.dir/build.make CMakeFiles/06_rosQueueTest.dir/src/ros_queue_test.cpp.o
+.PHONY : src/ros_queue_test.cpp.o
+
+src/ros_queue_test.i: src/ros_queue_test.cpp.i
+.PHONY : src/ros_queue_test.i
+
+# target to preprocess a source file
+src/ros_queue_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/06_rosQueueTest.dir/build.make CMakeFiles/06_rosQueueTest.dir/src/ros_queue_test.cpp.i
+.PHONY : src/ros_queue_test.cpp.i
+
+src/ros_queue_test.s: src/ros_queue_test.cpp.s
+.PHONY : src/ros_queue_test.s
+
+# target to generate assembly for a file
+src/ros_queue_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/06_rosQueueTest.dir/build.make CMakeFiles/06_rosQueueTest.dir/src/ros_queue_test.cpp.s
+.PHONY : src/ros_queue_test.cpp.s
 
 src/two_motors.o: src/two_motors.cpp.o
 .PHONY : src/two_motors.o
 
 # target to build an object file
 src/two_motors.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/src/two_motors.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/02_TwoController.dir/build.make CMakeFiles/02_TwoController.dir/src/two_motors.cpp.o
 .PHONY : src/two_motors.cpp.o
 
 src/two_motors.i: src/two_motors.cpp.i
@@ -326,7 +403,7 @@ src/two_motors.i: src/two_motors.cpp.i
 
 # target to preprocess a source file
 src/two_motors.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/src/two_motors.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/02_TwoController.dir/build.make CMakeFiles/02_TwoController.dir/src/two_motors.cpp.i
 .PHONY : src/two_motors.cpp.i
 
 src/two_motors.s: src/two_motors.cpp.s
@@ -334,7 +411,7 @@ src/two_motors.s: src/two_motors.cpp.s
 
 # target to generate assembly for a file
 src/two_motors.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TwoController.dir/build.make CMakeFiles/TwoController.dir/src/two_motors.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/02_TwoController.dir/build.make CMakeFiles/02_TwoController.dir/src/two_motors.cpp.s
 .PHONY : src/two_motors.cpp.s
 
 # Help Target
@@ -345,11 +422,13 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... CSVMotorController"
-	@echo "... MultiMotorTarget"
-	@echo "... MultipleTarget"
-	@echo "... Robot1DOF"
-	@echo "... TwoController"
+	@echo "... 01_CSVMotorController"
+	@echo "... 02_TwoController"
+	@echo "... 03_MultipleTarget"
+	@echo "... 04_MultiMotorTarget"
+	@echo "... 05_Robot1DOF"
+	@echo "... 06_rosQueueTest"
+	@echo "... 07_rosMotorTest"
 	@echo "... src/CSVMotorController.o"
 	@echo "... src/CSVMotorController.i"
 	@echo "... src/CSVMotorController.s"
@@ -365,6 +444,12 @@ help:
 	@echo "... src/robot_1DOF.o"
 	@echo "... src/robot_1DOF.i"
 	@echo "... src/robot_1DOF.s"
+	@echo "... src/ros_motor.o"
+	@echo "... src/ros_motor.i"
+	@echo "... src/ros_motor.s"
+	@echo "... src/ros_queue_test.o"
+	@echo "... src/ros_queue_test.i"
+	@echo "... src/ros_queue_test.s"
 	@echo "... src/two_motors.o"
 	@echo "... src/two_motors.i"
 	@echo "... src/two_motors.s"

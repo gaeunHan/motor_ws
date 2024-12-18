@@ -7,9 +7,9 @@
 using namespace std;
 
 // constructor
-EPOS4Slave::EPOS4Slave(float pulse, float gear_ratio) : PULSE(pulse), GEAR_RATIO(gear_ratio),
-                                                        CNT_PER_REVOLUTION(pulse * gear_ratio),
-                                                        CNT_PER_DEGREE((pulse * gear_ratio) / 360.0f) 
+EPOS4Slave::EPOS4Slave(float pulse, float gear_ratio) : PULSE(pulse * 4), GEAR_RATIO(gear_ratio),
+                                                        CNT_PER_REVOLUTION(pulse * 4 * gear_ratio),
+                                                        CNT_PER_DEGREE((pulse * 4 * gear_ratio) / 360.0f) 
 {
     pos[0] = 0.0f; pos[1] = 0.0f;
     vel[0] = 0.0f; vel[1] = 0.0f;
@@ -66,6 +66,13 @@ void EPOS4Slave::setTrajectory(float tick){
     vel_tick = b1 + 2*b2*dt + 3*b3*pow(dt,2) + 4*b4*pow(dt,3) + 5*b5*pow(dt,4); // [encoder cnt / sec]
     vel_tick = ((vel_tick * 60.0) / CNT_PER_REVOLUTION) * 35.0; // convert it into [rpm]
     acc_tick = 2*b2 + 6*b3*dt + 12*b4*pow(dt,2) + 20*b5*pow(dt,3);
+
+    // debugging
+    // cout << "T: " << T << endl;
+    // cout << "q0: " << q0 << " q1: " << q1 << " v0: " << v0 << " v1: " << v1 << " a0: " << a0 << " a1: " << a1 << endl;
+    // cout << "b0: " << b0 << " b1: " << b1 << "b2: " << b2 << "b3: " << b3 << " b4: " << b4 << " b5: " << b5 << endl;
+    // cout << "dt = currTime: " << currTime << " - moveTime[0]: " << moveTime[0] << " = " << dt << endl;
+    // cout << "pos_tick at currTime: " << pos_tick << " @ " << currTime << endl;
 }
 
 float EPOS4Slave::getVelTick(){
@@ -80,12 +87,17 @@ float EPOS4Slave::getMoveTime(){
     return moveTime[1] - moveTime[0];
 }
 
-void EPOS4Slave::logging(float tick, uint32_t actualVel, uint32_t actualPos){
+float EPOS4Slave::getCntPerRevolution(){
+    return CNT_PER_REVOLUTION;
+}
+
+void EPOS4Slave::logging(float tick, int32_t actualVel, int32_t actualPos){
     t1_array.push_back(tick);
     velocity_input_array.push_back(vel_tick / GEAR_RATIO); // [rpm]
-    position_input_array.push_back(pos_tick * 360.0 / PULSE / GEAR_RATIO); // [deg]
+    position_input_array.push_back(pos_tick * 360.0 / CNT_PER_REVOLUTION); // [deg]
     velocity_output_array.push_back(actualVel / GEAR_RATIO); // actual velocity 읽을 때 기어비로 나눠줘야 함. 
-    position_output_array.push_back(((actualPos * 360.0f) / (PULSE * 4)) / GEAR_RATIO); // logging pos in degree 
+    //position_output_array.push_back(((actualPos * 360.0f) / (PULSE)) / GEAR_RATIO); // logging pos in degree 
+    position_output_array.push_back((actualPos * 360.0f) / CNT_PER_REVOLUTION); // logging pos in degree 
 }
 
 void EPOS4Slave::saveData(const string &position_filename, const string &velocity_filename) {

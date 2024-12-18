@@ -29,6 +29,7 @@ public:
     float getVelTick();
     float getPosTick();
     float getMoveTime();
-    void logging(float tick, uint32_t actualVel, uint32_t actualPos);
+    float getCntPerRevolution();
+    void logging(float tick, int32_t actualVel, int32_t actualPos);
     void saveData(const string &position_filename, const string &velocity_filename);    
 };
