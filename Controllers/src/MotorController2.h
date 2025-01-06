@@ -24,7 +24,7 @@ private:
 public:
     EPOS4Slave(float pulse, float gear_ratio);
     ~EPOS4Slave();
-    void setTrajectoryParam(float pos0, float pos1, float t0, float t1, float motion_input_period);
+    void setTrajectoryParam(float pos0, float pos1, float t0, float motion_input_period);
     void setTrajectory(float tick);
     void setVel0();
     float getVelTick();

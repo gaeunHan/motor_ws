@@ -33,7 +33,7 @@ EPOS4Slave::EPOS4Slave::~EPOS4Slave(){
 }
 
 
-void EPOS4Slave::setTrajectoryParam(float pos0, float pos1, float t0, float t1, float motion_input_period){
+void EPOS4Slave::setTrajectoryParam(float pos0, float pos1, float t0, float motion_input_period){
     pos[0] = pos0 * CNT_PER_DEGREE;
     pos[1] = pos1 * CNT_PER_DEGREE;
 
@@ -45,7 +45,7 @@ void EPOS4Slave::setTrajectoryParam(float pos0, float pos1, float t0, float t1, 
     acc[1] = 0;
 
     moveTime[0] = t0;
-    moveTime[1] = t1;
+    moveTime[1] = t0 + motion_input_period;
 }
 
 void EPOS4Slave::setTrajectory(float tick){

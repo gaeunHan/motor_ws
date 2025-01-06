@@ -305,7 +305,7 @@ void cyclic_task_csv()
                 // update vel[0]
                 motor1.setVel0();
                 // set trajectory: 1초 주기의 수술로봇 팔 모션 생성
-                motor1.setTrajectoryParam(currPosDeg, target_position, motionTick, motionTick+MOTION_INPUT_PERIOD, MOTION_INPUT_PERIOD);
+                motor1.setTrajectoryParam(currPosDeg, target_position, motionTick, MOTION_INPUT_PERIOD);
                 motionTick++; // 1초에 1씩 증가
                 
                 break;
