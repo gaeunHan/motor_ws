@@ -22,7 +22,7 @@
 #include <iomanip> // std::fixed, std::setprecision
 #include <mutex>
 #include "ecrt.h"
-#include "CSVMotorController.h"
+#include "MotorController2.h"
 #include "shared_memory.hpp"
 
 using namespace std;
@@ -33,7 +33,7 @@ using namespace std;
 #define NSEC_PER_SEC (1000000000)
 #define FREQUENCY (NSEC_PER_SEC / PERIOD_NS)
 #define MAXON_EPOS4_5A 0x000000fb, 0x61500000 // Product Number 확인 필요(ESI file)
-#define TARGET_NUM 3
+#define MOTION_INPUT_PERIOD 1.0 // sec
 
 /****************************************************************************/
 // EtherCAT
@@ -222,14 +222,6 @@ EPOS4Slave motor1(1024.0, 35.0);
 // trajectories
 float motionTick = 0.0;
 float currPosDeg = 0.0;
-// float trajectories[TARGET_NUM][8] = {
-//     {0.0, 360.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
-//     //{360.0, 360.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
-//     {360.0, 360.0 + 180.0, 0.0, 0.0, 0.0, 0.0, 2.0, 3.0},
-//     //{540.0, 540.0, 0.0, 0.0, 0.0, 0.0, 3.0, 4.0},
-//     {540.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0, 5.0}
-// };
-// int targetIdx = 0;
 
 // logging vars.
 float tick = 0;
@@ -308,14 +300,12 @@ void cyclic_task_csv()
                     is_operational = 1;
                     is_init = 1;                   
                 } 
-                // set trajectory: 1초 주기의 수술로봇 팔 모션 생성
+                // get current position in deg
                 currPosDeg = (float)EC_READ_S32(domain1_pd + offset_position_actual_value) * 360.0 / motor1.getCntPerRevolution();
-                cout << "target_position: " << target_position << endl;
-                cout << "currPosDeg: " << currPosDeg << endl;
-                // relative mode
-                //motor1.setTrajectoryParam(currPosDeg, currPosDeg+target_position, 0.0, 0.0, 0.0, 0.0, motionTick, motionTick+1.0);
-                // absolute mode
-                motor1.setTrajectoryParam(0, target_position, 0.0, 0.0, 0.0, 0.0, motionTick, motionTick+1.0);
+                // update vel[0]
+                motor1.setVel0();
+                // set trajectory: 1초 주기의 수술로봇 팔 모션 생성
+                motor1.setTrajectoryParam(currPosDeg, target_position, motionTick, motionTick+MOTION_INPUT_PERIOD, MOTION_INPUT_PERIOD);
                 motionTick++; // 1초에 1씩 증가
                 
                 break;
@@ -355,11 +345,11 @@ void cyclic_task_csv()
         // set target velocity by following 5th-poly trajectory
         motor1.setTrajectory(tick);
 
-        // convert vel_t into [rpm]
-        float vel = motor1.getVelTick();
+        // get target velocity
+        float target_vel = motor1.getVelTick();
 
         // write a target velocity
-        EC_WRITE_U32(domain1_pd + offset_target_velocity, vel);
+        EC_WRITE_U32(domain1_pd + offset_target_velocity, target_vel);
 
         // debugging
         // cout << "pos: " << EC_READ_S32(domain1_pd + offset_position_actual_value) << endl;
@@ -566,7 +556,7 @@ int main(int argc, char **argv)
         }
     }
 
-    motor1.saveData("/home/robogram/motor_ws/CSVMotorController/logging/ros_pos01.txt", "/home/robogram/motor_ws/CSVMotorController/logging/ros_vel01.txt");
+    motor1.saveData("/home/robogram/motor_ws/Controllers/logging/csv_prev_vel_pos01.txt", "/home/robogram/motor_ws/Controllers/logging/csv_prev_vel_vel01.txt");
 
     // 공유 메모리 해제
     munmap(shared_memory, sizeof(SharedMemoryData));

@@ -33,7 +33,6 @@ using namespace std;
 #define NSEC_PER_SEC (1000000000)
 #define FREQUENCY (NSEC_PER_SEC / PERIOD_NS)
 #define MAXON_EPOS4_5A 0x000000fb, 0x61500000 // Product Number 확인 필요(ESI file)
-#define TARGET_NUM 3
 #define MOTION_INPUT_PERIOD 1.0 // sec
 
 /****************************************************************************/
@@ -225,14 +224,6 @@ EPOS4Slave motor1(1024.0, 35.0);
 // trajectories
 float motionTick = 0.0;
 float currPosDeg = 0.0;
-// float trajectories[TARGET_NUM][8] = {
-//     {0.0, 360.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0},
-//     //{360.0, 360.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0},
-//     {360.0, 360.0 + 180.0, 0.0, 0.0, 0.0, 0.0, 2.0, 3.0},
-//     //{540.0, 540.0, 0.0, 0.0, 0.0, 0.0, 3.0, 4.0},
-//     {540.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0, 5.0}
-// };
-// int targetIdx = 0;
 
 // logging vars.
 float tick = 0;
@@ -313,9 +304,6 @@ void cyclic_task_csp()
                 } 
                 // set trajectory: 1초 주기의 수술로봇 팔 모션 생성
                 currPosDeg = (float)EC_READ_S32(domain1_pd + offset_position_actual_value) * 360.0 / motor1.getCntPerRevolution();
-                // cout << "target_position: " << target_position << endl;
-                // cout << "currPosDeg: " << currPosDeg << endl;
-                // motor1.setTrajectoryParam(currPosDeg, currPosDeg+target_position, 0.0, 0.0, 0.0, 0.0, motionTick, motionTick+1.0);
                 motor1.setTrajectoryParam(currPosDeg, target_position, 0.0, 0.0, 0.0, 0.0, motionTick, motionTick+MOTION_INPUT_PERIOD);
                 motionTick++; // 1초에 1씩 증가
                 

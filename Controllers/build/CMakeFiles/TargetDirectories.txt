@@ -1,3 +1,4 @@
 /home/robogram/motor_ws/Controllers/build/CMakeFiles/01_CSP_ZERO_VEL.dir
+/home/robogram/motor_ws/Controllers/build/CMakeFiles/02_CSV_PREV_VEL.dir
 /home/robogram/motor_ws/Controllers/build/CMakeFiles/edit_cache.dir
 /home/robogram/motor_ws/Controllers/build/CMakeFiles/rebuild_cache.dir

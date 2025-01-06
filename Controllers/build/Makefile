@@ -129,6 +129,19 @@ depend:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/01_CSP_ZERO_VEL.dir/build.make CMakeFiles/01_CSP_ZERO_VEL.dir/build
 .PHONY : 01_CSP_ZERO_VEL/fast
 
+#=============================================================================
+# Target rules for targets named 02_CSV_PREV_VEL
+
+# Build rule for target.
+02_CSV_PREV_VEL: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 02_CSV_PREV_VEL
+.PHONY : 02_CSV_PREV_VEL
+
+# fast build rule for target.
+02_CSV_PREV_VEL/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/02_CSV_PREV_VEL.dir/build.make CMakeFiles/02_CSV_PREV_VEL.dir/build
+.PHONY : 02_CSV_PREV_VEL/fast
+
 src/MotorController.o: src/MotorController.cpp.o
 .PHONY : src/MotorController.o
 
@@ -152,6 +165,30 @@ src/MotorController.s: src/MotorController.cpp.s
 src/MotorController.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/01_CSP_ZERO_VEL.dir/build.make CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController.cpp.s
 .PHONY : src/MotorController.cpp.s
+
+src/MotorController2.o: src/MotorController2.cpp.o
+.PHONY : src/MotorController2.o
+
+# target to build an object file
+src/MotorController2.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/02_CSV_PREV_VEL.dir/build.make CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController2.cpp.o
+.PHONY : src/MotorController2.cpp.o
+
+src/MotorController2.i: src/MotorController2.cpp.i
+.PHONY : src/MotorController2.i
+
+# target to preprocess a source file
+src/MotorController2.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/02_CSV_PREV_VEL.dir/build.make CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController2.cpp.i
+.PHONY : src/MotorController2.cpp.i
+
+src/MotorController2.s: src/MotorController2.cpp.s
+.PHONY : src/MotorController2.s
+
+# target to generate assembly for a file
+src/MotorController2.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/02_CSV_PREV_VEL.dir/build.make CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController2.cpp.s
+.PHONY : src/MotorController2.cpp.s
 
 src/csp_zero_vel.o: src/csp_zero_vel.cpp.o
 .PHONY : src/csp_zero_vel.o
@@ -177,6 +214,30 @@ src/csp_zero_vel.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/01_CSP_ZERO_VEL.dir/build.make CMakeFiles/01_CSP_ZERO_VEL.dir/src/csp_zero_vel.cpp.s
 .PHONY : src/csp_zero_vel.cpp.s
 
+src/csv_prev_vel.o: src/csv_prev_vel.cpp.o
+.PHONY : src/csv_prev_vel.o
+
+# target to build an object file
+src/csv_prev_vel.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/02_CSV_PREV_VEL.dir/build.make CMakeFiles/02_CSV_PREV_VEL.dir/src/csv_prev_vel.cpp.o
+.PHONY : src/csv_prev_vel.cpp.o
+
+src/csv_prev_vel.i: src/csv_prev_vel.cpp.i
+.PHONY : src/csv_prev_vel.i
+
+# target to preprocess a source file
+src/csv_prev_vel.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/02_CSV_PREV_VEL.dir/build.make CMakeFiles/02_CSV_PREV_VEL.dir/src/csv_prev_vel.cpp.i
+.PHONY : src/csv_prev_vel.cpp.i
+
+src/csv_prev_vel.s: src/csv_prev_vel.cpp.s
+.PHONY : src/csv_prev_vel.s
+
+# target to generate assembly for a file
+src/csv_prev_vel.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/02_CSV_PREV_VEL.dir/build.make CMakeFiles/02_CSV_PREV_VEL.dir/src/csv_prev_vel.cpp.s
+.PHONY : src/csv_prev_vel.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -186,12 +247,19 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... 01_CSP_ZERO_VEL"
+	@echo "... 02_CSV_PREV_VEL"
 	@echo "... src/MotorController.o"
 	@echo "... src/MotorController.i"
 	@echo "... src/MotorController.s"
+	@echo "... src/MotorController2.o"
+	@echo "... src/MotorController2.i"
+	@echo "... src/MotorController2.s"
 	@echo "... src/csp_zero_vel.o"
 	@echo "... src/csp_zero_vel.i"
 	@echo "... src/csp_zero_vel.s"
+	@echo "... src/csv_prev_vel.o"
+	@echo "... src/csv_prev_vel.i"
+	@echo "... src/csv_prev_vel.s"
 .PHONY : help
 
 
