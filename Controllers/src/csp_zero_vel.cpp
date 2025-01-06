@@ -34,6 +34,7 @@ using namespace std;
 #define FREQUENCY (NSEC_PER_SEC / PERIOD_NS)
 #define MAXON_EPOS4_5A 0x000000fb, 0x61500000 // Product Number 확인 필요(ESI file)
 #define TARGET_NUM 3
+#define MOTION_INPUT_PERIOD 1.0 // sec
 
 /****************************************************************************/
 // EtherCAT
@@ -55,6 +56,7 @@ static unsigned int counter = 0;
 static unsigned int offset_control_word;
 static unsigned int offset_target_position;
 static unsigned int offset_position_offset;
+static unsigned int offset_torque_offset;
 static unsigned int offset_modes_of_operation;
 static unsigned int offset_digital_outputs;
 static unsigned int offset_min_position_limit;
@@ -198,7 +200,6 @@ float target_position;
 SharedMemoryData *shared_memory = nullptr;
 
 void getTargetPos(){
-
     pthread_mutex_lock(&shared_memory->mutex);
 
     // 데이터 준비 상태 확인
@@ -312,12 +313,10 @@ void cyclic_task_csp()
                 } 
                 // set trajectory: 1초 주기의 수술로봇 팔 모션 생성
                 currPosDeg = (float)EC_READ_S32(domain1_pd + offset_position_actual_value) * 360.0 / motor1.getCntPerRevolution();
-                cout << "target_position: " << target_position << endl;
-                cout << "currPosDeg: " << currPosDeg << endl;
-                // relative mode
-                //motor1.setTrajectoryParam(currPosDeg, currPosDeg+target_position, 0.0, 0.0, 0.0, 0.0, motionTick, motionTick+1.0);
-                // absolute mode
-                motor1.setTrajectoryParam(0, target_position, 0.0, 0.0, 0.0, 0.0, motionTick, motionTick+1.0);
+                // cout << "target_position: " << target_position << endl;
+                // cout << "currPosDeg: " << currPosDeg << endl;
+                // motor1.setTrajectoryParam(currPosDeg, currPosDeg+target_position, 0.0, 0.0, 0.0, 0.0, motionTick, motionTick+1.0);
+                motor1.setTrajectoryParam(currPosDeg, target_position, 0.0, 0.0, 0.0, 0.0, motionTick, motionTick+MOTION_INPUT_PERIOD);
                 motionTick++; // 1초에 1씩 증가
                 
                 break;
@@ -354,14 +353,14 @@ void cyclic_task_csp()
 
     // 1ms의 모터 제어
     if(is_operational){
-        // set target velocity by following 5th-poly trajectory
+        // set target pos_tick
         motor1.setTrajectory(tick);
 
-        // convert vel_t into [rpm]
-        float vel = motor1.getVelTick();
+        // get pos_tick
+        float pos_tick = motor1.getPosTick();
 
         // write a target velocity
-        EC_WRITE_U32(domain1_pd + offset_target_velocity, vel);
+        EC_WRITE_U32(domain1_pd + offset_target_position, pos_tick);
 
         // debugging
         // cout << "pos: " << EC_READ_S32(domain1_pd + offset_position_actual_value) << endl;
@@ -375,7 +374,7 @@ void cyclic_task_csp()
 
     // stop the motor
     if(is_stop){        
-        EC_WRITE_U32(domain1_pd + offset_target_velocity, 0);
+        EC_WRITE_U32(domain1_pd + offset_target_position, 0);
         if(EC_READ_S32(domain1_pd + offset_velocity_actual_value) == 0){
             printf("motor is stopped.\n");
             is_operational = 0;
@@ -485,6 +484,7 @@ int main(int argc, char **argv)
     if (shm_fd == -1)
     {
         cout << "Failed to open shared memory." << endl;
+        cout << endl << "*** ROS node is not ready ***" << endl << endl;
     }
 
     // memory mapping

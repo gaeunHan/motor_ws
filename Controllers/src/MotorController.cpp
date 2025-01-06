@@ -2,7 +2,7 @@
 #include <vector>
 #include <fstream>
 #include <cmath>
-#include "CSVMotorController.h"
+#include "MotorController.h"
 #include "ecrt.h"
 using namespace std;
 

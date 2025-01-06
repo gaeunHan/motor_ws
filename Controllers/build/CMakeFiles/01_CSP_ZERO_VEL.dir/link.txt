@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController.cpp.o CMakeFiles/01_CSP_ZERO_VEL.dir/src/csp_zero_vel.cpp.o -o 01_CSP_ZERO_VEL   -L/opt/etherlab/lib  -Wl,-rpath,/opt/etherlab/lib -lethercat 

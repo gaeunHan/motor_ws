@@ -95,7 +95,7 @@ const static ec_pdo_entry_reg_t domain1_regs[] =
     {0,0, MAXON_EPOS4_5A, 0x603F, 0x00, &offset_error_code}
 };
 
-/**************************** MDP module CSV mapping ****************************/
+/**************************** MDP module CSP mapping ****************************/
 static ec_pdo_entry_info_t csp_pdo_entries[] = {
     // RxPDO (Master -> Slave)
     {0x6040, 0x00, 16},    // control word
