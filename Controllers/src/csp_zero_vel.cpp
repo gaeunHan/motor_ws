@@ -34,6 +34,7 @@ using namespace std;
 #define FREQUENCY (NSEC_PER_SEC / PERIOD_NS)
 #define MAXON_EPOS4_5A 0x000000fb, 0x61500000 // Product Number 확인 필요(ESI file)
 #define MOTION_INPUT_PERIOD 1.0 // sec
+enum Mode{CSP_ZERO_VEL, CSV_PREV_VEL, CSP_PREDICT};
 
 /****************************************************************************/
 // EtherCAT
@@ -304,7 +305,7 @@ void cyclic_task_csp()
                 } 
                 // set trajectory: 1초 주기의 수술로봇 팔 모션 생성
                 currPosDeg = (float)EC_READ_S32(domain1_pd + offset_position_actual_value) * 360.0 / motor1.getCntPerRevolution();
-                motor1.setTrajectoryParam(currPosDeg, target_position, 0.0, 0.0, 0.0, 0.0, motionTick, motionTick+MOTION_INPUT_PERIOD);
+                motor1.setTrajectoryParam(currPosDeg, target_position, motionTick, MOTION_INPUT_PERIOD, CSP_ZERO_VEL);
                 motionTick++; // 1초에 1씩 증가
                 
                 break;
@@ -541,7 +542,7 @@ int main(int argc, char **argv)
         }
     }
 
-    motor1.saveData("/home/robogram/motor_ws/Controllers/logging/csp_zero_vel_pos01.txt", "/home/robogram/motor_ws/Controllers/logging/csp_zero_vel_vel01.txt");
+    motor1.saveData("/home/robogram/motor_ws/Controllers/logging/csp_zero_vel_pos02.txt", "/home/robogram/motor_ws/Controllers/logging/csp_zero_vel_vel02.txt");
 
     // 공유 메모리 해제
     munmap(shared_memory, sizeof(SharedMemoryData));

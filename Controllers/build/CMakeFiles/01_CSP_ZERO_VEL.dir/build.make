@@ -69,19 +69,19 @@ include CMakeFiles/01_CSP_ZERO_VEL.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/01_CSP_ZERO_VEL.dir/flags.make
 
-CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController.cpp.o: CMakeFiles/01_CSP_ZERO_VEL.dir/flags.make
-CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController.cpp.o: ../src/MotorController.cpp
-CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController.cpp.o: CMakeFiles/01_CSP_ZERO_VEL.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/robogram/motor_ws/Controllers/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController.cpp.o -MF CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController.cpp.o.d -o CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController.cpp.o -c /home/robogram/motor_ws/Controllers/src/MotorController.cpp
+CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController2.cpp.o: CMakeFiles/01_CSP_ZERO_VEL.dir/flags.make
+CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController2.cpp.o: ../src/MotorController2.cpp
+CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController2.cpp.o: CMakeFiles/01_CSP_ZERO_VEL.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/robogram/motor_ws/Controllers/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController2.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController2.cpp.o -MF CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController2.cpp.o.d -o CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController2.cpp.o -c /home/robogram/motor_ws/Controllers/src/MotorController2.cpp
 
-CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/robogram/motor_ws/Controllers/src/MotorController.cpp > CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController.cpp.i
+CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController2.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController2.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/robogram/motor_ws/Controllers/src/MotorController2.cpp > CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController2.cpp.i
 
-CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/robogram/motor_ws/Controllers/src/MotorController.cpp -o CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController.cpp.s
+CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController2.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController2.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/robogram/motor_ws/Controllers/src/MotorController2.cpp -o CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController2.cpp.s
 
 CMakeFiles/01_CSP_ZERO_VEL.dir/src/csp_zero_vel.cpp.o: CMakeFiles/01_CSP_ZERO_VEL.dir/flags.make
 CMakeFiles/01_CSP_ZERO_VEL.dir/src/csp_zero_vel.cpp.o: ../src/csp_zero_vel.cpp
@@ -99,13 +99,13 @@ CMakeFiles/01_CSP_ZERO_VEL.dir/src/csp_zero_vel.cpp.s: cmake_force
 
 # Object files for target 01_CSP_ZERO_VEL
 01_CSP_ZERO_VEL_OBJECTS = \
-"CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController.cpp.o" \
+"CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController2.cpp.o" \
 "CMakeFiles/01_CSP_ZERO_VEL.dir/src/csp_zero_vel.cpp.o"
 
 # External object files for target 01_CSP_ZERO_VEL
 01_CSP_ZERO_VEL_EXTERNAL_OBJECTS =
 
-01_CSP_ZERO_VEL: CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController.cpp.o
+01_CSP_ZERO_VEL: CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController2.cpp.o
 01_CSP_ZERO_VEL: CMakeFiles/01_CSP_ZERO_VEL.dir/src/csp_zero_vel.cpp.o
 01_CSP_ZERO_VEL: CMakeFiles/01_CSP_ZERO_VEL.dir/build.make
 01_CSP_ZERO_VEL: CMakeFiles/01_CSP_ZERO_VEL.dir/link.txt

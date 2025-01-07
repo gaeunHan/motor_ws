@@ -142,35 +142,12 @@ depend:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/02_CSV_PREV_VEL.dir/build.make CMakeFiles/02_CSV_PREV_VEL.dir/build
 .PHONY : 02_CSV_PREV_VEL/fast
 
-src/MotorController.o: src/MotorController.cpp.o
-.PHONY : src/MotorController.o
-
-# target to build an object file
-src/MotorController.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/01_CSP_ZERO_VEL.dir/build.make CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController.cpp.o
-.PHONY : src/MotorController.cpp.o
-
-src/MotorController.i: src/MotorController.cpp.i
-.PHONY : src/MotorController.i
-
-# target to preprocess a source file
-src/MotorController.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/01_CSP_ZERO_VEL.dir/build.make CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController.cpp.i
-.PHONY : src/MotorController.cpp.i
-
-src/MotorController.s: src/MotorController.cpp.s
-.PHONY : src/MotorController.s
-
-# target to generate assembly for a file
-src/MotorController.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/01_CSP_ZERO_VEL.dir/build.make CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController.cpp.s
-.PHONY : src/MotorController.cpp.s
-
 src/MotorController2.o: src/MotorController2.cpp.o
 .PHONY : src/MotorController2.o
 
 # target to build an object file
 src/MotorController2.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/01_CSP_ZERO_VEL.dir/build.make CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController2.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/02_CSV_PREV_VEL.dir/build.make CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController2.cpp.o
 .PHONY : src/MotorController2.cpp.o
 
@@ -179,6 +156,7 @@ src/MotorController2.i: src/MotorController2.cpp.i
 
 # target to preprocess a source file
 src/MotorController2.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/01_CSP_ZERO_VEL.dir/build.make CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController2.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/02_CSV_PREV_VEL.dir/build.make CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController2.cpp.i
 .PHONY : src/MotorController2.cpp.i
 
@@ -187,6 +165,7 @@ src/MotorController2.s: src/MotorController2.cpp.s
 
 # target to generate assembly for a file
 src/MotorController2.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/01_CSP_ZERO_VEL.dir/build.make CMakeFiles/01_CSP_ZERO_VEL.dir/src/MotorController2.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/02_CSV_PREV_VEL.dir/build.make CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController2.cpp.s
 .PHONY : src/MotorController2.cpp.s
 
@@ -248,9 +227,6 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... 01_CSP_ZERO_VEL"
 	@echo "... 02_CSV_PREV_VEL"
-	@echo "... src/MotorController.o"
-	@echo "... src/MotorController.i"
-	@echo "... src/MotorController.s"
 	@echo "... src/MotorController2.o"
 	@echo "... src/MotorController2.i"
 	@echo "... src/MotorController2.s"

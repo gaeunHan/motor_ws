@@ -6,6 +6,8 @@
 #include "ecrt.h"
 using namespace std;
 
+enum Mode{CSP_ZERO_VEL, CSV_PREV_VEL, CSP_PREDICT};
+
 // constructor
 EPOS4Slave::EPOS4Slave(float pulse, float gear_ratio) : PULSE(pulse * 4), GEAR_RATIO(gear_ratio),
                                                         CNT_PER_REVOLUTION(pulse * 4 * gear_ratio),
@@ -33,18 +35,27 @@ EPOS4Slave::EPOS4Slave::~EPOS4Slave(){
 }
 
 
-void EPOS4Slave::setTrajectoryParam(float pos0, float pos1, float vel0, float vel1, float acc0, float acc1, float t0, float t1){
+void EPOS4Slave::setTrajectoryParam(float pos0, float pos1, float t0, float motion_input_period, int mode){
     pos[0] = pos0 * CNT_PER_DEGREE;
     pos[1] = pos1 * CNT_PER_DEGREE;
 
-    vel[0] = vel0;
-    vel[1] = vel1;
+    switch(mode){
+        case CSP_ZERO_VEL:
+            vel[0] = 0.0;
+            vel[1] = 0.0;
+            break;
+        case CSV_PREV_VEL:
+            vel[1] = ((pos1 - pos0) / motion_input_period) * CNT_PER_DEGREE;
+            break;
+        case CSP_PREDICT:
+            break;
+    }
 
-    acc[0] = acc0;
-    acc[1] = acc1;
+    acc[0] = 0;
+    acc[1] = 0;
 
     moveTime[0] = t0;
-    moveTime[1] = t1;
+    moveTime[1] = t0 + motion_input_period;
 }
 
 void EPOS4Slave::setTrajectory(float tick){
@@ -68,11 +79,16 @@ void EPOS4Slave::setTrajectory(float tick){
     acc_tick = 2*b2 + 6*b3*dt + 12*b4*pow(dt,2) + 20*b5*pow(dt,3);
 
     // debugging
+    // cout << "vel[0]: " << vel[0] << " vel[1]: " << vel[1] << endl;
     // cout << "T: " << T << endl;
     // cout << "q0: " << q0 << " q1: " << q1 << " v0: " << v0 << " v1: " << v1 << " a0: " << a0 << " a1: " << a1 << endl;
     // cout << "b0: " << b0 << " b1: " << b1 << "b2: " << b2 << "b3: " << b3 << " b4: " << b4 << " b5: " << b5 << endl;
     // cout << "dt = currTime: " << currTime << " - moveTime[0]: " << moveTime[0] << " = " << dt << endl;
     // cout << "pos_tick at currTime: " << pos_tick << " @ " << currTime << endl;
+}
+
+void EPOS4Slave::setVel0(){
+    vel[0] = vel[1];
 }
 
 float EPOS4Slave::getVelTick(){

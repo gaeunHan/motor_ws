@@ -2,8 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Load position and velocity data
-position_data = np.loadtxt('csv_prev_vel_pos01.txt')
-velocity_data = np.loadtxt('csv_prev_vel_vel01.txt')
+# position_data = np.loadtxt('csv_prev_vel_pos01.txt')
+# velocity_data = np.loadtxt('csv_prev_vel_vel01.txt')
+position_data = np.loadtxt('csp_zero_vel_pos02.txt')
+velocity_data = np.loadtxt('csp_zero_vel_vel02.txt')
 
 # Extract columns from position data
 timestamp_pos = position_data[:, 0]
@@ -25,7 +27,7 @@ plt.plot(timestamp_pos, actual_position, label='Actual Position', linestyle='--'
 plt.title('Position Data')
 plt.xlabel('Timestamp (s)')
 plt.ylabel('Position')
-plt.ylim(-5, 45)
+plt.ylim(-10, 45)
 plt.legend()
 plt.grid(True)
 
@@ -36,7 +38,7 @@ plt.plot(timestamp_vel, actual_velocity, label='Actual Velocity', linestyle='--'
 plt.title('Velocity Data')
 plt.xlabel('Timestamp (s)')
 plt.ylabel('Velocity')
-plt.ylim(-15, 5)
+plt.ylim(-15, 10)
 plt.legend()
 plt.grid(True)
 

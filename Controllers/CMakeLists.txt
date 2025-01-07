@@ -17,6 +17,6 @@ add_executable(01_CSP_ZERO_VEL ${Controllers_01_SOURCES})
 target_link_libraries(01_CSP_ZERO_VEL ethercat)
 
 # executable file 2: 02_CSV_PREV_VEL
-set(Controllers_02_SOURCES src/MotorController2.cpp src/csv_prev_vel.cpp)
+set(Controllers_02_SOURCES src/MotorController.cpp src/csv_prev_vel.cpp)
 add_executable(02_CSV_PREV_VEL ${Controllers_02_SOURCES})
 target_link_libraries(02_CSV_PREV_VEL ethercat)
