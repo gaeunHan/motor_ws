@@ -34,7 +34,6 @@ using namespace std;
 #define FREQUENCY (NSEC_PER_SEC / PERIOD_NS)
 #define MAXON_EPOS4_5A 0x000000fb, 0x61500000 // Product Number 확인 필요(ESI file)
 #define MOTION_INPUT_PERIOD 1.0 // sec
-#define NONE 0
 enum Mode{CSP_ZERO_VEL, CSV_PREV_VEL, CSP_PREDICT};
 
 /****************************************************************************/
@@ -226,6 +225,8 @@ EPOS4Slave motor1(1024.0, 35.0);
 // trajectories
 float motionTick = 0.0;
 float currPosDeg = 0.0;
+float positions[2] = {0.0, 0.0};
+int getPosNum = 0;
 
 // logging vars.
 float tick = 0;
@@ -241,6 +242,7 @@ uint16_t epos4_error_code = 0;
 uint32_t target_velocity = 0;
 bool is_init = 0;
 bool is_operational = 0;
+bool is_logging = 0;
 bool is_stop = 0;
 bool is_shutdown = 0;
 bool is_terminate = 0;
@@ -271,9 +273,6 @@ void cyclic_task_csp()
         // check for slave configuration state(s)
         check_slave_config_states(); // ecrt_slave_config_state()
 
-        // get target position: 1초 주기의 수술로봇 팔 모션
-        getTargetPos();
-
         // get statusword
         status_word = EC_READ_U16(domain1_pd + offset_status_word);
         
@@ -301,12 +300,27 @@ void cyclic_task_csp()
                     EC_WRITE_U32(domain1_pd + offset_min_position_limit, -1000000000); // set min pos limit
                     EC_WRITE_U32(domain1_pd + offset_max_position_limit, 1000000000); // set max pos limit
                     
-                    is_operational = 1;
-                    is_init = 1;                   
+                    is_init = 1;            
+                    is_logging = 1;       
                 } 
-                // set trajectory: 1초 주기의 수술로봇 팔 모션 생성
-                currPosDeg = (float)EC_READ_S32(domain1_pd + offset_position_actual_value) * 360.0 / motor1.getCntPerRevolution();
-                motor1.setTrajectoryParam(currPosDeg, target_position, NONE, motionTick, MOTION_INPUT_PERIOD, CSP_ZERO_VEL);
+
+                // get target position: 1초 주기의 수술로봇 팔 모션
+                getTargetPos();
+                getPosNum++;
+                positions[0] = positions[1];
+                positions[1] = target_position;
+
+                // bring one motion input delay
+                if(getPosNum >= 2){
+                    is_operational = 1;
+                    // get current position in deg
+                    currPosDeg = (float)EC_READ_S32(domain1_pd + offset_position_actual_value) * 360.0 / motor1.getCntPerRevolution();
+                    // update vel[0]
+                    motor1.setVel0();
+                    // set trajectory: 1초 주기의 수술로봇 팔 모션 생성
+                    motor1.setTrajectoryParam(currPosDeg, positions[0], positions[1], motionTick, MOTION_INPUT_PERIOD, CSP_PREDICT);
+                }
+                
                 motionTick++; // 1초에 1씩 증가
                 
                 break;
@@ -355,12 +369,14 @@ void cyclic_task_csp()
         // debugging
         // cout << "pos: " << EC_READ_S32(domain1_pd + offset_position_actual_value) << endl;
         // cout << "vel: " << EC_READ_S32(domain1_pd + offset_velocity_actual_value) << endl;
+    } 
 
+    if(is_logging){
         // logging
         motor1.logging(tick, EC_READ_S32(domain1_pd + offset_velocity_actual_value), EC_READ_S32(domain1_pd + offset_position_actual_value));
         tick += 0.001; 
         idx++;
-    } 
+    }
 
     // stop the motor
     if(is_stop){        
@@ -368,6 +384,7 @@ void cyclic_task_csp()
         if(EC_READ_S32(domain1_pd + offset_velocity_actual_value) == 0){
             printf("motor is stopped.\n");
             is_operational = 0;
+            is_logging = 0;
             is_stop = 0;
             is_shutdown = 1;
         } 
@@ -379,6 +396,7 @@ void cyclic_task_csp()
         if(((EC_READ_U16(domain1_pd + offset_status_word)) & 0x0040) == 0x0040){
             printf("operation enabled -> switch on disabled.\n");
             is_operational = 0;
+            is_logging = 0;
             is_shutdown = 0;
             is_terminate = 1;
         }
@@ -529,6 +547,7 @@ int main(int argc, char **argv)
             stopSignal = '\0';
             is_stop = 1;
             is_operational = 0;
+            is_logging = 0;
         }
 
         if(is_terminate == 1){
@@ -543,7 +562,7 @@ int main(int argc, char **argv)
         }
     }
 
-    motor1.saveData("/home/robogram/motor_ws/Controllers/logging/csp_zero_vel_pos02.txt", "/home/robogram/motor_ws/Controllers/logging/csp_zero_vel_vel02.txt");
+    motor1.saveData("/home/robogram/motor_ws/Controllers/logging/csp_predict_pos01.txt", "/home/robogram/motor_ws/Controllers/logging/csp_predict_vel01.txt");
 
     // 공유 메모리 해제
     munmap(shared_memory, sizeof(SharedMemoryData));

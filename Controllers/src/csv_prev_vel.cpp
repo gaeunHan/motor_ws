@@ -34,6 +34,7 @@ using namespace std;
 #define FREQUENCY (NSEC_PER_SEC / PERIOD_NS)
 #define MAXON_EPOS4_5A 0x000000fb, 0x61500000 // Product Number 확인 필요(ESI file)
 #define MOTION_INPUT_PERIOD 1.0 // sec
+#define NONE 0
 enum Mode{CSP_ZERO_VEL, CSV_PREV_VEL, CSP_PREDICT};
 
 /****************************************************************************/
@@ -306,7 +307,7 @@ void cyclic_task_csv()
                 // update vel[0]
                 motor1.setVel0();
                 // set trajectory: 1초 주기의 수술로봇 팔 모션 생성
-                motor1.setTrajectoryParam(currPosDeg, target_position, motionTick, MOTION_INPUT_PERIOD, CSV_PREV_VEL);
+                motor1.setTrajectoryParam(currPosDeg, target_position, NONE, motionTick, MOTION_INPUT_PERIOD, CSV_PREV_VEL);
                 motionTick++; // 1초에 1씩 증가
                 
                 break;

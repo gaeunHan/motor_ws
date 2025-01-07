@@ -20,3 +20,8 @@ target_link_libraries(01_CSP_ZERO_VEL ethercat)
 set(Controllers_02_SOURCES src/MotorController.cpp src/csv_prev_vel.cpp)
 add_executable(02_CSV_PREV_VEL ${Controllers_02_SOURCES})
 target_link_libraries(02_CSV_PREV_VEL ethercat)
+
+# executable file 3: 03_CSP_PREDICT
+set(Controllers_03_SOURCES src/MotorController.cpp src/csp_predict.cpp)
+add_executable(03_CSP_PREDICT ${Controllers_03_SOURCES})
+target_link_libraries(03_CSP_PREDICT ethercat)

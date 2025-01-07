@@ -69,19 +69,19 @@ include CMakeFiles/02_CSV_PREV_VEL.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/02_CSV_PREV_VEL.dir/flags.make
 
-CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController2.cpp.o: CMakeFiles/02_CSV_PREV_VEL.dir/flags.make
-CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController2.cpp.o: ../src/MotorController2.cpp
-CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController2.cpp.o: CMakeFiles/02_CSV_PREV_VEL.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/robogram/motor_ws/Controllers/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController2.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController2.cpp.o -MF CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController2.cpp.o.d -o CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController2.cpp.o -c /home/robogram/motor_ws/Controllers/src/MotorController2.cpp
+CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController.cpp.o: CMakeFiles/02_CSV_PREV_VEL.dir/flags.make
+CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController.cpp.o: ../src/MotorController.cpp
+CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController.cpp.o: CMakeFiles/02_CSV_PREV_VEL.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/robogram/motor_ws/Controllers/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController.cpp.o -MF CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController.cpp.o.d -o CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController.cpp.o -c /home/robogram/motor_ws/Controllers/src/MotorController.cpp
 
-CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController2.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController2.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/robogram/motor_ws/Controllers/src/MotorController2.cpp > CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController2.cpp.i
+CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/robogram/motor_ws/Controllers/src/MotorController.cpp > CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController.cpp.i
 
-CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController2.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController2.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/robogram/motor_ws/Controllers/src/MotorController2.cpp -o CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController2.cpp.s
+CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/robogram/motor_ws/Controllers/src/MotorController.cpp -o CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController.cpp.s
 
 CMakeFiles/02_CSV_PREV_VEL.dir/src/csv_prev_vel.cpp.o: CMakeFiles/02_CSV_PREV_VEL.dir/flags.make
 CMakeFiles/02_CSV_PREV_VEL.dir/src/csv_prev_vel.cpp.o: ../src/csv_prev_vel.cpp
@@ -99,13 +99,13 @@ CMakeFiles/02_CSV_PREV_VEL.dir/src/csv_prev_vel.cpp.s: cmake_force
 
 # Object files for target 02_CSV_PREV_VEL
 02_CSV_PREV_VEL_OBJECTS = \
-"CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController2.cpp.o" \
+"CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController.cpp.o" \
 "CMakeFiles/02_CSV_PREV_VEL.dir/src/csv_prev_vel.cpp.o"
 
 # External object files for target 02_CSV_PREV_VEL
 02_CSV_PREV_VEL_EXTERNAL_OBJECTS =
 
-02_CSV_PREV_VEL: CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController2.cpp.o
+02_CSV_PREV_VEL: CMakeFiles/02_CSV_PREV_VEL.dir/src/MotorController.cpp.o
 02_CSV_PREV_VEL: CMakeFiles/02_CSV_PREV_VEL.dir/src/csv_prev_vel.cpp.o
 02_CSV_PREV_VEL: CMakeFiles/02_CSV_PREV_VEL.dir/build.make
 02_CSV_PREV_VEL: CMakeFiles/02_CSV_PREV_VEL.dir/link.txt
