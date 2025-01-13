@@ -48,12 +48,13 @@ void EPOS4Slave::setTrajectoryParam(float pos0, float pos1, float pos2, float t0
             vel[1] = ((pos1 - pos0) / motion_input_period) * CNT_PER_DEGREE;
             break;
         case CSP_PREDICT:
-            if(abs(pos1) > abs(pos2)){
-                vel[1] = 0.0;
-            }
-            else{
-                vel[1] = ((pos2 - pos1) / motion_input_period) * CNT_PER_DEGREE;
-            }
+            vel[1] = ((pos2 - pos1) / motion_input_period) * CNT_PER_DEGREE;
+            // if(abs(pos1) > abs(pos2)){
+            //     vel[1] = 0.0;
+            // }
+            // else{
+            //     vel[1] = ((pos2 - pos1) / motion_input_period) * CNT_PER_DEGREE;
+            // }
             break;
     }
 

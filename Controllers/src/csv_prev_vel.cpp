@@ -546,7 +546,7 @@ int main(int argc, char **argv)
         }
     }
 
-    motor1.saveData(basePath + "csv_prev_vel_pos01.txt", basePath + "csv_prev_vel_vel01.txt", basePath + "csv_prev_vel_acc01.txt", basePath + "csv_prev_vel_jerk01.txt");
+    motor1.saveData(basePath + "csv_prev_vel_pos02.txt", basePath + "csv_prev_vel_vel02.txt", basePath + "csv_prev_vel_acc02.txt", basePath + "csv_prev_vel_jerk02.txt");
 
     // 공유 메모리 해제
     munmap(shared_memory, sizeof(SharedMemoryData));
