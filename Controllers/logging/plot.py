@@ -2,20 +2,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Load position and velocity data
-# position_data = np.loadtxt('csp_zero_vel/csp_zero_vel_pos03.txt')
-# velocity_data = np.loadtxt('csp_zero_vel/csp_zero_vel_vel03.txt')
-# accel_data = np.loadtxt('csp_zero_vel/csp_zero_vel_acc03.txt')
-# jerk_data = np.loadtxt('csp_zero_vel/csp_zero_vel_jerk03.txt')
+position_data = np.loadtxt('csp_zero_vel/csp_zero_vel_pos03.txt')
+velocity_data = np.loadtxt('csp_zero_vel/csp_zero_vel_vel03.txt')
+accel_data = np.loadtxt('csp_zero_vel/csp_zero_vel_acc03.txt')
+jerk_data = np.loadtxt('csp_zero_vel/csp_zero_vel_jerk03.txt')
 
 # position_data = np.loadtxt('csv_prev_vel/csv_prev_vel_pos02.txt')
 # velocity_data = np.loadtxt('csv_prev_vel/csv_prev_vel_vel02.txt')
 # accel_data = np.loadtxt('csv_prev_vel/csv_prev_vel_acc02.txt')
 # jerk_data = np.loadtxt('csv_prev_vel/csv_prev_vel_jerk02.txt')
 
-position_data = np.loadtxt('csp_predict/csp_predict_pos02.txt')
-velocity_data = np.loadtxt('csp_predict/csp_predict_vel02.txt')
-accel_data = np.loadtxt('csp_predict/csp_predict_acc02.txt')
-jerk_data = np.loadtxt('csp_predict/csp_predict_jerk02.txt')
+# position_data = np.loadtxt('csp_predict/csp_predict_pos02.txt')
+# velocity_data = np.loadtxt('csp_predict/csp_predict_vel02.txt')
+# accel_data = np.loadtxt('csp_predict/csp_predict_acc02.txt')
+# jerk_data = np.loadtxt('csp_predict/csp_predict_jerk02.txt')
 
 # Extract columns from position data
 timestamp_pos = position_data[:, 0]
@@ -59,57 +59,57 @@ print("Reference Jerk data: RMS =", reference_jerk_rms, ", Max =", reference_jer
 plt.figure(figsize=(16, 12))
 
 # title
-# plt.suptitle('csp_zero_vel', fontsize=36, fontweight='bold')
+plt.suptitle('csp_zero_vel', fontsize=36, fontweight='bold')
 # plt.suptitle('csv_prev_vel', fontsize=36, fontweight='bold')
-plt.suptitle('csv_predict', fontsize=36, fontweight='bold')
+# plt.suptitle('csv_predict', fontsize=50, fontweight='bold')
 
 # Plot position data
 plt.subplot(2, 2, 1)
 plt.plot(timestamp_pos, reference_position, label='Reference Position', linestyle='-', color='blue')
 plt.plot(timestamp_pos, actual_position, label='Actual Position', linestyle='--', color='cyan')
-plt.title('Position Data', fontsize=32)  # Title font size
-plt.xlabel('Timestamp (s)', fontsize=28)  # X-axis label font size
-plt.ylabel('Position [deg]', fontsize=28)  # Y-axis label font size
+plt.title('Position Data', fontsize=50)  # Title font size
+plt.xlabel('Timestamp (s)', fontsize=42)  # X-axis label font size
+plt.ylabel('Position [deg]', fontsize=42)  # Y-axis label font size
 plt.xlim(0, 28)
 plt.ylim(-10, 30)
-plt.legend(fontsize=20, loc='upper right')  # Legend font size
+plt.legend(fontsize=30, loc='upper right')  # Legend font size
 plt.grid(True)
-plt.tick_params(axis='both', which='major', labelsize=24)  # Tick label font size
+plt.tick_params(axis='both', which='major', labelsize=38)  # Tick label font size
 
 # Plot position error
 plt.subplot(2, 2, 2)
 plt.plot(timestamp_pos, position_error, label='Position Error', linestyle='-', color='red')
-plt.title('Position Error', fontsize=32)
-plt.xlabel('Timestamp (s)', fontsize=28)
-plt.ylabel('Error [deg]', fontsize=28)
+plt.title('Position Error', fontsize=50)
+plt.xlabel('Timestamp (s)', fontsize=42)
+plt.ylabel('Error [deg]', fontsize=42)
 plt.xlim(0, 28)
-plt.ylim(-0.5, 0.5)
+plt.ylim(-0.3, 0.3)
 plt.grid(True)
-plt.tick_params(axis='both', which='major', labelsize=24)
+plt.tick_params(axis='both', which='major', labelsize=38)
 
 # Plot jerk data
 plt.subplot(2, 2, 3)
 plt.plot(timestamp_jerk, reference_jerk, label='Reference Jerk', linestyle='-', color='orange')
 plt.plot(timestamp_jerk, actual_jerk, label='Actual Jerk', linestyle='--', color='maroon')
-plt.title('Jerk Data', fontsize=32)
-plt.xlabel('Timestamp (s)', fontsize=28)
-plt.ylabel('Jerk [rpm/s²]', fontsize=28)
+plt.title('Jerk Data', fontsize=50)
+plt.xlabel('Timestamp (s)', fontsize=42)
+plt.ylabel('Jerk [rpm/s²]', fontsize=42)
 plt.xlim(0, 28)
 plt.ylim(-50, 50)
-plt.legend(fontsize=20, loc='upper right')  # Legend font size
+plt.legend(fontsize=30, loc='upper right')  # Legend font size
 plt.grid(True)
-plt.tick_params(axis='both', which='major', labelsize=24)
+plt.tick_params(axis='both', which='major', labelsize=38)
 
 # Plot jerk error
 plt.subplot(2, 2, 4)
 plt.plot(timestamp_jerk, jerk_error, label='Jerk Error', linestyle='-', color='red')
-plt.title('Jerk Error', fontsize=32)
-plt.xlabel('Timestamp (s)', fontsize=28)
-plt.ylabel('Error [rpm/s²]', fontsize=28)
+plt.title('Jerk Error', fontsize=50)
+plt.xlabel('Timestamp (s)', fontsize=42)
+plt.ylabel('Error [rpm/s²]', fontsize=42)
 plt.xlim(0, 28)
 plt.ylim(-50, 50)
 plt.grid(True)
-plt.tick_params(axis='both', which='major', labelsize=24)
+plt.tick_params(axis='both', which='major', labelsize=38)
 
 # # Plot position data
 # plt.subplot(4, 2, 1)
