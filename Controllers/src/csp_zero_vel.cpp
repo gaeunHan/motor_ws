@@ -36,6 +36,7 @@ using namespace std;
 #define MOTION_INPUT_PERIOD 1.0 // sec
 #define NONE 0
 enum Mode{CSP_ZERO_VEL, CSV_PREV_VEL, CSP_PREDICT};
+string basePath = "/home/robogram/motor_ws/Controllers/logging/csp_zero_vel/";
 
 /****************************************************************************/
 // EtherCAT
@@ -471,11 +472,12 @@ int main(int argc, char **argv)
     
     // open shared memory
     int shm_fd = shm_open(SHARED_MEMORY_NAME, O_RDWR, 0666);
-    if (shm_fd == -1)
-    {
-        cout << "Failed to open shared memory." << endl;
-        cout << endl << "*** ROS node is not ready ***" << endl << endl;
+    while(shm_fd == -1){
+        cout << "ROS node is not ready ..." << endl;
+        usleep(10000);
+        shm_fd = shm_open(SHARED_MEMORY_NAME, O_RDWR, 0666);
     }
+    cout << "Succeed to open shared memory" << endl;
 
     // memory mapping
     shared_memory = static_cast<SharedMemoryData *>(mmap(
@@ -543,7 +545,7 @@ int main(int argc, char **argv)
         }
     }
 
-    motor1.saveData("/home/robogram/motor_ws/Controllers/logging/csp_zero_vel_pos02.txt", "/home/robogram/motor_ws/Controllers/logging/csp_zero_vel_vel02.txt");
+    motor1.saveData(basePath + "csp_zero_vel_pos02.txt", basePath + "csp_zero_vel_vel02.txt", basePath + "csp_zero_vel_acc02.txt", basePath + "csp_zero_vel_jerk02.txt");
 
     // 공유 메모리 해제
     munmap(shared_memory, sizeof(SharedMemoryData));

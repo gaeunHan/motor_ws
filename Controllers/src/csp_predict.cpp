@@ -35,6 +35,7 @@ using namespace std;
 #define MAXON_EPOS4_5A 0x000000fb, 0x61500000 // Product Number 확인 필요(ESI file)
 #define MOTION_INPUT_PERIOD 1.0 // sec
 enum Mode{CSP_ZERO_VEL, CSV_PREV_VEL, CSP_PREDICT};
+string basePath = "/home/robogram/motor_ws/Controllers/logging/csp_predict/";
 
 /****************************************************************************/
 // EtherCAT
@@ -489,11 +490,13 @@ int main(int argc, char **argv)
     
     // open shared memory
     int shm_fd = shm_open(SHARED_MEMORY_NAME, O_RDWR, 0666);
-    if (shm_fd == -1)
-    {
-        cout << "Failed to open shared memory." << endl;
-        cout << endl << "*** ROS node is not ready ***" << endl << endl;
+    while(shm_fd == -1){
+        cout << "ROS node is not ready ..." << endl;
+        usleep(10000);
+        shm_fd = shm_open(SHARED_MEMORY_NAME, O_RDWR, 0666);
     }
+    cout << "Succeed to open shared memory" << endl;
+
 
     // memory mapping
     shared_memory = static_cast<SharedMemoryData *>(mmap(
@@ -562,7 +565,7 @@ int main(int argc, char **argv)
         }
     }
 
-    motor1.saveData("/home/robogram/motor_ws/Controllers/logging/csp_predict_pos01.txt", "/home/robogram/motor_ws/Controllers/logging/csp_predict_vel01.txt");
+    motor1.saveData(basePath + "csp_predict_pos01.txt", basePath + "csp_predict_vel01.txt", basePath + "csp_predict_acc01.txt", basePath + "csp_predict_jerk01.txt");
 
     // 공유 메모리 해제
     munmap(shared_memory, sizeof(SharedMemoryData));

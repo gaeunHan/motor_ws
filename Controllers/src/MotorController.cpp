@@ -79,10 +79,17 @@ void EPOS4Slave::setTrajectory(float tick){
     // pos, vel, acc formula
     float currTime = tick;
     float dt = currTime - moveTime[0];
+
     pos_tick = b0 + b1*dt + b2*pow(dt,2) + b3*pow(dt,3) + b4*pow(dt,4) + b5*pow(dt,5); // [encoder cnt]
+
     vel_tick = b1 + 2*b2*dt + 3*b3*pow(dt,2) + 4*b4*pow(dt,3) + 5*b5*pow(dt,4); // [encoder cnt / sec]
-    vel_tick = ((vel_tick * 60.0) / CNT_PER_REVOLUTION) * 35.0; // convert it into [rpm]
+    vel_tick = (vel_tick * 60.0) / CNT_PER_REVOLUTION * GEAR_RATIO; // convert in [rpm]
+
     acc_tick = 2*b2 + 6*b3*dt + 12*b4*pow(dt,2) + 20*b5*pow(dt,3);
+    acc_tick = (acc_tick * 60.0) / CNT_PER_REVOLUTION * GEAR_RATIO; // convert in [rpm/s]
+
+    jerk_tick = 6*b3 + 24*b4*dt + 60*b5*pow(dt,2);
+    jerk_tick = (jerk_tick * 60.0) / CNT_PER_REVOLUTION * GEAR_RATIO; // convert in [rpm/s^2]
 
     // debugging
     // cout << "vel[0]: " << vel[0] << " vel[1]: " << vel[1] << endl;
@@ -115,20 +122,27 @@ float EPOS4Slave::getCntPerRevolution(){
 
 void EPOS4Slave::logging(float tick, int32_t actualVel, int32_t actualPos){
     t1_array.push_back(tick);
+    
+    position_input_array.push_back((pos_tick * 360.0) / CNT_PER_REVOLUTION); // [deg]
     velocity_input_array.push_back(vel_tick / GEAR_RATIO); // [rpm]
-    position_input_array.push_back(pos_tick * 360.0 / CNT_PER_REVOLUTION); // [deg]
-    velocity_output_array.push_back(actualVel / GEAR_RATIO); // actual velocity 읽을 때 기어비로 나눠줘야 함. 
-    //position_output_array.push_back(((actualPos * 360.0f) / (PULSE)) / GEAR_RATIO); // logging pos in degree 
-    position_output_array.push_back((actualPos * 360.0f) / CNT_PER_REVOLUTION); // logging pos in degree 
+    acceleration_input_array.push_back(acc_tick / GEAR_RATIO); // [rpm/s]
+    jerk_input_array.push_back(jerk_tick / GEAR_RATIO); // [rpm/s^2]
+    
+    position_output_array.push_back((actualPos * 360.0f) / CNT_PER_REVOLUTION); 
+    velocity_output_array.push_back(actualVel / GEAR_RATIO);
 }
 
-void EPOS4Slave::saveData(const string &position_filename, const string &velocity_filename) {
+void EPOS4Slave::saveData(const string &position_filename, const string &velocity_filename, const string &acceleration_filename, const string &jerk_filename) {
     ofstream pos_file(position_filename);
     ofstream vel_file(velocity_filename);
+    ofstream acc_file(acceleration_filename);
+    ofstream jerk_file(jerk_filename);
 
     for (size_t i = 0; i < t1_array.size(); ++i) {
         pos_file << t1_array[i] << " " << position_input_array[i] << " " << position_output_array[i] << "\n";
         vel_file << t1_array[i] << " " << velocity_input_array[i] << " " << velocity_output_array[i] << "\n";
+        acc_file << t1_array[i] << " " << acceleration_input_array[i] << "\n";
+        jerk_file << t1_array[i] << " " << jerk_input_array[i] << "\n";
     }
 
     cout << "\n**values saved to file." << endl;
